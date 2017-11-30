@@ -1,0 +1,54 @@
+<template>
+    <v-container grid-list-md >
+        <v-layout row wrap>
+            <v-flex xs4>
+                <h2>Login </h2>
+            </v-flex>
+            <v-flex xs8>
+                <v-layout row wrap>
+                    <v-flex xs8>
+                        <ul>
+                            <li v-for="item in items" :key="item" >{{item}}</li> 
+                        </ul>
+
+                        <ul>
+                            <li v-for="item in completed" :key="item" :style="{background:'lightgreen'}" >{{item}}</li> 
+                        </ul>
+
+                    </v-flex>
+                    <v-flex xs4>
+                        Try
+                    </v-flex>
+                </v-layout>
+            </v-flex>
+        </v-layout>
+     </v-container>
+</template>
+<style scoped>
+    li.complete {
+        background: #DDD;
+    }
+</style>
+
+<script>
+ export default {
+  name: 'Pagination',
+  data() {
+    return {
+        unit:[],
+        page:[],
+        meta:{},
+        items:[
+            "Login",
+            "Error Handling",
+            "Redirect"
+        ],
+        completed:[
+        ]
+    };
+  },
+};    
+</script>
+<style scoped>
+
+</style>
