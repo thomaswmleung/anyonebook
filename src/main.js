@@ -41,6 +41,7 @@ import {
   VGrid,
   VToolbar,
   VCard,
+  VDialog,
   transitions
 } from 'vuetify';
 import '../node_modules/vuetify/src/stylus/app.styl'
@@ -59,6 +60,7 @@ Vue.use(Vuetify, {
     VGrid,
     VToolbar,
     VCard, 
+    VDialog,
     transitions
   },
   // theme: {
