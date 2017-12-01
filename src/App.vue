@@ -27,6 +27,7 @@
     </v-navigation-drawer> 
     <v-toolbar app fixed >
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
+      <h3>AnyOneBook {{$t($route.name)}}</h3>
       <!-- <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
       <v-btn
         icon
