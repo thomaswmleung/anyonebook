@@ -94,7 +94,10 @@
       </v-list>
     </v-navigation-drawer> -->
     <v-footer :fixed="fixed" app>
-      <span>&copy; 2017</span>
+      <span>Copyright&copy; {{ new Date().getFullYear() }} </span>
+      <span> iLearners Publishing Limited. All rights reserved.   </span> 
+      <a href="http://www.ilearners.hk/privacy.php" target="_blank" style="margin-left:1.2em"> {{$t('Privacy Policy')}} </a> 
+      <a href="http://www.ilearners.hk/legal.php" target="_blank" style="margin-left:1.2em"> {{$t('Legal Notice')}} </a>         
     </v-footer>
   </v-app>
 </template>
@@ -153,5 +156,24 @@
     },
   };
 </script>
+<style>
+ a:link {
+    text-decoration: none;
+    color:grey;
+}
+
+a:visited {
+    text-decoration: none;
+    color: darkgrey;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+a:active {
+    text-decoration: underline;
+}
+</style>
 
 

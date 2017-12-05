@@ -11,6 +11,8 @@ const translationsEn = {
 // translations can be kept in separate files for each language
 // i.e. resources/i18n/de.json.
 const translationsTc = {
+    "Privacy Policy":"私隱政策",
+    "Legal Notice":"服務條款",
     "about":"關於AnyOneBook",
     "shop":"選頁書店", 
     "Task":"工作清單",
