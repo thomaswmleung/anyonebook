@@ -20,6 +20,7 @@
                         Try
                     </v-flex>
                 </v-layout>
+                
             </v-flex>
         </v-layout>
      </v-container>
@@ -27,6 +28,9 @@
 <style scoped>
     li.complete {
         background: #DDD;
+    }
+    .flex-content{
+        display:flex;
     }
 </style>
 

@@ -35,23 +35,22 @@
                 <p>{{$t('about')}}</p>                
             </v-flex>
         </v-layout>
-        <v-layout row wrap>
+        <v-layout row wrap id="dragContainer">
              <v-flex xs12>
                   <h4>Row Item, Handle Drag and drop event,Delete confirmation box and Show Preview </h4>
              </v-flex>
             <v-flex xs12 md3>
                <ul>
                     <li class="completed">Show Tool box when click with transition effect</li>
-                    <li>When User click on the DrapAndDrop Icon It can move the item around</li>
+                    <li class="completed">When User click on the DrapAndDrop Icon It can move the item around</li>
                     <li class="completed">Click on delete button show modal popup delete </li>
                 </ul> 
             </v-flex>
-            <v-flex xs12 md9> 
+            <v-flex xs12 md9 class="rowContainer toc" id="toc" > 
                 
-                       <v-layout row wrap v-for="(page,index) in pages" :key="page.domain+page.area+page.ku">
-                           <v-flex xs12 >
+                       <v-layout row wrap v-for="(page,index) in pages" :key="page.domain+page.area+page.ku" class="rowItem toc" :data="page" :id="`page-${index}`">
+                           <v-flex xs12  >
                                <v-card>
-                                    
                                         <v-card-title primary-title>
                                             <v-layout row wrap @click.stop="updatePageRecord(index,'tools')" >
                                                 <v-flex xs4  >
@@ -63,7 +62,6 @@
                                                 <v-flex xs4 text-xs-right >
                                                     <h3 class="content mb-1">
                                                         <div  v-if="!page.tools">{{(index+1)*2}} </div>
-                                                        <v-slide-x-transition>
                                                             <div  v-if="page.tools">
                                                                 {{(index+1)*2}} 
                                                                 <v-btn  fab dark small color="primary" 
@@ -72,35 +70,30 @@
                                                                 </v-btn>
                                                                 <v-btn  fab dark small color="error" 
                                                                     @click.stop="confirmDelete(index)">
-                                                                    <v-icon dark>delete</v-icon>
+                                                                    <v-icon  @click.stop="updatePageRecord(index,'tools')" >delete</v-icon>
                                                                 </v-btn>
-                                                                 <v-btn  fab dark small color="warning" 
-                                                                    @click.stop="">
-                                                                    <v-icon dark>drag_handle</v-icon>
-                                                                </v-btn>                                                            
+                                                                <v-icon class="handle">drag_handle</v-icon>                  
                                                             </div>
-                                                        </v-slide-x-transition>
                                                     </h3>
-                                                    
                                                 </v-flex>
+                                                
                                             </v-layout>
                                         </v-card-title>
-                                    <v-slide-y-transition>
-                                     <v-layout row wrap v-if="page.preview">
-                                            <v-flex xs12 sm12 md6 >
-                                                <v-card>
-                                                    <v-card-media :src="page.image"  height="450px">
-                                                    </v-card-media>
-                                                </v-card>
-                                        </v-flex>
-                                        <v-flex xs12 sm12 md6 >
-                                                <v-card>
-                                                    <v-card-media :src="page.image"   height="450px">
-                                                    </v-card-media>
-                                                </v-card>
-                                        </v-flex>
+                                     <v-layout row wrap >
+                                            <v-flex xs12 sm12 md6  >
+                                                    <v-card>
+                                                        <v-card-media :src="page.image"  :style="{height:page.preview?'450px':'0px'}">
+                                                        </v-card-media>
+                                                    </v-card>
+                                                </v-flex>
+                                                <v-flex xs12 sm12 md6 >
+                                                    <v-card>
+                                                        <v-card-media :src="page.image"   :style="{height:page.preview?'450px':'0px'}">
+                                                        </v-card-media>
+                                                    </v-card>
+                                                </v-flex>
                                     </v-layout>
-                                    </v-slide-y-transition>
+                                 
                                 </v-card>
                            </v-flex>
                        </v-layout>
@@ -138,7 +131,24 @@
 <script>
  export default {
   name: 'Pagination',
+  mounted: function() {
+    lmdd.set(document.getElementById('dragContainer'), {
+      containerClass: 'rowContainer',
+      draggableItemClass: 'rowItem',
+      handleClass: 'handle',
+      dataMode: true
+    });
+    this.$el.addEventListener('lmddend', this.handleDragEvent);
+  },
   methods:{
+      handleDragEvent(event) {
+          console.log(event.detail.to.container.classList);
+          let dragItemIndex = event.detail.draggedElement.id.split(/-+/).pop();              
+          this.pages.splice(
+              event.detail.to.index,
+              0,
+              this.pages.splice(dragItemIndex,1)[0]);
+    },
       updatePageRecord(index,attribute){
           console.log(index, attribute);
           this.pages.forEach(page=>{page["preview"]=false;page[attribute]=false;});
@@ -200,9 +210,9 @@
         meta:{},
         items:[
             "Http controller, API integration with backend",
-            "Design the UI logic for Page row and Unit",
-            "Handle Drag and drop event",
-            "Add button within page row with hide and show logic ",
+            
+            
+           
             "receive record from props, page record, unit record  ",
             "emit event for future handling ",
             
@@ -210,6 +220,9 @@
             "Using Page attribute to navigate the page"
         ],
         completed:[
+             "Add button within page row with hide and show logic ",
+            "Design the UI logic for Page row and Unit",
+            "Handle Drag and drop event",
             "using Vuetify layout",
             "i18n Language integration"
 

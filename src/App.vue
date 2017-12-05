@@ -27,7 +27,9 @@
     </v-navigation-drawer> 
     <v-toolbar app fixed >
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
-      <h3>AnyOneBook {{$t($route.name)}}</h3>
+      <h3>AnyOneBook － {{$t($route.name)}}</h3>
+      <v-btn flat @click.stop="$i18n.set('tc')">中文</v-btn>
+      <v-btn flat @click.stop="$i18n.set('en')">English</v-btn>
       <!-- <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
       <v-btn
         icon
@@ -102,7 +104,7 @@
     data() {
       return {
         clipped: false,
-        drawer: false,
+        drawer: true,
         fixed: true,
         items: [
           {

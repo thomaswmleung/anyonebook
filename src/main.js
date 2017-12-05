@@ -41,8 +41,10 @@ import {
   VGrid,
   VToolbar,
   VCard,
-  VDialog,
-  transitions
+  VDialog,   
+  transitions,
+  VTextField,
+  VForm,
 } from 'vuetify';
 import '../node_modules/vuetify/src/stylus/app.styl'
 
@@ -61,7 +63,9 @@ Vue.use(Vuetify, {
     VToolbar,
     VCard, 
     VDialog,
-    transitions
+    transitions,
+    VForm,
+    VTextField
   },
   // theme: {
   //   primary: '#ee44aa',
