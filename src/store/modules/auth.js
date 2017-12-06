@@ -52,7 +52,7 @@ const actions = {
     commit('loadingBar', true)
     const { username, password } = payload.auth
     const credentials = {}
-    const selectedLang = localStorage.getItem('default_lang')
+    // const selectedLang = localStorage.getItem('default_lang')
     ApiHttp.post(`/login?username=${username}&password=${password}`)
       .then((response) => {
         credentials.token = response.data.token
@@ -70,8 +70,9 @@ const actions = {
         commit('refreshUser')
         commit('setAuthenticated', true)
         commit('loadingBar', false)
-        payload.router.push('/intro')
-        Vue.toasted.success($t('message.auth.success')).goAway(3000)
+        payload.router.push('/')
+        Vue.toasted.success("Login Successfully").goAway(3000);
+      
       })
       .catch((error) => {
         var message = ''
@@ -79,12 +80,12 @@ const actions = {
         if (error.response) {
           let data = error.response.data
           if (data.errors[0].ERR_CODE === 'E109') {
-            message = $t('message.auth.fail')
+            message =data.errors[0].ERR_MSG;            
           }
         }
 
         commit('loadingBar', false)
-        Vue.toasted.error(message).goAway(3000)
+        Vue.toasted.error(message).goAway(3000);
       })
   },
   authLogout ({ commit }, payload) {
@@ -138,7 +139,7 @@ const actions = {
         errorMessage = payload.errors
       }
       else {
-        errorMessage = $t('http.errors.internal_server_orror')
+        errorMessage = Vue.$t('http.errors.internal_server_orror')
       }
 
       dispatch(SHOW_TOASH, { message: errorMessage, type: 'error' })

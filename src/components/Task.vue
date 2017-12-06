@@ -208,18 +208,13 @@
 
         ],
         meta:{},
-        items:[
-            "Http controller, API integration with backend",
-            
-            
-           
-            "receive record from props, page record, unit record  ",
-            "emit event for future handling ",
-            
+        items:[                       
+            "receive record from props, page record, unit record  ",            
             "Using Vuex as state management,split into module common, pagination, order, user",
             "Using Page attribute to navigate the page"
         ],
         completed:[
+            "Http controller, API integration with backend",
              "Add button within page row with hide and show logic ",
             "Design the UI logic for Page row and Unit",
             "Handle Drag and drop event",

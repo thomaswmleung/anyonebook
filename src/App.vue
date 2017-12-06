@@ -23,7 +23,31 @@
             </router-link>
           </v-list-tile-content>
         </v-list-tile>
+        <!-- Logout button -->
+        <v-list-tile v-if="authenticated">
+          <v-list-tile-action>
+            <v-icon light v-html="'exit_to_app'"></v-icon>
+          </v-list-tile-action>
+          <v-list-tile-content>
+            <a href="#" @click.stop="authLogout($router)">
+              <v-list-tile-title v-text="$t('Logout')"></v-list-tile-title>
+            </a>
+          </v-list-tile-content>
+        </v-list-tile>
+
+        <!-- Login Button -->
+        <v-list-tile v-if="!authenticated">
+          <v-list-tile-action>
+            <v-icon light>face</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-content>
+             <router-link to="/login">
+            <v-list-tile-title >{{$t('Login')}}</v-list-tile-title>
+            </router-link>
+          </v-list-tile-content>
+        </v-list-tile>
       </v-list>
+      
     </v-navigation-drawer> 
     <v-toolbar app fixed >
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
@@ -103,6 +127,7 @@
 </template>
 
 <script>
+  import {mapGetters,mapActions} from "vuex";
   export default {
     data() {
       return {
@@ -143,10 +168,6 @@
           icon: 'description',
           title: 'Order Management',
           path:"order_management"
-        },{
-          icon: 'face',
-          title: 'Login/Logout',
-          path:"login"
         }],
         miniVariant: false,
         right: true,
@@ -154,6 +175,18 @@
         title: 'Vuetify.js',
       };
     },
+    computed:{
+        ...mapGetters([
+          "authenticated"
+        ])
+    },
+    methods:{
+      ...mapActions(["authLogout",'authUserDetect'])
+    },
+    created(){
+       //If User Already Login Update the LocalStorage 
+       this.authUserDetect();
+    }
   };
 </script>
 <style>

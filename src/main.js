@@ -2,17 +2,19 @@
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue';
 import Vuex from 'vuex'
-
+import Toasted from 'vue-toasted'
 // load vuex i18n module
 import vuexI18n from 'vuex-i18n';
 
 import {translationsEn, translationsTc} from "@/translations";
 
-Vue.use(Vuex);
+import store from '@/store';
 
+Vue.use(Vuex);
+Vue.use(Toasted);
 // initialize the vuex store using the vuex module. note that you can change the
 //  name of the module if you wish
-const store = new Vuex.Store();
+// const store = new Vuex.Store();
 
 // initialize the internationalization plugin on the vue instance. note that
 // the store must be passed to the plugin. the plugin will then generate some
@@ -45,6 +47,7 @@ import {
   transitions,
   VTextField,
   VForm,
+  VSelect,
 } from 'vuetify';
 import '../node_modules/vuetify/src/stylus/app.styl'
 
@@ -65,7 +68,8 @@ Vue.use(Vuetify, {
     VDialog,
     transitions,
     VForm,
-    VTextField
+    VTextField,
+    VSelect
   },
   // theme: {
   //   primary: '#ee44aa',
@@ -80,11 +84,11 @@ Vue.use(Vuetify, {
 
 Vue.config.productionTip = true;
 
-Vue.use(Vuex);
 
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
+  store,
   router,
   template: '<App/>',
   components: { App },
