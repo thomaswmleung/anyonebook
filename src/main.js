@@ -30,7 +30,7 @@ Vue.i18n.add('en', translationsEn);
 Vue.i18n.add('tc', translationsTc);
 
 // set the start locale to use
-Vue.i18n.set('en');
+Vue.i18n.set('tc');
 
 import {
   Vuetify,

@@ -25,11 +25,11 @@ export default new Router({
     },
     {
       path:"/tasks",
-      name:'Task',
+      name:'Tasks',
       component:load('Task'),
     },
     {
-      path:"/upload_page",
+      path:"/upload_page/:id?",
       name:'UploadPage',
       component:load('UploadPage'),
       beforeEnter:authenticated

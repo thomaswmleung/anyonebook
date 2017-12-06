@@ -19,14 +19,14 @@
           </v-list-tile-action>
           <v-list-tile-content>
              <router-link :to="item.path">
-            <v-list-tile-title v-text="item.title"></v-list-tile-title>
+            <v-list-tile-title v-text="$t(item.title)" ></v-list-tile-title>
             </router-link>
           </v-list-tile-content>
         </v-list-tile>
         <!-- Logout button -->
         <v-list-tile v-if="authenticated">
           <v-list-tile-action>
-            <v-icon light v-html="'exit_to_app'"></v-icon>
+            <v-icon light>exit_to_app</v-icon>
           </v-list-tile-action>
           <v-list-tile-content>
             <a href="#" @click.stop="authLogout($router)">
@@ -51,9 +51,10 @@
     </v-navigation-drawer> 
     <v-toolbar app fixed >
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
-      <h3>AnyOneBook － {{$t($route.name)}}</h3>
-      <v-btn flat @click.stop="$i18n.set('tc')">中文</v-btn>
-      <v-btn flat @click.stop="$i18n.set('en')">English</v-btn>
+      <h3>AnyOneBook － {{$t($route.name)}}&nbsp;&nbsp;</h3>
+      <a class="lang_btn" @click.stop="$i18n.set('tc')" >中 </a>
+      <span class="lang_btn">&nbsp;| &nbsp;</span>
+      <a class="lang_btn" @click.stop="$i18n.set('en')" >Eng</a>
       <!-- <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
       <v-btn
         icon
@@ -117,9 +118,9 @@
         </v-list-tile>
       </v-list>
     </v-navigation-drawer> -->
-    <v-footer :fixed="fixed" app>
-      <span>Copyright&copy; {{ new Date().getFullYear() }} </span>
-      <span> iLearners Publishing Limited. All rights reserved.   </span> 
+    <v-footer>
+      <span>Copyright&copy; &nbsp;{{new Date().getFullYear()}}&nbsp; </span>
+      <span> iLearners Publishing Limited. All rights reserved.</span> 
       <a href="http://www.ilearners.hk/privacy.php" target="_blank" style="margin-left:1.2em"> {{$t('Privacy Policy')}} </a> 
       <a href="http://www.ilearners.hk/legal.php" target="_blank" style="margin-left:1.2em"> {{$t('Legal Notice')}} </a>         
     </v-footer>
@@ -146,15 +147,15 @@
           path:"tasks"
         },{
           icon: 'file_upload',
-          title: 'Upload Page',
+          title: 'UploadPage',
           path:"upload_page"
         },{
           icon: 'find_in_page',
-          title: 'Search Page',
+          title: 'SearchPage',
           path:"search_page"
         },{
           icon: 'open_in_new',
-          title: 'Create Book from Codex',
+          title: 'CreateBook',
           path:"create_book"
         },{
           icon: 'book',
@@ -162,11 +163,11 @@
           path:"search_book"
         },{
           icon: 'account_box',
-          title: 'User Profile',
+          title: 'UserProfile',
           path:"user_profile"
         },{
           icon: 'description',
-          title: 'Order Management',
+          title: 'OrderManagement',
           path:"order_management"
         }],
         miniVariant: false,
@@ -207,6 +208,16 @@ a:hover {
 a:active {
     text-decoration: underline;
 }
+
+.lang_btn{
+   user-select: none;
+        -moz-user-select: none;
+        -khtml-user-select: none;
+        -webkit-user-select: none;
+        -o-user-select: none;
+  color:darkgrey;
+}
+
 </style>
 
 

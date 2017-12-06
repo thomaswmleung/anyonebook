@@ -15,7 +15,7 @@ const translationsTc = {
     "Legal Notice":"服務條款",
     "about":"關於AnyOneBook",
     "shop":"選頁書店", 
-    "Task":"工作清單",
+    "Tasks":"工作清單",
     confirm_remove_page:"你確認要在第 {page} 頁上的{domain} - {area} 嗎?", 
     "Delete":"刪除", 
     "Cancel":"取消",
@@ -26,7 +26,17 @@ const translationsTc = {
     "Login":"登入", 
     "Logout":"登出",
     "AnyOneBook Login":"AnyOneBook 登入",
-    "E-mail must be valid":"無效Email "
+    "E-mail must be valid":"無效Email ",
+
+    Home:"首頁",
+    UploadPage:"上載頁面",
+    SearchPage:"找尋頁面",
+    CreateBook:"創建選頁書",
+    "Search Books":"找尋選頁書",
+    UserProfile:"用戶資料",
+    OrderManagement:"訂單管理",
+
+    "Page Information":"頁面資料",
 };
 
 

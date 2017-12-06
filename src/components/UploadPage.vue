@@ -25,13 +25,13 @@
         <v-layout row wrap>
         
             <v-flex md8>
-                <v-card>
+                <v-card >
                     <v-container>
                         <v-card-title>
                             <h3 class="title">
                                 <span>{{$t('Page Information')}}</span>
                                 <v-btn fab dark small color="primary" @click.stop="uploadPDF">
-                                    <v-icon>note_add</v-icon>
+                                    <v-icon v-html="uploadIcon"></v-icon>
                                 </v-btn>
                             </h3>
                         </v-card-title>
@@ -65,33 +65,54 @@
                                               item-value="code"
                                               item-text="label"
                                               :label="$t('Knowledge Unit')" editable ></v-select></v-flex>                                
+                                 <v-flex xs12 md4>
+                                    <!-- @TODO mapping existing page to previous page, if previous page is exist -->
+                                    <v-btn>{{$t('Previous Page')}}</v-btn>
+                                </v-flex>              
                             </v-layout>
                             <v-layout row wrap>
-                                <v-flex xs12 md4>
-                                    <!-- @TODO -->
-                                    <v-btn>{{$t('Previous Page')}}</v-btn>
+                                <v-flex md12>
+                                    <!-- Handle Affiliation -->
+                                    <h4 class="subtitle">
+                                        <span>{{$t('Affiliation')}}</span>
+                                        <v-btn fab dark small primary @click.stop="addAffilication">
+                                            <v-icon >add</v-icon>
+                                        </v-btn>
+                                    </h4>                                    
+                                    <!--For Loop of all Affiliation Item-->
                                 </v-flex>
+                                <v-flex md12>
+                                    <v-layout row wrap>
+                                        <v-flex md4></v-flex>
+                                        <v-flex md4></v-flex>
+                                        <v-flex md4></v-flex>
+                                    </v-layout>
+                                </v-flex>
+                               
                             </v-layout>
                             <v-layout row wrap>
                                 <v-flex>
-                                    <v-card>
+                                    <v-card hover >
                                         <v-card-title>
                                             <h3 class="subtitle">
                                                 <span>{{$t('version')}}</span> 
                                                 <v-btn fab dark small color="primary" @click.stop="uploadPDF">
-                                                    <v-icon>note_add</v-icon>
+                                                    <v-icon v-html="uploadIcon"></v-icon>
                                                 </v-btn>
                                             </h3>
                                         </v-card-title>
                                         <v-container>
                                         <!-- Listing PDF version-->
-                                            <v-layout row wrap v-for="i in 30" :key="i">
-                                                <!-- user level nature position output file_path_btn preview_btn -->
-                                                <v-flex xs12 sm6><span > v-for {{i}} &nbsp; </span></v-flex>                                                
+                                            <v-layout row wrap>
+                                                <!-- user level nature position output file_path_btn preview_btn remove_btn -->
+                                                <v-flex  v-for="i in 8" :key="i" xs12 md6 >
+                                                    <span > v-for {{i}} &nbsp; </span>
+                                                </v-flex>                                                
                                             </v-layout>
-                                             <v-layout row wrap v-for="i in 30" :key="i">
-                                                <!-- user level nature position output file_path_btn preview_btn -->
-                                                <span > v-for {{i}} &nbsp; </span>
+                                             <v-layout row wrap >
+                                                 <v-btn fab dark small color="primary" @click.stop="uploadPDF">
+                                                    <v-icon v-html="uploadIcon"></v-icon>
+                                                </v-btn>
                                             </v-layout>
                                         </v-container>
                                     </v-card>
@@ -109,7 +130,7 @@
                     </v-card-title>
                     <v-card-text>                        
                         <v-btn x-large style="height:8em;width:100%" @click.stop="uploadPDF">
-                            <v-icon x-large >note_add</v-icon>
+                            <v-icon x-large v-html="uploadIcon"></v-icon>
                         </v-btn>
                     </v-card-text>               
                 </v-card>
@@ -131,11 +152,23 @@ export default {
         uploadPDF() {
         console.log("Upload PDF");
         //Show
+        },
+    //Process PDF upload 
+        processPDF(){
+
+        },
+    //Add Page Record
+        addPageRecord(){
+
+        },
+        addAffilication(){
+
         }
   },
   data() {
     return {
       valid: "",
+      uploadIcon:"attachment",
       showTaskItem: false,
       selectedPDF: {},
       option: {
