@@ -217,7 +217,8 @@ export default {
         "Web form to upload page",
         "Handle Media API with modal and Form, Update API to handle PDF page",
         "Upload multiple PDF into same PDF Page file",
-        "Add modal popup for previous page handling"
+        "Add modal popup for previous page handling",
+        "handle modal upload"
       ],
       completed: []
     };
@@ -225,5 +226,4 @@ export default {
 };
 </script>
 <style scoped>
-
 </style>
