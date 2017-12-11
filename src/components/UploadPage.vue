@@ -40,36 +40,44 @@
                                     <v-select :items="option.codex" 
                                               item-value="code"
                                               item-text="label"
-                                              v-model="codex"
+                                              v-model="current_page.codex"
+                                              @input="pageUpdateOption({type:'codex',values:$event})"
                                               :label="$t('Codex')" editable ></v-select>
                                 </v-flex>
                                 <v-flex xs12 md4>
                                     <v-select :items="option.syllabus" 
                                               item-value="code"
                                               item-text="label"
-                                              v-model="syllabus"
-                                              @input="updateOption('syllabus')"
+                                              v-model="current_page.syllabus"
+                                              @input="pageUpdateOption({type:'syllabus',values:$event})"
                                               :label="$t('Syllabus')" editable ></v-select>
                                 </v-flex>
                                 <v-flex xs12 md4>
                                     <v-select :items="option.domain" 
-                                              v-model="domain"
-                                              @input="updateOption('domain')"
+                                              v-model="current_page.domain"
+                                              @input="pageUpdateOption({type:'domain',values:$event})"
                                               :label="$t('Domain')" editable ></v-select>
                                 </v-flex>
                             </v-layout>
                             <v-layout row wrap>
                                 <v-flex xs12 md4><v-select :items="option.area" 
-                                v-model="area"
-                                              @input="updateOption('area')"                        
+                                v-model="current_page.area"
+                                              @input="pageUpdateOption({type:'area',values:$event})"                        
                                               :label="$t('Area')" editable ></v-select></v-flex>
                                 <v-flex xs12 md4><v-select :items="option.knowledge_unit" 
-                                v-model="knowledge_unit"
-                                              @input="updateOption('knowledge_unit')"                                              
+                                v-model="current_page.knowledge_unit"
+                                              @input="pageUpdateOption({type:'knowledge_unit',values:$event})"                                              
                                               :label="$t('Knowledge Unit')" editable ></v-select></v-flex>                                
                                  <v-flex xs12 md4>
                                     <!-- @TODO mapping existing page to previous page, if previous page is exist -->
-                                    <v-btn>{{$t('Previous Page')}}</v-btn>
+                                    <v-btn v-if="current_page.previous_page_id==''">{{$t('Previous Page')}}</v-btn>
+                                </v-flex>    
+                                <v-flex xs12 md12>
+                                    <v-text-field
+                                        :label="$t('Remark')"
+                                        v-model="current_page.remark"
+                                        @input="pageUpdateOption({type:'remark',values:$event})"
+                                    ></v-text-field>
                                 </v-flex>              
                             </v-layout>
                             <v-layout row wrap>
@@ -160,7 +168,8 @@ li.complete {
 </style>
 
 <script>
-import {syllabus} from "@/store/static-record";
+ import {mapGetters,mapActions} from "vuex";
+// import {syllabus} from "@/store/static-record";
 import _ from "lodash";
 
 import PageModalAffiliation from "@/components/partial/page-modal-affiliation"
@@ -169,6 +178,7 @@ export default {
   name: "Pagination",
   components:{PageModalAffiliation},
   methods: {
+      ...mapActions(["pageUpdateOption"]),
     //Upload PDF process - trigger 
         uploadPDF() {
             console.log("Upload PDF");
@@ -244,7 +254,12 @@ export default {
             }
         }
   },
-  
+  computed:{      
+        ...mapGetters({
+            option:"PageSyllabusOptions",
+            current_page:"currentPage"    
+        })  
+  },
   data() {
     return {
       valid: "",
@@ -256,7 +271,7 @@ export default {
       domain:"",
       area:"",
       knowledge_unit:"",
-      all_syllabus:syllabus,
+    //   all_syllabus:syllabus,
       
       show_affiliation:false,
       current_affiliation:{},
@@ -267,49 +282,50 @@ export default {
       
       show_fullscreen_loader:false,
 
-      option: {
-        codex: [
-            { code: "chinese_learn_free", label: "語文自由識" },
-            { code: "math_learn_free", label: "數學自由識" },
-        ],
-        syllabus: [{ code: "hk_primary_chinese", label: "香港小學中文" },
-        { code: "hk_primary_math", label: "香港小學數學" }],
-        domain: [],
-        area: [],
-        knowledge_unit: [],
-        user: [
-          { code: "A", label: "answer" },
-          { code: "S", label: "Student Un-coded" },
-          { code: "R", label: "Student Coded" },
-          { code: "U", label: "Teacher Un-coded" },
-          { code: "T", label: "Teacher Coded" }
-        ],
-        level: [
-          { code: "G", label: "Top Gun" },
-          { code: "H", label: "High Baseline" },
-          { code: "B", label: "Baseline" },
-          { code: "F", label: "Support with Scaffolding" },
-          { code: "D", label: "Indeterminate" },
-          { code: "O", label: "Open Graphic" }
-        ],
-        nature: [
-          { code: "P", label: "Paper or Text" },
-          { code: "Q", label: "Question" },
-          { code: "N", label: "Comprehension" },
-          { code: "M", label: "Exam or Test" }
-        ],
-        position: [
-          { code: "V", label: "Inside Page" },
-          { code: "W", label: "Cover" },
-          { code: "X", label: "Inside Cover" },
-          { code: "Y", label: "Page One" },
-          { code: "Z", label: "Back Cover" }
-        ],
-        output: [
-          { code: "C", label: "Color" },
-          { code: "K", label: "Black/White" }
-        ]
-      },
+    //   option: {
+    //     codex: [
+    //         { code: "chinese_learn_free", label: "語文自由識" },
+    //         { code: "math_learn_free", label: "數學自由識" },
+    //     ],
+    //     syllabus: [{ code: "hk_primary_chinese", label: "香港小學中文" },
+    //     { code: "hk_primary_math", label: "香港小學數學" }],
+    //     domain: [],
+    //     area: [],
+    //     knowledge_unit: [],
+    //     remark:"",
+    //     user: [
+    //       { code: "A", label: "answer" },
+    //       { code: "S", label: "Student Un-coded" },
+    //       { code: "R", label: "Student Coded" },
+    //       { code: "U", label: "Teacher Un-coded" },
+    //       { code: "T", label: "Teacher Coded" }
+    //     ],
+    //     level: [
+    //       { code: "G", label: "Top Gun" },
+    //       { code: "H", label: "High Baseline" },
+    //       { code: "B", label: "Baseline" },
+    //       { code: "F", label: "Support with Scaffolding" },
+    //       { code: "D", label: "Indeterminate" },
+    //       { code: "O", label: "Open Graphic" }
+    //     ],
+    //     nature: [
+    //       { code: "P", label: "Paper or Text" },
+    //       { code: "Q", label: "Question" },
+    //       { code: "N", label: "Comprehension" },
+    //       { code: "M", label: "Exam or Test" }
+    //     ],
+    //     position: [
+    //       { code: "V", label: "Inside Page" },
+    //       { code: "W", label: "Cover" },
+    //       { code: "X", label: "Inside Cover" },
+    //       { code: "Y", label: "Page One" },
+    //       { code: "Z", label: "Back Cover" }
+    //     ],
+    //     output: [
+    //       { code: "C", label: "Color" },
+    //       { code: "K", label: "Black/White" }
+    //     ]
+    //   },
       items: [
         "Web form to upload page",
         "Handle Media API with modal and Form, Update API to handle PDF page",

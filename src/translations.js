@@ -37,6 +37,14 @@ const translationsTc = {
     OrderManagement:"訂單管理",
 
     "Page Information":"頁面資料",
+
+    "Affiliation":"相聯出版物",
+
+    "version":"版本",
+
+    "Previous Page":"上一頁", 
+
+    "indicates required field":"必須填寫"
 };
 
 

@@ -7,43 +7,42 @@
         <v-card-text>
           <v-container grid-list-md>
             <v-layout wrap>
-              <v-flex xs12 sm6 md4>
-                <v-text-field label="Legal first name" required></v-text-field>
-              </v-flex>
-              <v-flex xs12 sm6 md4>
-                <v-text-field label="Legal middle name" hint="example of helper text only on focus"></v-text-field>
-              </v-flex>
-              <v-flex xs12 sm6 md4>
-                <v-text-field label="Legal last name" hint="example of persistent helper text"
-                  persistent-hint
-                  required
-                ></v-text-field>
-              </v-flex>
-              <v-flex xs12>
-                <v-text-field label="Email" required></v-text-field>
-              </v-flex>
-              <v-flex xs12>
-                <v-text-field label="Password" type="password" required></v-text-field>
-              </v-flex>
+              
               <v-flex xs12 sm6>
                 <v-select
-                  label="Age"
+                  :label="$t('Publisher')"
                   required
-                  :items="['0-17', '18-29', '30-54', '54+']"
+                  chips
+                  :items="['現代出版社', '教育出版社', '新領域出版社']"
                 ></v-select>
               </v-flex>
               <v-flex xs12 sm6>
                 <v-select
-                  label="Interests"
-                  multiple
+                  :label="$t('Book Name')"                  
                   autocomplete
                   chips
-                  :items="['Skiing', 'Ice hockey', 'Soccer', 'Basketball', 'Hockey', 'Reading', 'Writing', 'Coding', 'Basejump']"
+                  :items="['語文生活', '中文26週', '數學26週', '摘星成長']"
+                ></v-select>
+              </v-flex>
+              <v-flex xs12 sm6>
+                <v-select
+                  :label="$t('Book\'s Version')"                  
+                  autocomplete
+                  chips
+                  :items="['2016 P5 A', '2016 P5 B', '2016 P4 A', '2016 P4 B']"
+                ></v-select>
+              </v-flex>
+              <v-flex xs12 sm6>
+                <v-select
+                  :label="$t('Book Unit Title')"                  
+                  autocomplete
+                  chips
+                  :items="['2016 P5 A', '2016 P5 B', '2016 P4 A', '2016 P4 B']"
                 ></v-select>
               </v-flex>
             </v-layout>
           </v-container>
-          <small>*indicates required field</small>
+          <small>*{{$t("indicates required field")}}</small>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
