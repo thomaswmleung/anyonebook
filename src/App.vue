@@ -124,12 +124,20 @@
       <a href="http://www.ilearners.hk/privacy.php" target="_blank" style="margin-left:1.2em"> {{$t('Privacy Policy')}} </a> 
       <a href="http://www.ilearners.hk/legal.php" target="_blank" style="margin-left:1.2em"> {{$t('Legal Notice')}} </a>         
     </v-footer>
+
+    <!-- Common modal -->
+        <common-modal-loading
+            :show="fullscreen_loader"
+         ></common-modal-loading>
+
   </v-app>
 </template>
 
 <script>
   import {mapGetters,mapActions} from "vuex";
+  import CommonModalLoading from "@/components/partial/common-modal-loading"
   export default {
+      components:{CommonModalLoading},
     data() {
       return {
         clipped: false,
@@ -178,7 +186,8 @@
     },
     computed:{
         ...mapGetters([
-          "authenticated"
+          "authenticated",
+          "fullscreen_loader"
         ])
     },
     methods:{

@@ -10,6 +10,8 @@ import {translationsEn, translationsTc} from "@/translations";
 
 import store from '@/store';
 
+import {DEBUG} from '@/env';
+
 Vue.use(Vuex);
 Vue.use(Toasted);
 // initialize the vuex store using the vuex module. note that you can change the
@@ -22,7 +24,10 @@ Vue.use(Toasted);
 // instance (i.e. Vue.i18n.set).
 Vue.use(vuexI18n.plugin, store,
 	 {onTranslationNotFound (locale, key) {
-		console.warn(`i18n :: Key '${key}' not found for locale '${locale}'`);
+     if(DEBUG){
+      console.warn(`i18n :: Key '${key}' not found for locale '${locale}'`);
+     }
+		
 	}});
 
 // add translations directly to the application

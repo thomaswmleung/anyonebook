@@ -10,7 +10,6 @@
                         <ul>
                             <li v-for="item in items" :key="item" >{{item}}</li> 
                         </ul>
-
                         <ul>
                             <li v-for="item in completed" :key="item" :style="{background:'lightgreen'}" >{{item}}</li> 
                         </ul>
@@ -41,29 +40,32 @@
                                     <v-select :items="option.codex" 
                                               item-value="code"
                                               item-text="label"
+                                              v-model="codex"
                                               :label="$t('Codex')" editable ></v-select>
                                 </v-flex>
                                 <v-flex xs12 md4>
                                     <v-select :items="option.syllabus" 
                                               item-value="code"
                                               item-text="label"
+                                              v-model="syllabus"
+                                              @input="updateOption('syllabus')"
                                               :label="$t('Syllabus')" editable ></v-select>
                                 </v-flex>
                                 <v-flex xs12 md4>
                                     <v-select :items="option.domain" 
-                                              item-value="code"
-                                              item-text="label"
+                                              v-model="domain"
+                                              @input="updateOption('domain')"
                                               :label="$t('Domain')" editable ></v-select>
                                 </v-flex>
                             </v-layout>
                             <v-layout row wrap>
                                 <v-flex xs12 md4><v-select :items="option.area" 
-                                              item-value="code"
-                                              item-text="label"
+                                v-model="area"
+                                              @input="updateOption('area')"                        
                                               :label="$t('Area')" editable ></v-select></v-flex>
                                 <v-flex xs12 md4><v-select :items="option.knowledge_unit" 
-                                              item-value="code"
-                                              item-text="label"
+                                v-model="knowledge_unit"
+                                              @input="updateOption('knowledge_unit')"                                              
                                               :label="$t('Knowledge Unit')" editable ></v-select></v-flex>                                
                                  <v-flex xs12 md4>
                                     <!-- @TODO mapping existing page to previous page, if previous page is exist -->
@@ -81,6 +83,7 @@
                                     </h4>                                    
                                     <!--For Loop of all Affiliation Item-->
                                 </v-flex>
+                                <!--For Loop of all Affiliation Item-->
                                 <v-flex md12>
                                     <v-layout row wrap>
                                         <v-flex md4></v-flex>
@@ -136,6 +139,18 @@
                 </v-card>
             </v-flex>
         </v-layout>
+        <!--
+            include the modal(dialog) for different PDF version upload
+            include the modal(dialog) for affiliation 
+            include the modal(dialog) for previous page finder  
+        -->
+        <page-modal-affiliation 
+            :show="show_affiliation"
+            :record="current_affiliation"
+            @close_dialog = "show_affiliation=false">
+        </page-modal-affiliation>
+         
+
      </v-container>
 </template>
 <style scoped>
@@ -145,38 +160,120 @@ li.complete {
 </style>
 
 <script>
+import {syllabus} from "@/store/static-record";
+import _ from "lodash";
+
+import PageModalAffiliation from "@/components/partial/page-modal-affiliation"
+
 export default {
   name: "Pagination",
+  components:{PageModalAffiliation},
   methods: {
     //Upload PDF process - trigger 
         uploadPDF() {
-        console.log("Upload PDF");
-        //Show
+            console.log("Upload PDF");
+            //Show PDF upload modal 
+            this.show_fullscreen_loader = true;
         },
     //Process PDF upload 
         processPDF(){
-
+            //Check page group id is exist or not 
+            //If not,create a new page 
+                //validate meta information filled or not 
+                // if not show a the toast require to fill the page information, and close the modal
+                // if OK format the parameter and call page_group API, wait for return 
+                    //update page-group-id                    
+                    //upload pdf media api , show loading 
+                        //call page_group api and set parent_page_group as  page-group-id   
+                            //hide loading 
+            
+            //If page-group-id already exist 
+            //upload pdf media api , show loading 
+                        //call page_group api and set parent_page_group as  page-group-id   
+                            //hide loading 
         },
-    //Add Page Record
-        addPageRecord(){
+    
+        addPreviousPageRecord(){
+            //Add Page Record
+            //Get Page Record by Page ID 
+
+            
+            // Case has multiple pages 
+            /*
+                provide a case study binding set, working with ilearners moodle, 
+                allow the user can exchange idea through social media (if necessary)
+                user go to select a theme, have material about that theme background information, detail , graphic etc , then provide various addon discussion question, 
+                sample essay from previous student?
+                user pick a theme 
+                select topic and case 
+                choose addon discussion question and execerise
+                the problem set can be focus on theory or partical approach to  
+
+                活頁 教材 
+
+                the engine is the same, but have much more flexible approach to the market, 
+                any educator can make used this approach to create education material, (using existing online PDF Editing Software) 
+                https://www.sejda.com/pdf-editor or using google doc to export pdf, problem might rise is the format of the page                 
+            */
 
         },
         addAffilication(){
-
+            //show modal  
+            this.show_affiliation = true;
+            //format the parameter and update the action 
+        },
+        updateOption(type){
+            let record_set = {};
+            // use this.syllabus to update option.domain / area / knowledge unit
+            if(type=="syllabus"){
+                 record_set  = _.find(this.all_syllabus,{code:this.syllabus}).entitys;
+                this.option.domain = _.map(_.uniqBy(record_set,o=>o.domain), "domain");
+                this.option.area = _.map(_.uniqBy(record_set,o=>o.area), "area");
+                this.option.knowledge_unit = _.map(_.uniqBy(record_set,o=>o.knowledge_unit), "knowledge_unit");
+            }
+            if(type=="domain"){
+                record_set  = _.find(this.all_syllabus,{code:this.syllabus}).entitys;
+                record_set = _.filter(record_set, {domain:this.domain}) ;               
+                this.option.area = _.map(_.uniqBy(record_set,o=>o.area), "area");
+                this.option.knowledge_unit = _.map(_.uniqBy(record_set,o=>o.knowledge_unit), "knowledge_unit");
+            }
+            if(type=="area"){
+                record_set  = _.find(this.all_syllabus,{code:this.syllabus}).entitys;
+                record_set = _.filter(record_set, {domain:this.domain, area:this.area}) ;                               
+                this.option.knowledge_unit = _.map(_.uniqBy(record_set,o=>o.knowledge_unit), "knowledge_unit");
+            }
         }
   },
+  
   data() {
     return {
       valid: "",
       uploadIcon:"attachment",
       showTaskItem: false,
       selectedPDF: {},
+      codex:"",
+      syllabus:"",
+      domain:"",
+      area:"",
+      knowledge_unit:"",
+      all_syllabus:syllabus,
+      
+      show_affiliation:false,
+      current_affiliation:{},
+
+      show_previous_finder:false,
+      finder_pagination:{},
+      previous_page_id:"",
+      
+      show_fullscreen_loader:false,
+
       option: {
         codex: [
             { code: "chinese_learn_free", label: "語文自由識" },
             { code: "math_learn_free", label: "數學自由識" },
         ],
-        syllabus: [{ code: "hk_primary_chinese_2015", label: "香港小學中文  2015" }],
+        syllabus: [{ code: "hk_primary_chinese", label: "香港小學中文" },
+        { code: "hk_primary_math", label: "香港小學數學" }],
         domain: [],
         area: [],
         knowledge_unit: [],

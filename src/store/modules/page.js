@@ -42,7 +42,7 @@ const state = {
         output:"",
         file_url:"",
         preview_url:""        
-    }
+    },
 }
 
 //getters

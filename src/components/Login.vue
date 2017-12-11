@@ -30,7 +30,7 @@
                     </v-card-title>
                     <v-card-text>
                         
-                            <v-form v-model="valid" ref="form" lazy-validation>
+                            <v-form ref="form" lazy-validation>
                                 <v-text-field
                                 :label="$t('User Email')"
                                 :rules="emailRules"
@@ -68,7 +68,7 @@ import { mapActions, mapGetters } from 'vuex'
   name: 'Pagination',
   methods:{
       ...mapActions([
-      'authenticate'
+      'authenticate',
     ]),
       clear(){
           this.$refs.form.reset()

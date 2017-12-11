@@ -49,7 +49,7 @@ const mutations = {
 
 const actions = {
   authenticate ({ commit }, payload) {
-    commit('loadingBar', true)
+    commit('COMMOM_UPDATE_FULLSCREEN_LOADER', true) //Common Loader Module
     const { username, password } = payload.auth
     const credentials = {}
     // const selectedLang = localStorage.getItem('default_lang')
@@ -69,7 +69,7 @@ const actions = {
         storeUserToken(credentials)
         commit('refreshUser')
         commit('setAuthenticated', true)
-        commit('loadingBar', false)
+        commit('COMMOM_UPDATE_FULLSCREEN_LOADER', false) //Common Loader Module 
         payload.router.push('/')
         Vue.toasted.success("Login Successfully").goAway(3000);
       
@@ -84,7 +84,7 @@ const actions = {
           }
         }
 
-        commit('loadingBar', false)
+        commit('COMMOM_UPDATE_FULLSCREEN_LOADER', false) //Common Loader Module
         Vue.toasted.error(message).goAway(3000);
       })
   },

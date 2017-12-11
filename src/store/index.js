@@ -2,6 +2,7 @@
 
 import Vue from 'vue'
 import Vuex from 'vuex'
+import common from './modules/common'
 import auth from './modules/auth'
 
 import createLogger from '../plugins/logger'
@@ -14,6 +15,7 @@ export default new Vuex.Store({
     // actions,
     // getters,
     modules: {
+      common,
       auth
     },
     strict: debug,

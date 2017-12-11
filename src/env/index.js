@@ -82,7 +82,9 @@ const ORGZ = {
   }
 }
 
-const DEBUG = true
+
+//Show or Hide Warning message in console.log
+const DEBUG = false
 
 export {
   API_BASE_URL,
