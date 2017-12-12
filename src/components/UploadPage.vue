@@ -80,27 +80,7 @@
                                     ></v-text-field>
                                 </v-flex>              
                             </v-layout>
-                            <v-layout row wrap>
-                                <v-flex md12>
-                                    <!-- Handle Affiliation -->
-                                    <h4 class="subtitle">
-                                        <span>{{$t('Affiliation')}}</span>
-                                        <v-btn fab dark small primary @click.stop="addAffilication">
-                                            <v-icon >add</v-icon>
-                                        </v-btn>
-                                    </h4>                                    
-                                    <!--For Loop of all Affiliation Item-->
-                                </v-flex>
-                                <!--For Loop of all Affiliation Item-->
-                                <v-flex md12>
-                                    <v-layout row wrap>
-                                        <v-flex md4></v-flex>
-                                        <v-flex md4></v-flex>
-                                        <v-flex md4></v-flex>
-                                    </v-layout>
-                                </v-flex>
-                               
-                            </v-layout>
+                           
                             <v-layout row wrap>
                                 <v-flex>
                                     <v-card hover >
@@ -129,6 +109,44 @@
                                     </v-card>
                                 </v-flex>            
                             </v-layout>
+
+                            <!-- Affiliation-->
+                            <v-layout row wrap>
+                                <v-flex md12>
+                                    <!-- Handle Affiliation -->
+                                    <h4 class="subtitle">
+                                        <span>{{$t('Affiliation')}}</span>
+                                        <v-btn fab dark small primary @click.stop="addAffilication(-1)">
+                                            <v-icon >add</v-icon>
+                                        </v-btn>
+                                    </h4>                                    
+                                    <!--For Loop of all Affiliation Item-->
+                                </v-flex>
+                                <!--For Loop of all Affiliation Item-->
+                                <v-flex md6 v-for="(row,idx) in current_page.affiliation" :key="row.publisher+row.edition+row.page_number">
+                                    <v-card >
+                                        <v-container>
+                                            <v-layout row wrap>
+                                                <v-flex md6>{{row.publisher}},{{row.book_title}}</v-flex>
+                                                <v-flex md5>{{row.edition}},{{row.unit}}</v-flex>
+                                                <v-flex md1>{{row.page_number}}</v-flex>
+                                            </v-layout>
+                                            <v-layout row wrap>
+                                                <v-flex md12>
+                                                    <v-btn fab dark small color="primary" @click.stop="addAffilication(idx)">
+                                                        <v-icon dark>mode_edit</v-icon>
+                                                    </v-btn>
+                                                    <v-btn  fab dark small color="error" @click.stop="pageDeleteAffiliation(idx)">
+                                                        <v-icon dark>delete_forever</v-icon>
+                                                    </v-btn>
+                                                </v-flex>
+                                            </v-layout>
+                                        </v-container>
+                                    </v-card>
+                                </v-flex>
+                               
+                            </v-layout>
+
                             
                         </v-form>
                     </v-container>
@@ -178,7 +196,7 @@ export default {
   name: "Pagination",
   components:{PageModalAffiliation},
   methods: {
-      ...mapActions(["pageUpdateOption"]),
+      ...mapActions(["pageUpdateOption","pageUpdateAffiliationIndex","pageDeleteAffiliation"]),
     //Upload PDF process - trigger 
         uploadPDF() {
             console.log("Upload PDF");
@@ -227,37 +245,18 @@ export default {
             */
 
         },
-        addAffilication(){
+        addAffilication(index){
             //show modal  
             this.show_affiliation = true;
             //format the parameter and update the action 
-        },
-        updateOption(type){
-            let record_set = {};
-            // use this.syllabus to update option.domain / area / knowledge unit
-            if(type=="syllabus"){
-                 record_set  = _.find(this.all_syllabus,{code:this.syllabus}).entitys;
-                this.option.domain = _.map(_.uniqBy(record_set,o=>o.domain), "domain");
-                this.option.area = _.map(_.uniqBy(record_set,o=>o.area), "area");
-                this.option.knowledge_unit = _.map(_.uniqBy(record_set,o=>o.knowledge_unit), "knowledge_unit");
-            }
-            if(type=="domain"){
-                record_set  = _.find(this.all_syllabus,{code:this.syllabus}).entitys;
-                record_set = _.filter(record_set, {domain:this.domain}) ;               
-                this.option.area = _.map(_.uniqBy(record_set,o=>o.area), "area");
-                this.option.knowledge_unit = _.map(_.uniqBy(record_set,o=>o.knowledge_unit), "knowledge_unit");
-            }
-            if(type=="area"){
-                record_set  = _.find(this.all_syllabus,{code:this.syllabus}).entitys;
-                record_set = _.filter(record_set, {domain:this.domain, area:this.area}) ;                               
-                this.option.knowledge_unit = _.map(_.uniqBy(record_set,o=>o.knowledge_unit), "knowledge_unit");
-            }
+            this.pageUpdateAffiliationIndex(index);
         }
   },
   computed:{      
         ...mapGetters({
             option:"PageSyllabusOptions",
-            current_page:"currentPage"    
+            current_page:"currentPage",
+            current_page_affiliation_index:"currentPageAffiliationIndex",  
         })  
   },
   data() {
@@ -282,50 +281,6 @@ export default {
       
       show_fullscreen_loader:false,
 
-    //   option: {
-    //     codex: [
-    //         { code: "chinese_learn_free", label: "語文自由識" },
-    //         { code: "math_learn_free", label: "數學自由識" },
-    //     ],
-    //     syllabus: [{ code: "hk_primary_chinese", label: "香港小學中文" },
-    //     { code: "hk_primary_math", label: "香港小學數學" }],
-    //     domain: [],
-    //     area: [],
-    //     knowledge_unit: [],
-    //     remark:"",
-    //     user: [
-    //       { code: "A", label: "answer" },
-    //       { code: "S", label: "Student Un-coded" },
-    //       { code: "R", label: "Student Coded" },
-    //       { code: "U", label: "Teacher Un-coded" },
-    //       { code: "T", label: "Teacher Coded" }
-    //     ],
-    //     level: [
-    //       { code: "G", label: "Top Gun" },
-    //       { code: "H", label: "High Baseline" },
-    //       { code: "B", label: "Baseline" },
-    //       { code: "F", label: "Support with Scaffolding" },
-    //       { code: "D", label: "Indeterminate" },
-    //       { code: "O", label: "Open Graphic" }
-    //     ],
-    //     nature: [
-    //       { code: "P", label: "Paper or Text" },
-    //       { code: "Q", label: "Question" },
-    //       { code: "N", label: "Comprehension" },
-    //       { code: "M", label: "Exam or Test" }
-    //     ],
-    //     position: [
-    //       { code: "V", label: "Inside Page" },
-    //       { code: "W", label: "Cover" },
-    //       { code: "X", label: "Inside Cover" },
-    //       { code: "Y", label: "Page One" },
-    //       { code: "Z", label: "Back Cover" }
-    //     ],
-    //     output: [
-    //       { code: "C", label: "Color" },
-    //       { code: "K", label: "Black/White" }
-    //     ]
-    //   },
       items: [
         "Web form to upload page",
         "Handle Media API with modal and Form, Update API to handle PDF page",

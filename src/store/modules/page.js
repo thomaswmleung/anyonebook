@@ -29,7 +29,7 @@ const state = {
     current_page_affiliation:{
         publisher:"",
         book_title:"",
-        version:"",
+        edition:"",
         unit:"",
         lesson_title:"",
         page_number:"",
@@ -100,10 +100,6 @@ const state = {
             { code: "C", label: "Color" },
             { code: "K", label: "Black/White" }
           ]         
-    },
-
-    page_version_options:{
-
     }
     
 }
@@ -115,13 +111,20 @@ const types  = {
     PAGE_ADD_VERSION:"PAGE_ADD_VERSION",
     PAGE_UPDATE_VERSION:"PAGE_UPDATE_VERSION",
 
-    PAGE_UPDATE_OPTION:"PAGE_UPDATE_OPTION"
+    PAGE_UPDATE_OPTION:"PAGE_UPDATE_OPTION",
+
+    PAGE_UPDATE_AFFILIATION_INDEX:"PAGE_UPDATE_AFFILIATION_INDEX",
+    PAGE_UPDATE_AFFILIATION:"PAGE_UPDATE_AFFILIATION",
+    PAGE_RESET_AFFILIATION:"PAGE_RESET_AFFILIATION",
+    PAGE_PUSH_OR_MODIFY_AFFILIATION_ARRAY:"PAGE_PUSH_OR_MODIFY_AFFILIATION_ARRAY",
+    PAGE_DELETE_AFFILIATION:"PAGE_DELETE_AFFILIATION"
+
 }
 
 //getters
 const getters = {
     currentPage: state =>_.clone(state.current_page)  ,
-    currentPageAffiliation: state => state.current_page_affiliation ,
+    currentPageAffiliation: state => _.clone(state.current_page_affiliation),
     currentPageVersion: state => state.current_page_version,
     currentPageAffiliationIndex:state=>state.current_page_affiliation_index, 
     currentPageVersionIndex:state=>state.current_page_version_index,
@@ -185,13 +188,70 @@ const mutations ={
             state.current_page.remark = params.values;
         }
     },
+
+    [types.PAGE_UPDATE_AFFILIATION_INDEX](state,index){
+        state.current_page_affiliation_index = index;
+        if(index!=-1){
+            state.current_page_affiliation=_.clone(state.current_page.affiliation[index]); 
+        }
+    },
+    [types.PAGE_UPDATE_AFFILIATION](state,params){
+        state.current_page_affiliation[params.attr]= params.val
+    },
+    [types.PAGE_RESET_AFFILIATION](state,params){
+        let i ="";
+        for(i in state.current_page_affiliation){
+            if(typeof state.current_page_affiliation[i]=="string"){
+                state.current_page_affiliation[i]="";
+            }
+        }
+    },
+    [types.PAGE_PUSH_OR_MODIFY_AFFILIATION_ARRAY](state,params){
+        let _index = state.current_page_affiliation_index;
+        let _affiliation = _.clone(state.current_page_affiliation);
+        if(_index ==-1){
+            state.current_page.affiliation.push(_affiliation);
+        }else{
+            state.current_page.affiliation[_index] = _affiliation;
+        }
+        commit(types.PAGE_RESET_AFFILIATION);   
+    },
+    [types.PAGE_DELETE_AFFILIATION](state,index){
+        state.current_page.affiliation.splice(index,1);
+    }
+
+
 }
 
 //actions 
 const actions= {
     pageUpdateOption({commit},params){
         commit(types.PAGE_UPDATE_OPTION, params);
-    }
+    },
+    pageUpdateAffiliationIndex({commit},index){
+        commit(types.PAGE_UPDATE_AFFILIATION_INDEX, index);
+        if(index == -1){
+            commit(types.PAGE_RESET_AFFILIATION);  
+        }
+    }, 
+    pageUpdateAffiliation({commit},params){
+        commit(types.PAGE_UPDATE_AFFILIATION,params);
+    }, 
+    pageResetAffiliation({commit}){
+        commit(types.PAGE_RESET_AFFILIATION);
+    },
+    pagePushOrModifyAffiliationArray({commit}){
+        commit(types.PAGE_PUSH_OR_MODIFY_AFFILIATION_ARRAY); 
+        commit(types.PAGE_RESET_AFFILIATION); 
+    },
+    pageDeleteAffiliation({commit},index){
+        let processBool = window.confirm("Are you sure?");
+        if(processBool){
+            commit(types.PAGE_DELETE_AFFILIATION);
+        }
+        
+    },
+
 }
 
 export default {

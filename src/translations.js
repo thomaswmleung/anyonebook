@@ -16,17 +16,23 @@ const translationsTc = {
     "about":"關於AnyOneBook",
     "shop":"選頁書店", 
     "Tasks":"工作清單",
-    confirm_remove_page:"你確認要在第 {page} 頁上的{domain} - {area} 嗎?", 
+    confirm_remove_page:"你確認要刪除在第 {page} 頁上的{domain} - {area} 嗎?", 
     "Delete":"刪除", 
     "Cancel":"取消",
     "User Email":"使用者Email",
     "Password":"用戶密碼",
     "Password is required":"必須填寫用戶密碼",
-    "Submit":"提交",
-    "Login":"登入", 
+
     "Logout":"登出",
     "AnyOneBook Login":"AnyOneBook 登入",
     "E-mail must be valid":"無效Email ",
+
+    //Button Label
+    "Add":"新增",
+    "Edit":"修改",
+    "Close":"關閉",
+    "Submit":"提交",
+    "Login":"登入", 
 
     Home:"首頁",
     UploadPage:"上載頁面",

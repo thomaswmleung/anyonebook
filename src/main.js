@@ -53,6 +53,7 @@ import {
   VTextField,
   VForm,
   VSelect,
+  VDataTable,
 } from 'vuetify';
 import '../node_modules/vuetify/src/stylus/app.styl'
 
@@ -74,7 +75,8 @@ Vue.use(Vuetify, {
     transitions,
     VForm,
     VTextField,
-    VSelect
+    VSelect,
+    VDataTable,
   },
   // theme: {
   //   primary: '#ee44aa',
