@@ -43,14 +43,21 @@ const translationsTc = {
     OrderManagement:"訂單管理",
 
     "Page Information":"頁面資料",
+    
+    "Page Preview":"預覽",
 
     "Affiliation":"相聯出版物",
 
     "version":"版本",
 
-    "Previous Page":"上一頁", 
+    "Link Previous Page":"連結上一頁", 
 
-    "indicates required field":"必須填寫"
+    "indicates required field":"必須填寫",
+
+    "Please fill page information before upload":"上載前請先填寫頁面資料",
+
+    "其他":"其他詞語"
+
 };
 
 
