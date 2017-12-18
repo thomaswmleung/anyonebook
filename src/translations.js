@@ -55,6 +55,8 @@ const translationsTc = {
     "indicates required field":"必須填寫",
 
     "Please fill page information before upload":"上載前請先填寫頁面資料",
+    'Please fill in information of this version before upload':"上載前請先填寫此版本資料",
+
 
     "其他":"其他詞語"
 

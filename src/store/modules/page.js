@@ -1,14 +1,20 @@
 import Vue from 'vue'
 import { indexOf, each } from 'lodash'
-import { ApiPrivateHttp } from '@/shared/http-service'
+import { Http,ApiPrivateHttp } from '@/shared/http-service'
 import { toQueryParams } from '@/shared/helpers'
-import { REGISTER, DEBUG } from '@/env/index'
+import { REGISTER, DEBUG,API_BASE_URL } from '@/env'
 import { getUser } from '@/shared/auth-service'
 
 import {syllabus} from "@/store/static-record";
 import _ from "lodash";
 //initial state 
 const state = {
+    all_pages:[],
+    page_paginator:{
+        current_page:1,
+        total_count:0,
+        limit:8
+    },
     current_page:{
         _id:"",
         codex:"",
@@ -69,6 +75,7 @@ const state = {
         knowledge_unit:[],
         //Version
         user: [
+            { code: "", label: "" },
             { code: "A", label: "answer" },
             { code: "S", label: "Student Un-coded" },
             { code: "R", label: "Student Coded" },
@@ -76,6 +83,7 @@ const state = {
             { code: "T", label: "Teacher Coded" }
           ],
           level: [
+            { code: "", label: "" },
             { code: "G", label: "Top Gun" },
             { code: "H", label: "High Baseline" },
             { code: "B", label: "Baseline" },
@@ -84,12 +92,14 @@ const state = {
             { code: "O", label: "Open Graphic" }
           ],
           nature: [
+            { code: "", label: "" },
             { code: "P", label: "Paper or Text" },
             { code: "Q", label: "Question" },
             { code: "N", label: "Comprehension" },
             { code: "M", label: "Exam or Test" }
           ],
           position: [
+            { code: "", label: "" },
             { code: "V", label: "Inside Page" },
             { code: "W", label: "Cover" },
             { code: "X", label: "Inside Cover" },
@@ -97,6 +107,7 @@ const state = {
             { code: "Z", label: "Back Cover" }
           ],
           output: [
+            { code: "", label: "" },
             { code: "C", label: "Color" },
             { code: "K", label: "Black/White" }
           ]         
@@ -109,9 +120,10 @@ const types  = {
     PAGE_ADD_AFFILIATION:"PAGE_ADD_AFFILIATION",
     PAGE_UPDATE_AFFILIATION:"PAGE_UPDATE_AFFILIATION",
     PAGE_ADD_VERSION:"PAGE_ADD_VERSION",
-    PAGE_UPDATE_VERSION:"PAGE_UPDATE_VERSION",
+
 
     PAGE_UPDATE_OPTION:"PAGE_UPDATE_OPTION",
+    PAGE_RESET_OPTION:"PAGE_RESET_OPTION",
     //Affiliation Mutation Type
     PAGE_UPDATE_AFFILIATION_INDEX:"PAGE_UPDATE_AFFILIATION_INDEX",
     PAGE_UPDATE_AFFILIATION:"PAGE_UPDATE_AFFILIATION",
@@ -147,63 +159,7 @@ const getters = {
 
 //mutations
 const mutations ={
-    //Parameter come with type, value
-    [types.PAGE_UPDATE_OPTION] (state, params) {
-        let record_set;
-       //base on params.type define action 
-       if(params.type=="codex"){
-            !DEBUG||console.log(params);
-            state.current_page.codex = params.values;
-       }
-       if(params.type=="syllabus"){
-            console.log(params);
-            record_set = _.find(
-                            state.page_syllabus_options.all_syllabus,
-                            {code:params.values}).entitys;
-            state.current_page.syllabus = params.values;
-            state.current_page.domain = "";
-            state.current_page.area ="";
-
-            //update option array  
-            state.page_syllabus_options.domain = _.map(_.uniqBy(record_set,o=>o.domain), "domain");
-            state.page_syllabus_options.area = _.map(_.uniqBy(record_set,o=>o.area), "area");
-            state.page_syllabus_options.knowledge_unit = _.map(_.uniqBy(record_set,o=>o.knowledge_unit), "knowledge_unit");
-        }
-        if(params.type=="domain"){
-            !DEBUG||console.log(params);
-            record_set = _.find(
-                            state.page_syllabus_options.all_syllabus,
-                            {code:state.current_page.syllabus}).entitys;
-            state.current_page.domain = params.values;
-            state.current_page.area ="";
-            
-            record_set = _.filter(record_set, {domain:params.values}) ; 
-            //update option array 
-            state.page_syllabus_options.area = _.map(_.uniqBy(record_set,o=>o.area), "area");
-            state.page_syllabus_options.knowledge_unit = _.map(_.uniqBy(record_set,o=>o.knowledge_unit), "knowledge_unit");
-        }
-        if(params.type=="area"){
-            !DEBUG||console.log(params);
-            record_set = _.find(
-                            state.page_syllabus_options.all_syllabus,
-                            {code:state.current_page.syllabus}).entitys;
-            state.current_page.area = params.values;
-            
-            record_set = _.filter(record_set, 
-                    {
-                        domain:state.current_page.domain,
-                        area:state.current_page.area
-                    }) ; 
-            //update option array             
-            state.page_syllabus_options.knowledge_unit = _.map(_.uniqBy(record_set,o=>o.knowledge_unit), "knowledge_unit");
-        }
-        if(params.type=="knowledge_unit"){
-            state.current_page.knowledge_unit = params.values;
-        }
-        if(params.type=="remark"){
-            state.current_page.remark = params.values;
-        }
-    },
+    
     //Affiliation Mutation
     [types.PAGE_UPDATE_AFFILIATION_INDEX](state,index){
         state.current_page_affiliation_index = index;
@@ -271,13 +227,82 @@ const mutations ={
     /*** Page Version Mutation End ***/
     
 
+    //Page Mutation
+    //Parameter come with type, value
+    [types.PAGE_UPDATE_OPTION] (state, params) {
+        let record_set;
+        //base on params.type define action 
+        if(params.type=="codex"){
+                !DEBUG||console.log(params);
+                state.current_page.codex = params.values;
+        }
+        if(params.type=="syllabus"){
+                console.log(params);
+                record_set = _.find(
+                                state.page_syllabus_options.all_syllabus,
+                                {code:params.values}).entitys;
+                state.current_page.syllabus = params.values;
+                state.current_page.domain = "";
+                state.current_page.area ="";
+
+                //update option array  
+                state.page_syllabus_options.domain = _.map(_.uniqBy(record_set,o=>o.domain), "domain");
+                state.page_syllabus_options.area = _.map(_.uniqBy(record_set,o=>o.area), "area");
+                state.page_syllabus_options.knowledge_unit = _.map(_.uniqBy(record_set,o=>o.knowledge_unit), "knowledge_unit");
+            }
+            if(params.type=="domain"){
+                !DEBUG||console.log(params);
+                record_set = _.find(
+                                state.page_syllabus_options.all_syllabus,
+                                {code:state.current_page.syllabus}).entitys;
+                state.current_page.domain = params.values;
+                state.current_page.area ="";
+                
+                record_set = _.filter(record_set, {domain:params.values}) ; 
+                //update option array 
+                state.page_syllabus_options.area = _.map(_.uniqBy(record_set,o=>o.area), "area");
+                state.page_syllabus_options.knowledge_unit = _.map(_.uniqBy(record_set,o=>o.knowledge_unit), "knowledge_unit");
+            }
+            if(params.type=="area"){
+                !DEBUG||console.log(params);
+                record_set = _.find(
+                                state.page_syllabus_options.all_syllabus,
+                                {code:state.current_page.syllabus}).entitys;
+                state.current_page.area = params.values;
+                
+                record_set = _.filter(record_set, 
+                        {
+                            domain:state.current_page.domain,
+                            area:state.current_page.area
+                        }) ; 
+                //update option array             
+                state.page_syllabus_options.knowledge_unit = _.map(_.uniqBy(record_set,o=>o.knowledge_unit), "knowledge_unit");
+            }
+            if(params.type=="knowledge_unit"){
+                state.current_page.knowledge_unit = params.values;
+            }
+            if(params.type=="remark"){
+                state.current_page.remark = params.values;
+            }
+            if(params.type=="_id"){
+                state.current_page._id = params.values;
+            }
+        },
+        [types.PAGE_RESET_OPTION](state, params) {
+            let i ="";
+            for(i in state.current_page){
+                if(typeof state.current_page[i]=="string"){
+                    state.current_page[i]="";
+                }
+            }
+        }
+        /** Page Mutation End **/
+
 }
 
 //actions 
 const actions= {
-    pageUpdateOption({commit},params){
-        commit(types.PAGE_UPDATE_OPTION, params);
-    },
+
     //Affiliation Actions
     pageUpdateAffiliationIndex({commit},index){
         commit(types.PAGE_UPDATE_AFFILIATION_INDEX, index);
@@ -326,7 +351,59 @@ const actions= {
             commit(types.PAGE_DELETE_VERSION,index);
         }
     },
+    pageUploadVersion({commit},{formData,params}){
+        console.log(formData, params)
+        return new Promise((resolve,reject)=>{
+            Http({
+                method: 'post',
+                url: `${API_BASE_URL}/media`,
+                data: formData,
+                params
+              }).then(
+                  response=>{
+                      resolve(response);
+                  }
+              );
+
+        })
+    },
     /*** Version Actions End***/
+
+    //Page Action
+    pageUpdateOption({commit},params){
+        commit(types.PAGE_UPDATE_OPTION, params);
+    },
+    pageResetOption({commit}){
+
+    },
+    getPageById({commit},payload){
+
+    },
+    getPages({commit,dispatch,getters},payload){
+        
+    },    
+    createPage({commit,dispatch},payload){
+        return new Promise((resolve,reject)=>{
+            let method = 'post'
+            if (payload.page._id!="") {
+              method = 'put'
+            }            
+            ApiPrivateHttp[method]('/page_group', JSON.stringify(payload.page))
+              .then((response) => {
+                let message = `Page is ${payload.page._id!=""?"Updated":"Added"} successfully`;
+                response.message = message;
+                resolve(response);
+              })
+              .catch((errors) => {
+                reject(errors);
+              });
+        });
+    },
+    updatePage({commit},payload){
+
+    }
+    /*** Page Action End***/
+
 
 }
 

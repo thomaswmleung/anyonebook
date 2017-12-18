@@ -1,7 +1,7 @@
 import { chunk } from 'lodash'
 import moment from 'moment'
-import { Http, ApiPrivateHttp } from './../../shared/http-service'
-import { API_BASE_URL } from './../../env'
+import { Http, ApiPrivateHttp } from '@/shared/http-service'
+import { API_BASE_URL } from '@/env'
 
 const MEDIA_TYPE = 'image'
 
@@ -32,15 +32,15 @@ const mutations = {
 
 const actions = {
   getMedia ({ commit, dispatch, getters }, payload) {
-    commit('storeToStateMedia', [])
-    commit('loadingBar', true)
+    commit('storeToStateMedia', []);
+    commit('COMMOM_UPDATE_FULLSCREEN_LOADER',true) //Common Loader Module
 
     if (payload.search) {
       dispatch('clearCurrentStatePaginator')
     }
 
-    const { tag, remark, extension, startDate, endDate } = payload.filter
-    console.log()
+     const { tag, remark, extension, startDate, endDate } = payload.filter
+
     ApiPrivateHttp.get('/media', {
       params: {
         limit: getters.mediaPaginator.limit,
@@ -54,11 +54,11 @@ const actions = {
       }
     }).then((response) => {
       commit('storeToStateMedia', response.data)
-      commit('loadingBar', false)
+      commit('COMMOM_UPDATE_FULLSCREEN_LOADER',false) //Common Loader Module      
       commit('updatePaginatorMedia', { key: 'totalRows', value: response.total_count })
     }).catch((errors) => {
       dispatch('handleErrorResponse', { errors: errors, router: payload.router })
-      commit('loadingBar', false)
+      commit('COMMOM_UPDATE_FULLSCREEN_LOADER',false) //Common Loader Module      
     })
   },
   uploadMedia ({ commit, dispatch }, payload) {

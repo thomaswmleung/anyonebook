@@ -223,7 +223,6 @@ export default {
                     if(this.current_page[attr]==""){processBoolFlag=false;}
                }
            );
-                
             //  console.log("Upload PDF",processBoolFlag, this.current_page,this.$t);
             if(processBoolFlag){
                 this.pageUpdateVersionIndex(-1);
