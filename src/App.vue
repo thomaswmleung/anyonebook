@@ -149,34 +149,35 @@
           title: 'Home',
           path:"/"
         },
-          {
-          icon: 'bubble_chart',
-          title: 'Tasks',
-          path:"tasks"
-        },{
+        //   {
+        //   icon: 'bubble_chart',
+        //   title: 'Tasks',
+        //   path:"/tasks"
+        // },
+        {
           icon: 'file_upload',
           title: 'UploadPage',
-          path:"upload_page"
+          path:"/upload_page"
         },{
           icon: 'find_in_page',
           title: 'SearchPage',
-          path:"search_page"
+          path:"/search_page"
         },{
           icon: 'open_in_new',
           title: 'CreateBook',
-          path:"create_book"
+          path:"/create_book"
         },{
           icon: 'book',
           title: 'Search Books',
-          path:"search_book"
+          path:"/search_book"
         },{
           icon: 'account_box',
           title: 'UserProfile',
-          path:"user_profile"
+          path:"/user_profile"
         },{
           icon: 'description',
           title: 'OrderManagement',
-          path:"order_management"
+          path:"/order_management"
         }],
         miniVariant: false,
         right: true,

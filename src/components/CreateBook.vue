@@ -1,23 +1,13 @@
 <template>
     <v-container grid-list-md >
         <v-layout row wrap>
-            <v-flex xs4>
+            <v-flex md3>
                 <h2>Create Blank New Book / From Existing Book</h2>
             </v-flex>
-            <v-flex xs8>
+            <v-flex md9>
                 <v-layout row wrap>
-                    <v-flex xs8>
-                        <ul>
-                            <li v-for="item in items" :key="item" >{{item}}</li> 
-                        </ul>
-
-                        <ul>
-                            <li v-for="item in completed" :key="item" :style="{background:'lightgreen'}" >{{item}}</li> 
-                        </ul>
-
-                    </v-flex>
-                    <v-flex xs4>
-                        Try
+                    <v-flex v-for="(unit,idx) in units" :key="unit.domain+unit.subdomain">
+                        {{idx}} {{unit}}
                     </v-flex>
                 </v-layout>
             </v-flex>
@@ -35,7 +25,7 @@
   name: 'Pagination',
   data() {
     return {
-        unit:[],
+        units:[],
         page:[],
         meta:{},
         items:[

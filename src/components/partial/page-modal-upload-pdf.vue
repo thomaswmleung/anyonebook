@@ -116,28 +116,60 @@
               }
             })
             if(processBoolFlag){
-              this.processPDF();
+             this.$refs.fileInput.click(); 
             }else{
                 // if not show a the toast require to fill the page information, and close the modal
                 Vue.toasted.error(this.$t('Please fill in information of this version before upload')).goAway(3000);                
             }
           },
           //Process PDF upload 
-        processPDF(){
-            this.$refs.fileInput.click();            
-        },
-        getFormData (files) {
-          const forms = []
-          for (const file of files) {
-            const form = new FormData()
-            form.append('data', file, file.name)
-            forms.push(form)
-          }
-          return forms
+        processPDF(files){
+          let _instance = this;
+        //upload pdf media api
+          let formData = new FormData();
+          formData.append('media_file',files[0])
+
+          let params = {}
+          params.extension = getExtension(files[0].name)
+          params.type = "page_version_pdf"
+          params.tag= [
+            _instance.current_page.codex, 
+            _instance.current_page.syllabus,
+            _instance.current_page.domain, 
+            _instance.current_page.area,
+            _instance.current_page.knowledge_unit  
+          ]
+          params.usage = [_instance.current_page._id]
+
+          _instance.pageUploadVersion({formData, params}).then(
+            responsePageVersion=>{
+              //call page_group api and set parent_page_group as  page-group-id
+              let page ={};
+              page._id = "";
+              page.page_group = {};
+              page.page_group.import_url = responsePageVersion.data.url;
+              page.version = _instance.current_page_version;
+              page.affiliation = {};
+              page.parent_page_group_id = _instance.current_page._id
+              // page.page_group.page= []
+              _instance.createPage({page}).then(
+                response=>{
+                  //hide loading 
+                  _instance.showFullscreenLoader(false);                            
+                  _instance.$router.push(`/upload_page/${_instance.current_page._id}`);                            
+                 _instance.$emit("close_dialog");
+                  
+                }
+              )
+            },
+            errorPageVersion=>{
+              Vue.toasted($t('Fail to append page version to this record'));
+              _instance.showFullscreenLoader(false);
+            }
+          )                       
         },
         onFileChange($event){
           const files = $event.target.files || $event.dataTranasfer.files
-          const forms = this.getFormData(files);
           let page_parameter = {};
           let _instance = this;
           // this.pagePushOrModifyVersionArray()
@@ -150,8 +182,9 @@
               page_parameter._id = page_parameter.page_group._id;
               //custom mapping 
               page_parameter.page_group.subdomain = page_parameter.page_group.area; 
-              page_parameter.page_group.sub_title = page_parameter.page_group.knowledge_unit;              
-              page_parameter.page_group.page = [];
+              page_parameter.page_group.sub_title = page_parameter.page_group.knowledge_unit;
+              page_parameter.page_group.layout = page_parameter.page_group.syllabus;             
+              // page_parameter.page_group.page = [];
               delete page_parameter.page_group._id;
 
               //format the parameter and call page_group API, wait for return 
@@ -162,48 +195,7 @@
                       type:"_id",
                       values:response.page_group_id
                     });
-                    //upload pdf media api
-                    let formData = new FormData();
-                    formData.append('media_file',files[0])
-
-                    let params = {}
-                    params.extension = getExtension(files[0].name)
-                    params.type = "page_version_pdf"
-                    params.tag= [
-                      _instance.current_page.codex, 
-                      _instance.current_page.syllabus,
-                      _instance.current_page.domain, 
-                      _instance.current_page.area,
-                      _instance.current_page.knowledge_unit  
-                    ]
-                    params.usage = [_instance.current_page._id]
-
-                    _instance.pageUploadVersion({formData, params}).then(
-                      responsePageVersion=>{
-                        //call page_group api and set parent_page_group as  page-group-id
-                        let page ={};
-                        page._id = "";
-                        page.page_group = {};
-                        page.page_group.import_url = responsePageVersion.data.url;
-                        page.version = _instance.current_page_version;
-                        page.affiliation = {};
-                        page.parent_page_group_id = _instance.current_page._id
-                        page.page_group.page= []
-                        _instance.createPage({page}).then(
-                          response=>{
-                            //hide loading 
-                            _instance.showFullscreenLoader(false);                            
-                            _instance.pageResetOption();
-                            _instance.$emit("close_dialog");
-                            _instance.$router.push(`/upload_page/${_instance.current_page._id}`);                            
-                          }
-                        )
-                      },
-                      errorPageVersion=>{
-                        Vue.toasted($t('Fail to append page version to this record'));
-                        _instance.showFullscreenLoader(false);
-                      }
-                    )
+                    _instance.processPDF(files);
                   },
                   error=>{
                     console.error($t('Fail to create Page Record'),error);
@@ -211,19 +203,11 @@
                     _instance.showFullscreenLoader(false);
                   }  
                 )
-                
             }else{
-              
+             _instance.processPDF(files); 
             }
-                                      
-                    
-                        
-                            
-            //If page-group-id already exist 
-            //upload pdf media api , show loading 
-                        //call page_group api and set parent_page_group as  page-group-id   
-                            //hide loading           
-        }
+         
+        },
       },computed:{      
         ...mapGetters({
             option:"PageSyllabusOptions",
