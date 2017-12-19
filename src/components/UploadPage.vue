@@ -7,6 +7,10 @@
                         <v-card-title>
                             <h3 class="title">
                                 <span>{{$t('Page Information')}}</span>
+                                <span>({{$t(current_page._id==""?"Add":"Edit")}})</span>
+                                <span v-if="current_page._id!=''">
+                                    PageID - {{current_page._id}}
+                                </span>
                                 <v-btn fab dark small color="primary" @click.stop="uploadPDF">
                                     <v-icon v-html="uploadIcon"></v-icon>
                                 </v-btn>
@@ -199,15 +203,33 @@ export default {
       PageModalAffiliation,
       PageModalUploadPdf
     },
+   created () {
+    this.fetchData();
+  },
+  watch: {
+    // call again the method if the route changes
+    '$route': 'fetchData'
+  },
   methods: {
       ...mapActions([
           "pageUpdateOption",
           "pageUpdateAffiliationIndex",
           "pageDeleteAffiliation",
           "pageUpdateVersionIndex",
-          "pageDeleteVersion"
+          "pageDeleteVersion",
+          "getPageById",
+          "pageResetOption",
           
         ]),
+        fetchData(){
+            // fetch the data when the view is created and the data is
+            // already being observed
+            if(this.$route.params.id){
+                this.getPageById(this.$route.params.id)
+            }else{
+                this.pageResetOption();   
+            }
+        },
         //
         versionField(lbl,value){
             let _record =_.find(this.option[lbl],{code:value});
@@ -279,5 +301,3 @@ export default {
   }
 };
 </script>
-<style scoped>
-</style>

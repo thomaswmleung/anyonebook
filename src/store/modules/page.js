@@ -137,10 +137,15 @@ const types  = {
     PAGE_UPDATE_VERSION:"PAGE_UPDATE_VERSION",
     PAGE_RESET_VERSION:"PAGE_RESET_VERSION",
     PAGE_PUSH_OR_MODIFY_VERSION_ARRAY:"PAGE_PUSH_OR_MODIFY_VERSION_ARRAY",
-    PAGE_DELETE_VERSION:"PAGE_DELETE_VERSION"
+    PAGE_DELETE_VERSION:"PAGE_DELETE_VERSION",
     /* Page Version Mutation Type End */
 
+    //Page Mutation
+    PAGE_SET_CURRENT_PAGE:"PAGE_SET_CURRENT_PAGE",
 
+    PAGE_SET_LIST:"PAGE_SET_LIST",
+
+    /* Page Mutation Type End*/
 
 }
 
@@ -154,6 +159,9 @@ const getters = {
 
 
     PageSyllabusOptions:state=>state.page_syllabus_options,
+    pagePaginator:state=>state.page_paginator,
+    allPages:state=>state.all_pages,
+    
 
 }
 
@@ -295,7 +303,19 @@ const mutations ={
                     state.current_page[i]="";
                 }
             }
+            state.current_page.version = [];
+        },
+        [types.PAGE_SET_CURRENT_PAGE](state,params){
+            console.log(types.PAGE_SET_CURRENT_PAGE,params);
+            state.current_page = params;
+        },
+        [types.PAGE_SET_LIST](state,params){
+            state.all_pages = params.data;
+            state.page_paginator.total_count = params.total_count; 
         }
+
+
+
         /** Page Mutation End **/
 
 }
@@ -374,13 +394,70 @@ const actions= {
         commit(types.PAGE_UPDATE_OPTION, params);
     },
     pageResetOption({commit}){
-
+        commit(types.PAGE_RESET_OPTION);
     },
-    getPageById({commit},payload){
+    getPageById({commit,getters},id){
+        commit('COMMOM_UPDATE_FULLSCREEN_LOADER',true) //Common Loader Module
 
-    },
-    getPages({commit,dispatch,getters},payload){
+        // const {title,sub_title,subject,domain,subdomain,startDate,endDate} = filter; 
+
+        ApiPrivateHttp.get(`/page_group/${id}`)
+        .then(response=>{
+            commit('COMMOM_UPDATE_FULLSCREEN_LOADER',false) //Common Loader Module 
+            let current_page_obj = {
+                _id:response.data._id,
+                codex:response.data.codex,
+                syllabus:response.data.layout||"hk_primary_chinese",
+                subject:response.data.subject,
+                domain:response.data.domain,
+                area:response.data.subdomain,
+                knowledge_unit:response.data.sub_title,
+                previous_page_id:"",
+                level_of_difficulty:"",
+                affiliation:[],
+                version:response.data.versions,
+                created_at:"",
+                created_by:"",
+                author:"",
+                remark:response.data.remark
+            };
+            commit(types.PAGE_UPDATE_OPTION,
+                {type:"syllabus",
+                values:current_page_obj.syllabus}
+            );
+            commit(types.PAGE_SET_CURRENT_PAGE,current_page_obj);
+        });
         
+    },
+    getPages({commit,dispatch},{paginator,filters,router}){
+        let {title, 
+            sub_title,
+            domain, 
+            subdomain,
+            codex,
+            remark, 
+            startDate, 
+            endDate, } = filters;
+            commit('COMMOM_UPDATE_FULLSCREEN_LOADER',true)   //Common Loader Module      
+        ApiPrivateHttp.get('/page_group', {
+            params: {
+              limit: paginator.limit ||10,
+              skip: paginator.skip|| 0,
+              title: title || undefined,
+              sub_title: sub_title || undefined,
+              subdomain: subdomain || undefined,
+              codex: codex || undefined,
+              from_date: startDate ? moment(startDate).format('YYYY-MM-DD') : undefined,
+              to_date: endDate ? moment(endDate).format('YYYY-MM-DD') : undefined
+            }
+          }).then((response) => {
+            commit('COMMOM_UPDATE_FULLSCREEN_LOADER',false) //Common Loader Module 
+            console.log(response);
+            commit(types.PAGE_SET_LIST,response)                 
+          }).catch((errors) => {
+            dispatch('handleErrorResponse', { errors: errors, router })
+            commit('COMMOM_UPDATE_FULLSCREEN_LOADER',false) //Common Loader Module      
+          })
     },    
     createPage({commit,dispatch},payload){
         return new Promise((resolve,reject)=>{
