@@ -3,14 +3,19 @@
         <v-layout row wrap>
             <v-flex md3>
                 <h2>Create Blank New Book / From Existing Book</h2>
+                 <!-- Preview -->
+                 <!-- Codex List -->
             </v-flex>
             <v-flex md9>
+
+                <!-- TOC content -->
                 <v-layout row wrap>
                     <v-flex v-for="(unit,idx) in units" :key="unit.domain+unit.subdomain">
                         {{idx}} {{unit}}
                     </v-flex>
                 </v-layout>
             </v-flex>
+
         </v-layout>
      </v-container>
 </template>
