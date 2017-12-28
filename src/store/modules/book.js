@@ -10,9 +10,21 @@ import _ from "lodash";
 
 const state = {}
 
-const getters = {}
-const actions = {}
-const mutations = {}
+// retrive the value from the state 
+const getters = {
+  
+}
+
+// modify value in the state
+const mutations = {
+
+}
+
+// connect with external source or multiple mutation in single action
+const actions = {
+
+}
+
 
 export default {
     state,
