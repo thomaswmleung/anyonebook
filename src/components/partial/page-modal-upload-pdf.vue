@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="show" persistent max-width="750px">
+  <v-dialog v-model="show" persistent max-width="950px">
      <v-card>
        <v-card-title>
           <span class="headline">
@@ -9,30 +9,25 @@
         </v-card-title>
         <v-container grid-list-md>
             <v-layout wrap>
-              <v-flex xs6 sm6 md4 
-                  v-for="(item,idx) in form_fields" 
-                  :key="idx">
-                <v-select
-                  :label="$t(item.lbl)"                  
-                  autocomplete
-                  v-model = "current_page_version[item.code]"
-                  @input="pageUpdateVersion({attr:item.code,val:$event})"                  
-                  :items="option[item.code]"
-                  item-value="code"
-                  item-text="label"
-                ></v-select>
+              <v-flex xs6 sm6 md3 
+                  v-for="item in form_fields" 
+                  :key="item.code">
+                  <div>{{$t(item.lbl)}}</div>
+                 <v-radio-group 
+                    v-model="current_page_version[item.code]" 
+                    column
+                    @change="pageUpdateVersion({attr:item.code,val:$event})" 
+                 >
+                    <v-radio
+                        v-for="opt in option[item.code]"
+                        v-if="opt.code"
+                        :key="opt.code" 
+                        :label="opt.label" 
+                        :value="opt.code"></v-radio>
+                 </v-radio-group>
               </v-flex>
-              <v-flex xs6 sm6 md4 >
-                <input type="file" 
-                     ref="fileInput"
-                     multiple="false"
-                    @change="onFileChange">
-                <v-btn dark color="primary" @click.stop="uploadPdf">
-                     <v-icon x-large>{{uploadIcon}}</v-icon>
-                </v-btn>
-                
-              </v-flex>
-              <v-flex xs12 sm12>
+
+               <v-flex xs6 sm6 md9>
                 <v-text-field
                   :label="$t('Remark')"                  
                   autocomplete
@@ -41,6 +36,15 @@
                   @input="pageUpdateVersion({attr:'remark',val:$event})" 
                 ></v-text-field>
               </v-flex>
+              
+              <v-flex xs2 sm1 md1 >
+                <input type="file" 
+                     ref="fileInput"
+                     multiple="false"
+                    @change="onFileChange">
+                  
+              </v-flex>
+             
             </v-layout>
         </v-container>
         <small>*{{$t("indicates required field")}}</small>
@@ -49,8 +53,8 @@
           <v-btn color="blue darken-1" flat @click.native="$emit('close_dialog');pageResetVersion()">
             {{$t("Close")}}
           </v-btn>
-          <v-btn color="blue darken-1" flat @click.native="uploadPdf">
-            {{$t(current_page_version_index==-1?'Add':'Edit')}}            
+          <v-btn v-if="current_page_version_index==-1" color="blue darken-1" flat @click.native="uploadPdf">
+            {{$t('Add')}}         
           </v-btn>
         </v-card-actions>
      </v-card>
@@ -66,7 +70,7 @@
   import Vue from 'vue'
   import {mapGetters,mapActions} from "vuex"
   import moment from 'moment' 
-   import { getExtension } from '@/shared/helpers'
+  import { getExtension } from '@/shared/helpers'
   
   export default{
       name:"PageModalUploadPdf",

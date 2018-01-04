@@ -31,7 +31,7 @@ export default new Router({
     {
       path:"/upload_page/:id?",
       name:'UploadPage',
-      component:load('UploadPage'),
+      component:load('UploadPageV2'),
       beforeEnter:authenticated
     },
     {
