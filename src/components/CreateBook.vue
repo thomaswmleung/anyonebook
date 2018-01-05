@@ -26,8 +26,18 @@
 </style>
 
 <script>
+ import Vue from 'vue';
+import {mapGetters,mapActions} from "vuex";
+// import {syllabus} from "@/store/static-record";
+import _ from "lodash";
+
  export default {
   name: 'Pagination',
+  methods: {
+      ...mapActions([
+          "getStyllabus",
+        ]),
+  },
   data() {
     return {
         units:[],
@@ -46,6 +56,12 @@
         ]
     };
   },
+  mounted(){
+
+     
+      this.getStyllabus('Math2017').then(res=>console.log(res));
+      
+  }
 };    
 </script>
 <style scoped>
