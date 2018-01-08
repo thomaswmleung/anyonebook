@@ -260,10 +260,11 @@ const mutations ={
         }
         if(params.type=="syllabus_code"){
                 console.log(params);
-                record_set = _.find(
-                                state.page_syllabus_options.all_syllabus,
-                                {code:params.values}).entitys;
-                state.current_page.syllabus = params.values;
+                // record_set = _.find(
+                //                 state.page_syllabus_options.all_syllabus,
+                //                 {code:params.values}).entitys;
+                record_set = state.page_syllabus_options.all_syllabus[params.values];
+                state.current_page.syllabus_code = params.values;
                 state.current_page.domain = "";
                 state.current_page.area ="";
 
@@ -274,9 +275,8 @@ const mutations ={
             }
             if(params.type=="domain"){
                 !DEBUG||console.log(params);
-                record_set = _.find(
-                                state.page_syllabus_options.all_syllabus,
-                                {code:state.current_page.syllabus}).entitys;
+                record_set = state.page_syllabus_options.all_syllabus[ state.current_page.syllabus_code ];
+                
                 state.current_page.domain = params.values;
                 state.current_page.area ="";
                 
@@ -287,9 +287,7 @@ const mutations ={
             }
             if(params.type=="area"){
                 !DEBUG||console.log(params);
-                record_set = _.find(
-                                state.page_syllabus_options.all_syllabus,
-                                {code:state.current_page.syllabus}).entitys;
+                record_set = state.page_syllabus_options.all_syllabus[ state.current_page.syllabus_code ];
                 state.current_page.area = params.values;
                 
                 record_set = _.filter(record_set, 
@@ -309,6 +307,7 @@ const mutations ={
             if(params.type=="_id"){
                 state.current_page._id = params.values;
             }
+            state.current_page[params.type]= params.values;
         },
         [types.PAGE_RESET_OPTION](state, params) {
             let i ="";
@@ -411,7 +410,7 @@ const actions= {
             }).then(
                 response=>{
                   let items=[]; 
-                  let fields = ["domain","area","kownledge_unit","learning_objective","particulars"];  
+                  let fields = ["domain","area","knowledge_unit","learning_objective","particulars"];  
                   let rowArray = response.split('\n');
                   rowArray.forEach(row=>{
                       let obj = {};

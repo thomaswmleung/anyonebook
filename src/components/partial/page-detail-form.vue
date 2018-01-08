@@ -18,7 +18,7 @@
                         <v-select :items="option.syllabus" 
                                     item-value="code"
                                     item-text="label"
-                                    v-model="current_page.syllabus"
+                                    v-model="current_page.syllabus_code"
                                     @input="pageUpdateOption({type:'syllabus_code',values:$event})"
                                     :label="$t('Syllabus')" editable ></v-select>
                     </v-flex>

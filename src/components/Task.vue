@@ -148,7 +148,7 @@
               event.detail.to.index,
               0,
               this.pages.splice(dragItemIndex,1)[0]);
-    },
+     },
       updatePageRecord(index,attribute){
           console.log(index, attribute);
           this.pages.forEach(page=>{page["preview"]=false;page[attribute]=false;});
@@ -173,14 +173,14 @@
                 domain:"tree",
                 area:"forest",
                 ku:"dying tree",
-                image:"http://writingexercises.co.uk/images2/randomimage/tree.jpg",
+                image:"//writingexercises.co.uk/images2/randomimage/tree.jpg",
                 preview:false,
                 tools:false
             },{
                 domain:"tree",
                 area:"inhouse",
                 ku:"paper bird in the birdcage",
-                image:"http://writingexercises.co.uk/images2/randomimage/birdcage.jpg",
+                image:"//writingexercises.co.uk/images2/randomimage/birdcage.jpg",
                 preview:false,
                 tools:false
             },{
