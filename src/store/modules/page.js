@@ -5,6 +5,7 @@ import { toQueryParams } from '@/shared/helpers'
 import { REGISTER, DEBUG,API_BASE_URL } from '@/env'
 import { getUser } from '@/shared/auth-service'
 
+
 //import {syllabus} from "@/store/static-record";
 import _ from "lodash";
 //initial state 
@@ -18,11 +19,13 @@ const state = {
     current_page:{
         _id:"",
         codex:"",
-        syllabus:"",
+        syllabus_code:"",
         subject:"",
         domain:"",
         area:"",
         knowledge_unit:"",
+        learning_objective:[],
+        particular:"",
         previous_page_id:"",
         level_of_difficulty:"",
         affiliation:[],
@@ -58,17 +61,22 @@ const state = {
     
     page_syllabus_options:{
         //Static Record
-        all_syllabus:syllabus,
+        all_syllabus:{},
         entitys:[],
 
         //Information
         codex: [
-            { code: "chinese_learn_free", label: "語文自由識" },
-            { code: "math_learn_free", label: "數學自由識" },
+            { code: "math-quick-and-accurate", label: "數學精準快",syllabus:"hk-maths-2002" },
+            { code: "math-mock-100", label: "數學模擬試一百",syllabus:"hk-maths-2002"},
+            { code: "math-learn-free", label: "數學自由識",syllabus:"hk-maths-2002" },
+            { code: "chinese-mock-100", label: "中文模擬試一百",syllabus:"hk-chinese" },
+            { code: "chinese-reading", label: "閱讀 + 理解" ,syllabus:"hk-chinese"},
+            { code: "chinese-learn-free", label: "語文自由識" ,syllabus:"hk-chinese"},
         ],
         syllabus:[
-            { code: "hk_primary_chinese", label: "香港小學中文" },
-            { code: "hk_primary_math", label: "香港小學數學" }
+            { code: "hk-maths-2002", label: "香港小學數學 2002" },
+            { code: "hk-maths-2017", label: "香港小學數學 2017" },
+            { code: "hk-chinese", label: "香港小學中文" },
         ],
         domain:[],
         area:[],
@@ -121,7 +129,7 @@ const types  = {
     PAGE_UPDATE_AFFILIATION:"PAGE_UPDATE_AFFILIATION",
     PAGE_ADD_VERSION:"PAGE_ADD_VERSION",
 
-
+    PAGE_UPDATE_SYLLABUS:"PAGE_UPDATE_SYLLABUS",
     PAGE_UPDATE_OPTION:"PAGE_UPDATE_OPTION",
     PAGE_RESET_OPTION:"PAGE_RESET_OPTION",
     //Affiliation Mutation Type
@@ -236,6 +244,12 @@ const mutations ={
     
 
     //Page Mutation
+    [types.PAGE_UPDATE_SYLLABUS](state,{code,list}){
+        state
+        .page_syllabus_options
+        .all_syllabus[code] = list;
+    },
+
     //Parameter come with type, value
     [types.PAGE_UPDATE_OPTION] (state, params) {
         let record_set;
@@ -244,7 +258,7 @@ const mutations ={
                 !DEBUG||console.log(params);
                 state.current_page.codex = params.values;
         }
-        if(params.type=="syllabus"){
+        if(params.type=="syllabus_code"){
                 console.log(params);
                 record_set = _.find(
                                 state.page_syllabus_options.all_syllabus,
@@ -384,14 +398,47 @@ const actions= {
                       resolve(response);
                   }
               );
-
         })
     },
     /*** Version Actions End***/
 
     //Page Action
+    getStyllabus(syllabusCode){
+        return new Promise((resolve,reject)=>{
+          Http({
+              method: 'get',
+              url: `/static/${syllabusCode}.tsv`,
+            }).then(
+                response=>{
+                  let items=[]; 
+                  let fields = ["domain","area","kownledge_unit","learning_objective","particulars"];  
+                  let rowArray = response.split('\n');
+                  rowArray.forEach(row=>{
+                      let obj = {};
+                      let attrs = row.split('\t');
+                      fields.forEach((str,idx)=>{
+                          obj[str] = attrs[idx];
+                      })
+                      items.push(obj);
+                  });
+                  resolve(items);
+                }
+            );
+  
+        });
+    },
     pageUpdateOption({commit},params){
-        commit(types.PAGE_UPDATE_OPTION, params);
+       
+        if(params.type=="syllabus_code" 
+            && !state.page_syllabus_options.all_syllabus[params.values]){
+            actions.getStyllabus(params.values).then(response=>{
+                commit(types.PAGE_UPDATE_SYLLABUS,{code:params.values, list:response});
+                commit(types.PAGE_UPDATE_OPTION, params);    
+            })
+        }else{
+            commit(types.PAGE_UPDATE_OPTION, params);
+        }
+        
     },
     pageResetOption({commit}){
         commit(types.PAGE_RESET_OPTION);
@@ -478,7 +525,8 @@ const actions= {
     },
     updatePage({commit},payload){
 
-    }
+    },
+
     /*** Page Action End***/
 
 

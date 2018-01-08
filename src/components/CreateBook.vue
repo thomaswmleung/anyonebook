@@ -57,10 +57,7 @@ import _ from "lodash";
     };
   },
   mounted(){
-
-     
-      this.getStyllabus('hk-maths-2002').then(res=>console.log(res));
-      
+      this.getStyllabus('hk-maths-2002').then(res=>console.log(res)); 
   }
 };    
 </script>

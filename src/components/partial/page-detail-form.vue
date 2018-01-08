@@ -19,7 +19,7 @@
                                     item-value="code"
                                     item-text="label"
                                     v-model="current_page.syllabus"
-                                    @input="pageUpdateOption({type:'syllabus',values:$event})"
+                                    @input="pageUpdateOption({type:'syllabus_code',values:$event})"
                                     :label="$t('Syllabus')" editable ></v-select>
                     </v-flex>
 
@@ -107,6 +107,9 @@ export default {
 
             // Case has multiple pages 
         },
+        updateSyllabusOption(){
+
+        }
   },
   data(){
       return{
