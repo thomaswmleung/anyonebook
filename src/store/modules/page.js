@@ -8,7 +8,7 @@ import { getUser } from '@/shared/auth-service'
 
 //import {syllabus} from "@/store/static-record";
 import _ from "lodash";
-//initial state 
+//initial state
 const state = {
     all_pages:[],
     page_paginator:{
@@ -53,12 +53,12 @@ const state = {
         output:"",
         remark:"",
         file_url:"",
-        preview_url:""        
+        preview_url:""
     },
 
     current_page_affiliation_index:-1,
     current_page_version_index:-1,
-    
+
     page_syllabus_options:{
         //Static Record
         all_syllabus:{},
@@ -81,6 +81,7 @@ const state = {
         domain:[],
         area:[],
         knowledge_unit:[],
+        learning_objective: [],
         //Version
         user: [
             { code: "", label: "" },
@@ -118,9 +119,9 @@ const state = {
             { code: "", label: "" },
             { code: "C", label: "Color" },
             { code: "K", label: "Black/White" }
-          ]         
+          ]
     }
-    
+
 }
 
 //typed
@@ -162,25 +163,25 @@ const getters = {
     currentPage: state =>_.clone(state.current_page)  ,
     currentPageAffiliation: state => _.clone(state.current_page_affiliation),
     currentPageVersion: state => _.clone(state.current_page_version),
-    currentPageAffiliationIndex:state=>state.current_page_affiliation_index, 
+    currentPageAffiliationIndex:state=>state.current_page_affiliation_index,
     currentPageVersionIndex:state=>state.current_page_version_index,
 
 
     PageSyllabusOptions:state=>state.page_syllabus_options,
     pagePaginator:state=>state.page_paginator,
     allPages:state=>state.all_pages,
-    
+
 
 }
 
 //mutations
 const mutations ={
-    
+
     //Affiliation Mutation
     [types.PAGE_UPDATE_AFFILIATION_INDEX](state,index){
         state.current_page_affiliation_index = index;
         if(index!=-1){
-            state.current_page_affiliation=_.clone(state.current_page.affiliation[index]); 
+            state.current_page_affiliation=_.clone(state.current_page.affiliation[index]);
         }
     },
     [types.PAGE_UPDATE_AFFILIATION](state,params){
@@ -201,7 +202,7 @@ const mutations ={
             state.current_page.affiliation.push(_affiliation);
         }else{
             state.current_page.affiliation[_index] = _affiliation;
-        }  
+        }
     },
     [types.PAGE_DELETE_AFFILIATION](state,index){
         let obj = state.current_page.affiliation.splice(index,1);
@@ -213,7 +214,7 @@ const mutations ={
     [types.PAGE_UPDATE_VERSION_INDEX](state,index){
         state.current_page_version_index = index;
         if(index!=-1){
-            state.current_page_version=_.clone(state.current_page.version[index]); 
+            state.current_page_version=_.clone(state.current_page.version[index]);
         }
     },
     [types.PAGE_UPDATE_VERSION](state,params){
@@ -234,14 +235,14 @@ const mutations ={
             state.current_page.version.push(_version);
         }else{
             state.current_page.version[_index] = _version;
-        }  
+        }
     },
     [types.PAGE_DELETE_VERSION](state,index){
         let obj = state.current_page.version.splice(index,1);
         DEBUG||console.log(index, obj);
     },
     /*** Page Version Mutation End ***/
-    
+
 
     //Page Mutation
     [types.PAGE_UPDATE_SYLLABUS](state,{code,list}){
@@ -253,7 +254,7 @@ const mutations ={
     //Parameter come with type, value
     [types.PAGE_UPDATE_OPTION] (state, params) {
         let record_set;
-        //base on params.type define action 
+        //base on params.type define action
         if(params.type=="codex"){
                 !DEBUG||console.log(params);
                 state.current_page.codex = params.values;
@@ -268,38 +269,44 @@ const mutations ={
                 state.current_page.domain = "";
                 state.current_page.area ="";
 
-                //update option array  
+                //update option array
                 state.page_syllabus_options.domain = _.map(_.uniqBy(record_set,o=>o.domain), "domain");
                 state.page_syllabus_options.area = _.map(_.uniqBy(record_set,o=>o.area), "area");
                 state.page_syllabus_options.knowledge_unit = _.map(_.uniqBy(record_set,o=>o.knowledge_unit), "knowledge_unit");
+                state.page_syllabus_options.learning_objective = _.map(_.uniqBy(record_set,o=>o.learning_objective), "learning_objective");
             }
             if(params.type=="domain"){
                 !DEBUG||console.log(params);
                 record_set = state.page_syllabus_options.all_syllabus[ state.current_page.syllabus_code ];
-                
+
                 state.current_page.domain = params.values;
                 state.current_page.area ="";
-                
-                record_set = _.filter(record_set, {domain:params.values}) ; 
-                //update option array 
+
+                record_set = _.filter(record_set, {domain:params.values}) ;
+                //update option array
                 state.page_syllabus_options.area = _.map(_.uniqBy(record_set,o=>o.area), "area");
                 state.page_syllabus_options.knowledge_unit = _.map(_.uniqBy(record_set,o=>o.knowledge_unit), "knowledge_unit");
+                state.page_syllabus_options.learning_objective = _.map(_.uniqBy(record_set,o=>o.learning_objective), "learning_objective");
             }
             if(params.type=="area"){
                 !DEBUG||console.log(params);
                 record_set = state.page_syllabus_options.all_syllabus[ state.current_page.syllabus_code ];
                 state.current_page.area = params.values;
-                
-                record_set = _.filter(record_set, 
+
+                record_set = _.filter(record_set,
                         {
                             domain:state.current_page.domain,
                             area:state.current_page.area
-                        }) ; 
-                //update option array             
+                        }) ;
+                //update option array
                 state.page_syllabus_options.knowledge_unit = _.map(_.uniqBy(record_set,o=>o.knowledge_unit), "knowledge_unit");
+                state.page_syllabus_options.learning_objective = _.map(_.uniqBy(record_set,o=>o.learning_objective), "learning_objective");
             }
             if(params.type=="knowledge_unit"){
                 state.current_page.knowledge_unit = params.values;
+            }
+            if (params.type == "learning_objective") {
+                state.current_page.learning_objective = params.values;
             }
             if(params.type=="remark"){
                 state.current_page.remark = params.values;
@@ -324,7 +331,7 @@ const mutations ={
         },
         [types.PAGE_SET_LIST](state,params){
             state.all_pages = params.data;
-            state.page_paginator.total_count = params.total_count; 
+            state.page_paginator.total_count = params.total_count;
         }
 
 
@@ -333,25 +340,25 @@ const mutations ={
 
 }
 
-//actions 
+//actions
 const actions= {
 
     //Affiliation Actions
     pageUpdateAffiliationIndex({commit},index){
         commit(types.PAGE_UPDATE_AFFILIATION_INDEX, index);
         if(index == -1){
-            commit(types.PAGE_RESET_AFFILIATION);  
+            commit(types.PAGE_RESET_AFFILIATION);
         }
-    }, 
+    },
     pageUpdateAffiliation({commit},params){
         commit(types.PAGE_UPDATE_AFFILIATION,params);
-    }, 
+    },
     pageResetAffiliation({commit}){
         commit(types.PAGE_RESET_AFFILIATION);
     },
     pagePushOrModifyAffiliationArray({commit}){
-        commit(types.PAGE_PUSH_OR_MODIFY_AFFILIATION_ARRAY); 
-        commit(types.PAGE_RESET_AFFILIATION); 
+        commit(types.PAGE_PUSH_OR_MODIFY_AFFILIATION_ARRAY);
+        commit(types.PAGE_RESET_AFFILIATION);
     },
     pageDeleteAffiliation({commit},index){
         let processBool = window.confirm("Are you sure?");
@@ -365,18 +372,18 @@ const actions= {
     pageUpdateVersionIndex({commit},index){
         commit(types.PAGE_UPDATE_VERSION_INDEX, index);
         if(index == -1){
-            commit(types.PAGE_RESET_VERSION);  
+            commit(types.PAGE_RESET_VERSION);
         }
-    }, 
+    },
     pageUpdateVersion({commit},params){
         commit(types.PAGE_UPDATE_VERSION,params);
-    }, 
+    },
     pageResetVersion({commit}){
         commit(types.PAGE_RESET_VERSION);
     },
     pagePushOrModifyVersionArray({commit}){
-        commit(types.PAGE_PUSH_OR_MODIFY_VERSION_ARRAY); 
-        commit(types.PAGE_RESET_VERSION); 
+        commit(types.PAGE_PUSH_OR_MODIFY_VERSION_ARRAY);
+        commit(types.PAGE_RESET_VERSION);
     },
     pageDeleteVersion({commit},index){
         let processBool = window.confirm("Are you sure?");
@@ -385,7 +392,7 @@ const actions= {
         }
     },
     pageUploadVersion({commit},{formData,params}){
-        
+
         return new Promise((resolve,reject)=>{
             Http({
                 method: 'post',
@@ -409,8 +416,8 @@ const actions= {
               url: `/static/${syllabusCode}.tsv`,
             }).then(
                 response=>{
-                  let items=[]; 
-                  let fields = ["domain","area","knowledge_unit","learning_objective","particulars"];  
+                  let items=[];
+                  let fields = ["domain","area","knowledge_unit","learning_objective","particulars"];
                   let rowArray = response.split('\n');
                   rowArray.forEach(row=>{
                       let obj = {};
@@ -423,21 +430,21 @@ const actions= {
                   resolve(items);
                 }
             );
-  
+
         });
     },
     pageUpdateOption({commit},params){
-       
-        if(params.type=="syllabus_code" 
+
+        if(params.type=="syllabus_code"
             && !state.page_syllabus_options.all_syllabus[params.values]){
             actions.getStyllabus(params.values).then(response=>{
                 commit(types.PAGE_UPDATE_SYLLABUS,{code:params.values, list:response});
-                commit(types.PAGE_UPDATE_OPTION, params);    
+                commit(types.PAGE_UPDATE_OPTION, params);
             })
         }else{
             commit(types.PAGE_UPDATE_OPTION, params);
         }
-        
+
     },
     pageResetOption({commit}){
         commit(types.PAGE_RESET_OPTION);
@@ -445,11 +452,11 @@ const actions= {
     getPageById({commit,getters},id){
         commit('COMMOM_UPDATE_FULLSCREEN_LOADER',true) //Common Loader Module
 
-        // const {title,sub_title,subject,domain,subdomain,startDate,endDate} = filter; 
+        // const {title,sub_title,subject,domain,subdomain,startDate,endDate} = filter;
 
         ApiPrivateHttp.get(`/page_group/${id}`)
         .then(response=>{
-            commit('COMMOM_UPDATE_FULLSCREEN_LOADER',false) //Common Loader Module 
+            commit('COMMOM_UPDATE_FULLSCREEN_LOADER',false) //Common Loader Module
             let current_page_obj = {
                 _id:response.data._id,
                 codex:response.data.codex,
@@ -473,18 +480,18 @@ const actions= {
             );
             commit(types.PAGE_SET_CURRENT_PAGE,current_page_obj);
         });
-        
+
     },
     getPages({commit,dispatch},{paginator,filters,router}){
-        let {title, 
+        let {title,
             sub_title,
-            domain, 
+            domain,
             subdomain,
             codex,
-            remark, 
-            startDate, 
+            remark,
+            startDate,
             endDate, } = filters;
-            commit('COMMOM_UPDATE_FULLSCREEN_LOADER',true)   //Common Loader Module      
+            commit('COMMOM_UPDATE_FULLSCREEN_LOADER',true)   //Common Loader Module
         ApiPrivateHttp.get('/page_group', {
             params: {
               limit: paginator.limit ||10,
@@ -497,20 +504,20 @@ const actions= {
               to_date: endDate ? moment(endDate).format('YYYY-MM-DD') : undefined
             }
           }).then((response) => {
-            commit('COMMOM_UPDATE_FULLSCREEN_LOADER',false) //Common Loader Module 
+            commit('COMMOM_UPDATE_FULLSCREEN_LOADER',false) //Common Loader Module
             console.log(response);
-            commit(types.PAGE_SET_LIST,response)                 
+            commit(types.PAGE_SET_LIST,response)
           }).catch((errors) => {
             dispatch('handleErrorResponse', { errors: errors, router })
-            commit('COMMOM_UPDATE_FULLSCREEN_LOADER',false) //Common Loader Module      
+            commit('COMMOM_UPDATE_FULLSCREEN_LOADER',false) //Common Loader Module
           })
-    },    
+    },
     createPage({commit,dispatch},payload){
         return new Promise((resolve,reject)=>{
             let method = 'post'
             if (payload.page._id!="") {
               method = 'put'
-            }            
+            }
             ApiPrivateHttp[method]('/page_group', JSON.stringify(payload.page))
               .then((response) => {
                 let message = `Page is ${payload.page._id!=""?"Updated":"Added"} successfully`;
