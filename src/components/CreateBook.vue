@@ -93,7 +93,7 @@ import _ from "lodash";
 
     },
      handleDragEvent(event) {
-          console.log(event.detail.to.container.classList);
+          console.log(event.detail.to.container);
           let dragItemIndex = event.detail.draggedElement.id.split(/-+/).pop();              
           this.area_rows.splice(
               event.detail.to.index,
