@@ -74,9 +74,9 @@
                             PageID - {{page._id}} <br>
                             {{page.title}} {{page.domain}} {{page.subdomain}} <br>
                             {{page.remark}}
-                            <v-flex md3 v-for="image in page.preview_image_array" :key="image._id">
-                              <img :src="image" style="max-height: 300px">
-                            </v-flex>
+                            <v-carousel>
+                              <v-carousel-item v-for="item in page.preview_image_array" v-bind:src="item" :key="item._id" cycle="false"></v-carousel-item>
+                            </v-carousel>
                             <router-link :to="`/upload_page/${page._id}`">
                             {{$t('Edit')}}
                             </router-link>

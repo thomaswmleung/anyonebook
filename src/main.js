@@ -27,7 +27,7 @@ Vue.use(vuexI18n.plugin, store,
      if(DEBUG){
       console.warn(`i18n :: Key '${key}' not found for locale '${locale}'`);
      }
-		
+
 	}});
 
 // add translations directly to the application
@@ -48,13 +48,14 @@ import {
   VGrid,
   VToolbar,
   VCard,
-  VDialog,   
+  VDialog,
   transitions,
   VTextField,
   VForm,
   VSelect,
   VDataTable,
-  VRadioGroup,  
+  VRadioGroup,
+  VCarousel
 } from 'vuetify';
 import '../node_modules/vuetify/src/stylus/app.styl'
 
@@ -71,14 +72,15 @@ Vue.use(Vuetify, {
     VIcon,
     VGrid,
     VToolbar,
-    VCard, 
+    VCard,
     VDialog,
     transitions,
     VForm,
     VTextField,
     VSelect,
     VDataTable,
-    VRadioGroup, 
+    VRadioGroup,
+    VCarousel
   },
   // theme: {
   //   primary: '#ee44aa',
