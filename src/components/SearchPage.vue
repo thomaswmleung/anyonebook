@@ -1,7 +1,7 @@
 <template>
     <v-container grid-list-md >
         <v-layout row wrap>
-          
+
             <v-flex sm10>
                 <v-layout row wrap>
                     <v-flex>
@@ -14,7 +14,7 @@
                         <v-form ref="page_meta" lazy-validation>
                             <v-layout row wrap>
                                 <v-flex xs12 md4>
-                                    <v-select :items="option.codex" 
+                                    <v-select :items="option.codex"
                                               item-value="code"
                                               item-text="label"
                                               v-model="current_page.codex"
@@ -22,28 +22,38 @@
                                               :label="$t('Codex')" editable ></v-select>
                                 </v-flex>
                                 <v-flex xs12 md4>
-                                    <v-select :items="option.syllabus" 
+                                    <v-select :items="option.syllabus"
                                               item-value="code"
                                               item-text="label"
                                               v-model="current_page.syllabus"
-                                              @input="pageUpdateOption({type:'syllabus',values:$event})"
+                                              @input="pageUpdateOption({type:'syllabus_code',values:$event})"
                                               :label="$t('Syllabus')" editable ></v-select>
                                 </v-flex>
                                 <v-flex xs12 md4>
-                                    <v-select :items="option.domain" 
+                                    <v-select :items="option.domain"
                                               v-model="current_page.domain"
                                               @input="pageUpdateOption({type:'domain',values:$event})"
                                               :label="$t('Domain')" editable ></v-select>
                                 </v-flex>
-                           
-                                <v-flex xs12 md4><v-select :items="option.area" 
+
+                                <v-flex xs12 md4><v-select :items="option.area"
                                 v-model="current_page.area"
-                                              @input="pageUpdateOption({type:'area',values:$event})"                        
-                                              :label="$t('Area')" editable ></v-select></v-flex>
-                                <v-flex xs12 md4><v-select :items="option.knowledge_unit" 
+                                              @input="pageUpdateOption({type:'area',values:$event})"
+                                              :label="$t('Area')" editable ></v-select>
+                                </v-flex>
+
+                                <v-flex xs12 md4><v-select :items="option.knowledge_unit"
                                 v-model="current_page.knowledge_unit"
-                                              @input="pageUpdateOption({type:'knowledge_unit',values:$event})"                                              
-                                              :label="$t('Knowledge Unit')" editable ></v-select></v-flex>                                
+                                              @input="pageUpdateOption({type:'knowledge_unit',values:$event})"
+                                              :label="$t('Knowledge Unit')" editable ></v-select>
+                                </v-flex>
+
+                                <v-flex xs12 md4><v-select :items="option.learning_objective"
+                                v-model="current_page.learning_objective"
+                                              @input="pageUpdateOption({type:'learning_objective',values:$event})"
+                                              :label="$t('Learning Objective')" editable ></v-select>
+                                </v-flex>
+
                                 <v-flex md3>
                                     <v-btn fab dark small color="primary" @click.stop="fetchData">
                                         <v-icon>search</v-icon>
@@ -53,7 +63,7 @@
                             </v-layout>
                         </v-form>
                     </v-container>
-                        
+
                     </v-flex>
                 </v-layout>
 
@@ -64,18 +74,21 @@
                             PageID - {{page._id}} <br>
                             {{page.title}} {{page.domain}} {{page.subdomain}} <br>
                             {{page.remark}}
+                            <v-flex md3 v-for="image in page.preview_image_array" :key="image._id">
+                              <img :src="image" style="max-height: 300px">
+                            </v-flex>
                             <router-link :to="`/upload_page/${page._id}`">
                             {{$t('Edit')}}
                             </router-link>
                             </v-container>
                         </v-card>
-                    </v-flex> 
-                </v-layout> 
+                    </v-flex>
+                </v-layout>
                  <v-layout row wrap >
                      <v-flex>
                         Total Record:  {{page_paginator.total_count}}
                      </v-flex>
-                 </v-layout>   
+                 </v-layout>
 
 
             </v-flex>
@@ -105,7 +118,7 @@ export default {
     },
    created () {
        this.pageResetOption();
-       this.fetchData();    
+       this.fetchData();
   },
   watch: {
     // call again the method if the route changes
@@ -128,7 +141,7 @@ export default {
             let paginator = {};
             paginator.limit = this.page_paginator.limit;
             paginator.skip = (this.page_paginator.current_page-1)*this.page_paginator.limit;
-            
+
 
             let filters = {};
             filters.domain = this.current_page.domain;
@@ -136,22 +149,23 @@ export default {
             filters.sub_title = this.current_page.knowledge_unit;
             filters.codex = this.current_page.codex;
             filters.layout = this.current_page.syllabus;
+            filters.learning_objective = this.current_page.learning_objective;
             let router  = this.$router;
 
             this.getPages({paginator,filters,router});
         },
   },
-  computed:{      
+  computed:{
         ...mapGetters({
             option:"PageSyllabusOptions",
             current_page:"currentPage",
             page_paginator:"pagePaginator",
             all_page:"allPages"
-        })  
+        })
   },
   data() {
     return {
-    
+
     };
   }
 };
