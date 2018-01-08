@@ -76,8 +76,6 @@
                         Total Record:  {{page_paginator.total_count}}
                      </v-flex>
                  </v-layout>   
-
-
             </v-flex>
         </v-layout>
      </v-container>
