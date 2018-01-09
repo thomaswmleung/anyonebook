@@ -82,9 +82,10 @@
                                 <v-carousel-item v-for="item in page.preview_image_array" v-bind:src="item" :key="item._id" cycle="false"></v-carousel-item>
                               </v-carousel>
                             </v-flex>
-                            <router-link :to="`/upload_page/${page._id}`">
-                            {{$t('Edit')}}
+                            <router-link :to="`/upload_page/${page._id}`" tag="button">
+                              <v-btn color="primary">{{$t('Edit')}}</v-btn>
                             </router-link>
+                            <v-btn color="error" @click.stop="deletePage({page})">{{$t('Delete')}}</v-btn>
                             </v-container>
                         </v-card>
                     </v-flex>
@@ -139,7 +140,8 @@ export default {
           "pageDeleteVersion",
           "getPageById",
           "pageResetOption",
-          "getPages"
+          "getPages",
+          "deletePage"
         ]),
         fetchData(){
             // fetch the data when the view is created and the data is
@@ -171,7 +173,7 @@ export default {
   },
   data() {
     return {
-
+      dialog: false
     };
   }
 };

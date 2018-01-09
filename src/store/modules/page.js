@@ -366,6 +366,7 @@ const actions= {
             commit(types.PAGE_DELETE_AFFILIATION,index);
         }
     },
+
     /*** Affiliation Actions End***/
 
    //Version Actions
@@ -532,9 +533,30 @@ const actions= {
     updatePage({commit},payload){
 
     },
+    deletePage({commit},payload){
+        let processBool = window.confirm("Are you sure?");
+        if (processBool){
+            return new Promise((resolve,reject)=>{
+                ApiPrivateHttp({
+                    method: 'delete',
+                    url: `${API_BASE_URL}/page_group`,
+                    params: {
+                        'pid': payload.page._id
+                    }
+                  }).then(
+                      response=>{
+                        let message = `Page is deleted successfully`;
+                        response.message = message;
+                        resolve(response);
+                      }
+                  ).catch((errors) => {
+                    reject(errors);
+                  });
+            })
+        }
+    }
 
     /*** Page Action End***/
-
 
 }
 
