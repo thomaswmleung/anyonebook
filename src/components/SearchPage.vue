@@ -74,9 +74,14 @@
                             PageID - {{page._id}} <br>
                             {{page.title}} {{page.domain}} {{page.subdomain}} <br>
                             {{page.remark}}
-                            <v-carousel>
-                              <v-carousel-item v-for="item in page.preview_image_array" v-bind:src="item" :key="item._id" cycle="false"></v-carousel-item>
-                            </v-carousel>
+                            <v-flex v-if="page.preview_image_array">
+                              <v-carousel v-if="page.preview_image_array.length == 1" hide-delimiters>
+                                <v-carousel-item v-for="item in page.preview_image_array" v-bind:src="item" :key="item._id" cycle="false"></v-carousel-item>
+                              </v-carousel>
+                              <v-carousel v-if="page.preview_image_array.length > 1">
+                                <v-carousel-item v-for="item in page.preview_image_array" v-bind:src="item" :key="item._id" cycle="false"></v-carousel-item>
+                              </v-carousel>
+                            </v-flex>
                             <router-link :to="`/upload_page/${page._id}`">
                             {{$t('Edit')}}
                             </router-link>
