@@ -2,7 +2,7 @@
   <v-dialog v-model="show" persistent max-width="950px">
     <v-container grid-list-md text-xs-center>
       <v-layout row wrap>
-        <v-flex xs3>
+        <v-flex xs2>
           <v-card>
             <v-switch
               :label="$t('Edit')"
@@ -18,7 +18,7 @@
             ></v-switch>
           </v-card>
         </v-flex>
-        <v-flex xs3 v-for="page in all_page" :key="page._id">
+        <v-flex xs4 v-for="page in all_page" :key="page._id">
           <v-card>
             <v-container>
               PageID - {{page._id}} <br>
@@ -33,7 +33,7 @@
             </v-container>
           </v-card>
         </v-flex>
-        <v-flex xs3>
+        <v-flex xs2>
           <v-card>
             <v-switch
               :label="$t('Edit')"
@@ -56,6 +56,12 @@
           </v-flex>
         </v-layout>
       </v-layout>
+      <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="blue darken-1" flat @click.native="$emit('close_dialog');pageResetVersion()">
+            {{$t("Close")}}
+          </v-btn>
+      </v-card-actions>
   </v-container>
   </v-dialog>
 </template>
@@ -84,7 +90,7 @@
           bw1:false,
           bw2:false,
           color1:false,
-          color2:false,
+          color2:false
         }
       },created () {
        this.pageResetOption();
