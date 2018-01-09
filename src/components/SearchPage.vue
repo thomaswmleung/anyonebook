@@ -86,7 +86,8 @@
                 </v-layout>
                  <v-layout row wrap >
                      <v-flex>
-                        Total Record:  {{page_paginator.total_count}}
+                        <v-pagination :length="Math.ceil(page_paginator.total_count/page_paginator.limit)" v-model="page_paginator.current_page" @input="fetchData"></v-pagination>
+                        (Total Record:  {{page_paginator.total_count}})
                      </v-flex>
                  </v-layout>
 
