@@ -174,7 +174,7 @@ export default {
             //validate meta information filled or not 
             let processBoolFlag = true;
             let attr;
-           ['codex','syllabus','domain','area'].forEach(
+           ['codex','syllabus_code','domain','area'].forEach(
                attr=>{
                     if(this.current_page[attr]==""){processBoolFlag=false;}
                }
