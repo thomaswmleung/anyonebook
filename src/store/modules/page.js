@@ -4,7 +4,7 @@ import { Http,ApiPrivateHttp } from '@/shared/http-service'
 import { toQueryParams } from '@/shared/helpers'
 import { REGISTER, DEBUG,API_BASE_URL } from '@/env'
 import { getUser } from '@/shared/auth-service'
-
+import moment from 'moment'
 
 //import {syllabus} from "@/store/static-record";
 import _ from "lodash";
@@ -536,10 +536,11 @@ const actions= {
     deletePage({commit},payload){
         let processBool = window.confirm("Are you sure?");
         if (processBool){
+            // console.log(JSON.stringify(payload.page));
             return new Promise((resolve,reject)=>{
                 ApiPrivateHttp({
                     method: 'delete',
-                    url: `${API_BASE_URL}/page_group`,
+                    url: '/page_group',
                     params: {
                         'pid': payload.page._id
                     }

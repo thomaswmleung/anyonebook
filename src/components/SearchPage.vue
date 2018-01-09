@@ -54,6 +54,56 @@
                                               :label="$t('Learning Objective')" editable ></v-select>
                                 </v-flex>
 
+                                <v-flex xs12 md4>
+                                  <v-menu
+                                    lazy
+                                    :close-on-content-click="false"
+                                    v-model="menuStartDate"
+                                    offset-y
+                                    full-width
+                                  >
+                                    <v-text-field
+                                      slot="activator"
+                                      label="From Date"
+                                      v-model="current_page.startDate"
+                                    ></v-text-field>
+                                    <v-date-picker v-model="startDate" @input="current_page.startDate = startDate" no-title scrollable actions>
+                                      <template slot-scope="{ save, cancel }">
+                                        <v-card-actions>
+                                          <v-spacer></v-spacer>
+                                          <v-btn flat color="primary" @click="cancel">{{$t('Cancel')}}</v-btn>
+                                          <v-btn flat color="primary" @click="save">OK</v-btn>
+                                        </v-card-actions>
+                                      </template>
+                                    </v-date-picker>
+                                  </v-menu>
+                                </v-flex>
+
+
+                                <v-flex xs12 md4>
+                                  <v-menu
+                                    lazy
+                                    :close-on-content-click="false"
+                                    v-model="menuEndDate"
+                                    offset-y
+                                    full-width
+                                  >
+                                    <v-text-field
+                                      slot="activator"
+                                      label="To Date"
+                                      v-model="current_page.endDate"
+                                    ></v-text-field>
+                                    <v-date-picker v-model="endDate" @input="current_page.endDate = endDate" no-title scrollable actions>
+                                      <template slot-scope="{ save, cancel }">
+                                        <v-card-actions>
+                                          <v-spacer></v-spacer>
+                                          <v-btn flat color="primary" @click="cancel">{{$t('Cancel')}}</v-btn>
+                                          <v-btn flat color="primary" @click="save">OK</v-btn>
+                                        </v-card-actions>
+                                      </template>
+                                    </v-date-picker>
+                                  </v-menu>
+                                </v-flex>
                                 <v-flex md3>
                                     <v-btn fab dark small color="primary" @click.stop="fetchData">
                                         <v-icon>search</v-icon>
@@ -73,7 +123,7 @@
                             <v-container>
                             PageID - {{page._id}} <br>
                             {{page.title}} {{page.domain}} {{page.subdomain}} <br>
-                            {{page.remark}}
+                            {{page.remark}} {{page.created_at}} <br>
                             <v-flex v-if="page.preview_image_array">
                               <v-carousel v-if="page.preview_image_array.length == 1" hide-delimiters>
                                 <v-carousel-item v-for="item in page.preview_image_array" v-bind:src="item" :key="item._id" cycle="false"></v-carousel-item>
@@ -158,6 +208,8 @@ export default {
             filters.codex = this.current_page.codex;
             filters.layout = this.current_page.syllabus;
             filters.learning_objective = this.current_page.learning_objective;
+            filters.startDate = this.current_page.startDate;
+            filters.endDate = this.current_page.endDate;
             let router  = this.$router;
 
             this.getPages({paginator,filters,router});
@@ -173,7 +225,11 @@ export default {
   },
   data() {
     return {
-      dialog: false
+      dialog: false,
+      menuStartDate: false,
+      menuEndDate: false,
+      startDate: null,
+      endDate: null
     };
   }
 };
