@@ -56,7 +56,10 @@ import {
   VDataTable,
   VRadioGroup,
   VCarousel,
-  VPagination
+  VPagination,
+  VDatePicker,
+  VMenu,
+  VSwitch
 } from 'vuetify';
 import '../node_modules/vuetify/src/stylus/app.styl'
 
@@ -82,7 +85,10 @@ Vue.use(Vuetify, {
     VDataTable,
     VRadioGroup,
     VCarousel,
-    VPagination
+    VPagination,
+    VDatePicker,
+    VMenu,
+    VSwitch
   },
   // theme: {
   //   primary: '#ee44aa',

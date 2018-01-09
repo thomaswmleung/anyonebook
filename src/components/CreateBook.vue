@@ -45,6 +45,7 @@
                 
                  </v-layout>
                  <!-- Codex List -->
+                <v-btn outline color="indigo" @click.stop="show_preview_book=true;">preview</v-btn>
                  <v-flex v-for="row in all_pages" :key="row.file_path">
                      <!-- {{row.domain}} - {{row.area}} -->
                      <!-- <img style="width=95%" :src="row.file_path"/> -->
@@ -110,6 +111,10 @@
             </v-flex>
 
         </v-layout>
+        <page-modal-preview-book
+            :show="show_preview_book"
+            @close_dialog = "show_preview_book=false">
+        </page-modal-preview-book>
      </v-container>
 </template>
 <style scoped>
@@ -123,6 +128,7 @@
 
 <script>
  import Vue from 'vue';
+ import PageModalPreviewBook from "@/components/partial/page-modal-preview-book"
 import {mapGetters,mapActions} from "vuex";
 import { Http,ApiPrivateHttp } from '@/shared/http-service'
 // import {syllabus} from "@/store/static-record";
@@ -131,6 +137,9 @@ import _ from "lodash";
 
  export default {
   name: 'Pagination',
+  components:{
+      PageModalPreviewBook,
+    },
   methods: {
       ...mapActions([
            "pageUpdateOption",
@@ -217,6 +226,7 @@ import _ from "lodash";
   },
   data() {
     return {
+        show_preview_book:false,
         codex:"",
         all_pages:[], 
         area_rows:[], //domain, area  
