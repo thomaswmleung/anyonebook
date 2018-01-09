@@ -1,5 +1,5 @@
 <template>
-    <v-container grid-list-md id="dragContainer">
+    <v-container grid-list-md text-xs-center id="dragContainer">
         <v-layout row wrap>
             <v-flex md3>
                 <h2>Create Blank New Book / From Existing Book</h2>
@@ -54,9 +54,11 @@
             </v-flex>
              <v-flex xs12 md9 class="rowContainer toc" id="toc" > 
                        <v-layout row wrap v-if="area_rows.length==0">
-                           <v-flex xs12 class="titel" >
+                           <v-flex xs12 class="title " >
+                               <v-card >
+                                <v-card-text class="px-0">{{$t("Please Add Your Row")}}</v-card-text>
+                              </v-card>
                                
-                               {{$t("Please Add Your Row")}}
                            </v-flex>
                        </v-layout>
                        <v-layout row wrap 
@@ -92,17 +94,16 @@
                                             </h3>
                                         </v-flex>
                                     </v-layout>
-                                     <v-layout row wrap >
+                                     <v-layout row wrap  :style="{height:page.preview?'450px':'0px',overflow:'scroll'}" >
+
                                             <v-flex xs12 sm12 md6  >
-                                                    <v-card>
-                                                        <v-card-media :src="page.image"  :style="{height:page.preview?'450px':'0px'}">
-                                                        </v-card-media>
+                                                    <v-card class="left_image">
+                                                        <img :src="getImage(page,'left')" alt="" height=100%>
                                                     </v-card>
                                                 </v-flex>
                                                 <v-flex xs12 sm12 md6 >
-                                                    <v-card>
-                                                        <v-card-media :src="page.image"   :style="{height:page.preview?'450px':'0px'}">
-                                                        </v-card-media>
+                                                    <v-card class="right_image">
+                                                        <img :src="getImage(page,'right')" alt="" height=100%>
                                                     </v-card>
                                                 </v-flex>
                                     </v-layout>
@@ -184,7 +185,9 @@ import _ from "lodash";
           this.area_rows.push({   
                 domain:this.current_page.domain,
                 area:this.current_page.area,
-                ku:this.current_page.knowledge_unit,             
+                ku:this.current_page.knowledge_unit,
+                left_page_image_path:"",
+                right_page_image_path:"",             
                 preview:false,
                 tools:false
             });
@@ -192,8 +195,21 @@ import _ from "lodash";
 
 
     //Base on domain and area to select array to display 
-    getPageArray({domain, area}){
-
+    getPageArray({domain, area,ku,left_page_image_path, right_page_image_path}){
+        console.log(this.all_pages);
+        return _.filter(this.all_pages,{
+            domain,
+            area,
+            knowledge_unit:ku
+        })
+    },
+    getImage({domain, area,ku,left_page_image_path, right_page_image_path}){
+        let pageRow  = _.find(_.sortBy(this.all_pages,["level_of_"]),{
+            domain,
+            area,
+            knowledge_unit:ku
+        })
+        return pageRow.file_path
     },
      handleDragEvent(event) {
           console.log(event.detail.to.container);
