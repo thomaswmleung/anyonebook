@@ -4,8 +4,22 @@
             <v-flex md3>
                 <h2>Create Blank New Book / From Existing Book</h2>
                  <!-- Preview -->
-                 <img style="width=95%"/>
+                 <v-layout row wrap>
+                                <v-flex xs12 >
+                                    <v-select :items="option.codex"
+                                              item-value="code"
+                                              item-text="label"
+                                              v-model="codex"
+                                              @input="pageUpdateOption({type:'codex',values:$event})"
+                                              :label="$t('Codex')" editable ></v-select>
+                                </v-flex>
+                
+                 </v-layout>
                  <!-- Codex List -->
+                 <v-flex v-for="row in all_pages" :key="row.file_path">
+                     <!-- {{row.domain}} - {{row.area}} -->
+                     <!-- <img style="width=95%" :src="row.file_path"/> -->
+                </v-flex> 
 
             </v-flex>
              <v-flex xs12 md9 class="rowContainer toc" id="toc" > 
@@ -84,9 +98,33 @@ import _ from "lodash";
       ...mapActions([
           "getStyllabus",
         ]),
+    getPageTsv(){
+        let page_file_name = "page-rows";
+        return new Promise((resolve,reject)=>{
+            Http({
+                methods:"get",
+                url: `/static/${page_file_name}.tsv`,
+            }).then(response=>{
+                let items=[];
+                    let fields = ["file_path", "codex", "syllabus_code", "domain", "area", "knowledge_unit", "learning_objective", "particular", "level_of _difficulty", "copyright_content", "copyright_artwork", "copyright_photo", "linkage", "user", "level", "nature", "position", "output"];
+                    let rowArray = response.split('\n');
+                    rowArray.forEach(row=>{
+                        let obj = {};
+                        let attrs = row.split('\t');
+                        fields.forEach((str,idx)=>{
+                            obj[str] = attrs[idx];
+                        })
+                        items.push(obj);
+                    });
+                resolve(items);
+            });
+        })
+    },
     //FetchData 
     fetchData(){
-        
+        //Get demo page array 
+        this.getPageTsv().then(list=>this.all_pages=list);
+        console.log("Fetchdata");
     },
     //Base on domain and area to select array to display 
     getPageArray({domain, area}){
@@ -115,7 +153,6 @@ import _ from "lodash";
       }
   },
   created () {
-    this.fetchData();
   },
   watch: {
     // call again the method if the route changes
@@ -123,13 +160,14 @@ import _ from "lodash";
   },
   data() {
     return {
+        codex:"",
         all_pages:[], 
         area_rows:[{
                 domain:"tree",
                 area:"forest",
                 ku:"dying tree",
                 image:"//writingexercises.co.uk/images2/randomimage/tree.jpg",
-                preview:false,
+                
                 tools:false
             },{
                 domain:"tree",
