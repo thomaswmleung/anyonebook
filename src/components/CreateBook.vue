@@ -113,6 +113,7 @@
         </v-layout>
         <page-modal-preview-book
             :show="show_preview_book"
+            :row_record="area_rows"
             @close_dialog = "show_preview_book=false">
         </page-modal-preview-book>
      </v-container>

@@ -1,20 +1,18 @@
 <template>
   <v-dialog v-model="show" persistent max-width="950px">
     <v-container grid-list-md text-xs-center>
+
       <v-layout row wrap>
         <v-flex xs2>
           <v-card>
             <v-switch
               :label="$t('Edit')"
               v-model="edit1"
+              @change="changeValue({page:1,edit:$event})"
             ></v-switch>
             <v-switch
-              label="Black/White"
+              :label="$t('Black/White')"
               v-model="bw1"
-            ></v-switch>
-            <v-switch
-              label="Color"
-              v-model="color1"
             ></v-switch>
           </v-card>
         </v-flex>
@@ -38,14 +36,11 @@
             <v-switch
               :label="$t('Edit')"
               v-model="edit2"
+              @change="changeValue({page:2,edit:$event})"
             ></v-switch>
             <v-switch
               label="Black/White"
               v-model="bw2"
-            ></v-switch>
-            <v-switch
-              label="Color"
-              v-model="color2"
             ></v-switch>
           </v-card>
         </v-flex>
@@ -58,10 +53,11 @@
       </v-layout>
       <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" flat @click.native="$emit('close_dialog');pageResetVersion()">
+          <v-btn color="blue darken-1" flat @click.native="$emit('close_dialog');">
             {{$t("Close")}}
           </v-btn>
       </v-card-actions>
+
   </v-container>
   </v-dialog>
 </template>
@@ -82,17 +78,16 @@
       components:{
         
       },
-      props:["show"],
+      props:["show","row_record"],
       data(){
         return{
           edit1:false,
           edit2:false,
           bw1:false,
-          bw2:false,
-          color1:false,
-          color2:false
+          bw2:false
         }
-      },created () {
+      },
+  created () {
        this.pageResetOption();
        this.fetchData();
   },
@@ -130,20 +125,17 @@
 
             this.getPages({paginator,filters,router});
         },
+        changeValue(param){
+          console.log("vswitch",this,param);
+        }
   },
   computed:{
         ...mapGetters({
             option:"PageSyllabusOptions",
             current_page:"currentPage",
             page_paginator:"pagePaginator",
-            all_page:"allPages",
-            area_row:""
+            all_page:"allPages"
         })
-  },
-  data() {
-    return {
-
-    };
   }
 };
 </script>
