@@ -58,7 +58,8 @@ import {
   VCarousel,
   VPagination,
   VDatePicker,
-  VMenu
+  VMenu,
+  VSwitch
 } from 'vuetify';
 import '../node_modules/vuetify/src/stylus/app.styl'
 
@@ -86,7 +87,8 @@ Vue.use(Vuetify, {
     VCarousel,
     VPagination,
     VDatePicker,
-    VMenu
+    VMenu,
+    VSwitch
   },
   // theme: {
   //   primary: '#ee44aa',
