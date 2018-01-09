@@ -52,7 +52,12 @@
 
             </v-flex>
              <v-flex xs12 md9 class="rowContainer toc" id="toc" > 
-                
+                       <v-layout row wrap v-if="area_rows.length==0">
+                           <v-flex xs12 class="titel" >
+                               
+                               {{$t("Please Add Your Row")}}
+                           </v-flex>
+                       </v-layout>
                        <v-layout row wrap 
                             v-for="(page,index) in area_rows" 
                             :key="page.domain+page.area+page.knowledge_unit" 
@@ -169,8 +174,7 @@ import _ from "lodash";
           this.area_rows.push({   
                 domain:this.current_page.domain,
                 area:this.current_page.area,
-                ku:this.current_page.knowledge_unit,
-                image:"",
+                ku:this.current_page.knowledge_unit,             
                 preview:false,
                 tools:false
             });
@@ -195,13 +199,15 @@ import _ from "lodash";
           this.area_rows[index][attribute]= true;
       },
       confirmDelete(index){
-          this.rowConfirmDelete = true;
-          this.rowIndex = index;          
+        if( confirm(this.$t('confirm_remove_page',{
+                                    domain:this.area_rows[index]['domain'],
+                                    area:this.area_rows[index]['area'],
+                                    page:(index+1)*2
+                                }))
+        ){
+            this.area_rows.splice(index,1);                                
+        };
       },
-      processDelete(){
-          this.area_rows.splice(this.rowIndex,1);
-          this.rowConfirmDelete = false; 
-      }
   },
   created () {
   },
@@ -213,42 +219,9 @@ import _ from "lodash";
     return {
         codex:"",
         all_pages:[], 
-        area_rows:[{
-                domain:"數",
-                area:"多位數",
-                ku:"多位數",
-                image:"/static/pages/20170505-abps/0001.jpg",
-                preview:false,
-                tools:false
-            },{
-                domain:"數",
-                area:"多位數",
-                ku:"大數量的估計",
-                image:"/static/pages/20170505-abps/0003.jpg",
-                preview:false,
-                tools:false
-            },{
-                domain:"數據處理",
-                area:"統計圖",
-                ku:"閱讀象形圖",
-                image:"/static/pages/20170505-abps/0017.jpg",
-                preview:false,
-                tools:false
-            },{
-                domain:"代數",
-                area:"代數",
-                ku:"代數符號",
-                image:"/static/pages/20170505-abps/0029.jpg",
-                preview:false,
-                tools:false
-            },{
-                domain:"度量",
-                area:"面積",
-                ku:"平行四邊形的面積",
-                image:"/static/pages/20170505-abps/0033.jpg",
-                preview:false,
-                tools:false
-            }], //domain, area  
+        area_rows:[], //domain, area  
+
+        
     };
   },
   mounted(){
