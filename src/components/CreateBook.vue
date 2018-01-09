@@ -5,14 +5,43 @@
                 <h2>Create Blank New Book / From Existing Book</h2>
                  <!-- Preview -->
                  <v-layout row wrap>
+                        <v-flex xs12 >
+                            <v-select :items="option.codex"
+                                        item-value="code"
+                                        item-text="label"
+                                        v-model="current_page.codex"
+                                        @input="updateCodex($event)"
+                                        :label="$t('Codex')" editable ></v-select>
+                            </v-flex>
                                 <v-flex xs12 >
-                                    <v-select :items="option.codex"
+                                    <v-select :items="option.syllabus"
                                               item-value="code"
                                               item-text="label"
-                                              v-model="codex"
-                                              @input="pageUpdateOption({type:'codex',values:$event})"
-                                              :label="$t('Codex')" editable ></v-select>
+                                              v-model="current_page.syllabus_code"
+                                              @input="pageUpdateOption({type:'syllabus_code',values:$event})"
+                                              :label="$t('Syllabus')" editable ></v-select>
                                 </v-flex>
+                                <v-flex xs12 >
+                                    <v-select :items="option.domain"
+                                              v-model="current_page.domain"
+                                              @input="pageUpdateOption({type:'domain',values:$event})"
+                                              :label="$t('Domain')" editable ></v-select>
+                                </v-flex>
+
+                                <v-flex xs12 ><v-select :items="option.area"
+                                v-model="current_page.area"
+                                              @input="pageUpdateOption({type:'area',values:$event})"
+                                              :label="$t('Area')" editable ></v-select>
+                                </v-flex>
+
+                                <v-flex xs12 ><v-select :items="option.knowledge_unit"
+                                v-model="current_page.knowledge_unit"
+                                              @input="pageUpdateOption({type:'knowledge_unit',values:$event})"
+                                              :label="$t('Knowledge Unit')" editable ></v-select>
+                                </v-flex>  
+                                <v-flex>
+                                    <v-btn color="primary" @click.stop="addAreaRow">{{$t("Add Page")}}</v-btn>
+                                </v-flex>                      
                 
                  </v-layout>
                  <!-- Codex List -->
@@ -24,37 +53,39 @@
             </v-flex>
              <v-flex xs12 md9 class="rowContainer toc" id="toc" > 
                 
-                       <v-layout row wrap v-for="(page,index) in area_rows" :key="page.domain+page.area+page.knowledge_unit" class="rowItem toc" :data="page" :id="`page-${index}`">
+                       <v-layout row wrap 
+                            v-for="(page,index) in area_rows" 
+                            :key="page.domain+page.area+page.knowledge_unit" 
+                            :data="page"
+                            :id="`${index}`"
+                            class="rowItem toc">
                            <v-flex xs12  >
-                               <v-card>
-                                        <v-card-title primary-title>
-                                            <v-layout row wrap @click.stop="updatePageRecord(index,'tools')" >
-                                                <v-flex xs4  >
-                                                    <h4 class="title mb-0">{{page.domain}}</h4>
-                                                </v-flex>
-                                                 <v-flex xs4  >
-                                                    <h3 class="subtitle mb-1">{{page.area}} </h3>
-                                                </v-flex>
-                                                <v-flex xs4 text-xs-right >
-                                                    <h3 class="content mb-1">
-                                                        <div  v-if="!page.tools">{{(index+1)*2}} </div>
-                                                            <div  v-if="page.tools">
-                                                                {{(index+1)*2}} 
-                                                                <v-btn  fab dark small color="primary" 
-                                                                    @click.stop="updatePageRecord(index,'preview')">
-                                                                    <v-icon dark>remove_red_eye</v-icon>
-                                                                </v-btn>
-                                                                <v-btn  fab dark small color="error" 
-                                                                    @click.stop="confirmDelete(index)">
-                                                                    <v-icon  @click.stop="updatePageRecord(index,'tools')" >delete</v-icon>
-                                                                </v-btn>
-                                                                <v-icon class="handle">drag_handle</v-icon>                  
-                                                            </div>
-                                                    </h3>
-                                                </v-flex>
-                                                
-                                            </v-layout>
-                                        </v-card-title>
+                                    <v-layout row wrap @click.stop="updatePageRecord(index,'tools')" >
+                                        <v-flex xs4  >
+                                            <h3 class="title mb-1">{{page.area}} </h3>
+                                            <span >{{page.domain}}</span>
+                                        </v-flex>
+                                            <v-flex xs4  >
+                                            <h3 class="subtitle mb-1">{{page.ku}} </h3>
+                                        </v-flex>
+                                        <v-flex xs4 text-xs-right >
+                                            <h3 class="content mb-1">
+                                                <div  v-if="!page.tools">{{(index+1)*2}} </div>
+                                                    <div  v-if="page.tools">
+                                                        {{(index+1)*2}} 
+                                                        <v-btn  fab dark small color="primary" 
+                                                            @click.stop="updatePageRecord(index,'preview')">
+                                                            <v-icon dark>remove_red_eye</v-icon>
+                                                        </v-btn>
+                                                        <v-btn  fab dark small color="error" 
+                                                            @click.stop="confirmDelete(index)">
+                                                            <v-icon  @click.stop="updatePageRecord(index,'tools')" >delete</v-icon>
+                                                        </v-btn>
+                                                        <v-icon class="handle">drag_handle</v-icon>                  
+                                                    </div>
+                                            </h3>
+                                        </v-flex>
+                                    </v-layout>
                                      <v-layout row wrap >
                                             <v-flex xs12 sm12 md6  >
                                                     <v-card>
@@ -69,8 +100,6 @@
                                                     </v-card>
                                                 </v-flex>
                                     </v-layout>
-                                 
-                                </v-card>
                            </v-flex>
                        </v-layout>
             </v-flex>
@@ -81,6 +110,9 @@
 <style scoped>
     li.complete {
         background: #DDD;
+    }
+    .rowItem.toc{
+        border:lightgrey 1px solid
     }
 </style>
 
@@ -96,7 +128,7 @@ import _ from "lodash";
   name: 'Pagination',
   methods: {
       ...mapActions([
-          "getStyllabus",
+           "pageUpdateOption",
         ]),
     getPageTsv(){
         let page_file_name = "page-rows";
@@ -124,8 +156,27 @@ import _ from "lodash";
     fetchData(){
         //Get demo page array 
         this.getPageTsv().then(list=>this.all_pages=list);
-        console.log("Fetchdata");
     },
+    //Update Codex 
+    updateCodex(codex){
+        let codexInstance = _.find(this.option.codex, {code:codex});
+        this.pageUpdateOption({type:'codex',values:codex})
+        this.pageUpdateOption({type:'syllabus_code',values:codexInstance.syllabus})
+    },
+    //Add Area Row  
+    addAreaRow(){
+          
+          this.area_rows.push({   
+                domain:this.current_page.domain,
+                area:this.current_page.area,
+                ku:this.current_page.knowledge_unit,
+                image:"",
+                preview:false,
+                tools:false
+            });
+    },
+
+
     //Base on domain and area to select array to display 
     getPageArray({domain, area}){
 
@@ -163,38 +214,38 @@ import _ from "lodash";
         codex:"",
         all_pages:[], 
         area_rows:[{
-                domain:"tree",
-                area:"forest",
-                ku:"dying tree",
-                image:"//writingexercises.co.uk/images2/randomimage/tree.jpg",
-                
-                tools:false
-            },{
-                domain:"tree",
-                area:"inhouse",
-                ku:"paper bird in the birdcage",
-                image:"//writingexercises.co.uk/images2/randomimage/birdcage.jpg",
+                domain:"數",
+                area:"多位數",
+                ku:"多位數",
+                image:"/static/pages/20170505-abps/0001.jpg",
                 preview:false,
                 tools:false
             },{
-                domain:"sea",
-                area:"boat",
-                ku:"boat",
-                image:"http://writingexercises.co.uk/images2/randomimage/boat.jpg",
+                domain:"數",
+                area:"多位數",
+                ku:"大數量的估計",
+                image:"/static/pages/20170505-abps/0003.jpg",
                 preview:false,
                 tools:false
             },{
-                domain:"people",
-                area:"action",
-                ku:"rain-coats",
-                image:"http://writingexercises.co.uk/images2/randomimage/rain-coats.jpg",
+                domain:"數據處理",
+                area:"統計圖",
+                ku:"閱讀象形圖",
+                image:"/static/pages/20170505-abps/0017.jpg",
                 preview:false,
                 tools:false
             },{
-                domain:"tree",
-                area:"store",
-                ku:"woodtextures",
-                image:"http://writingexercises.co.uk/images2/randomimage/woodtextures.jpg",
+                domain:"代數",
+                area:"代數",
+                ku:"代數符號",
+                image:"/static/pages/20170505-abps/0029.jpg",
+                preview:false,
+                tools:false
+            },{
+                domain:"度量",
+                area:"面積",
+                ku:"平行四邊形的面積",
+                image:"/static/pages/20170505-abps/0033.jpg",
                 preview:false,
                 tools:false
             }], //domain, area  
@@ -213,7 +264,8 @@ import _ from "lodash";
   },
    computed:{      
         ...mapGetters({
-            option:"PageSyllabusOptions",            
+            option:"PageSyllabusOptions",   
+            current_page:"currentPage",         
         })
 }
 };    
