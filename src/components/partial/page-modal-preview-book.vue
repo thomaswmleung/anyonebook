@@ -102,7 +102,7 @@
       components:{
         BookRowImage
       },
-      props:["show","row_record","all_pages"],
+      props:["show","row_record","all_pages", "grey"],
       data(){
         return{
           edit1:false,
