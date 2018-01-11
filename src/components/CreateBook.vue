@@ -125,6 +125,7 @@
         <page-modal-preview-book
             :show="show_preview_book"
             :row_record="area_rows"
+            :all_pages="all_pages"
             @close_dialog = "show_preview_book=false">
         </page-modal-preview-book>
      </v-container>

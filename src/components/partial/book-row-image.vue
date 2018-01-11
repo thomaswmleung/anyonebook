@@ -16,7 +16,7 @@
             <p style="margin-bottom:0px">
                 <img
                     v-if="getImage()" 
-                    :src="getImage()" 
+                    :src="getImage()"
                     :style="{height:`${row_height-70}px`}"                        
                  />
                 <v-card v-if="!getImage()" 
@@ -69,9 +69,11 @@ export default {
             knowledge_unit:ku
         });
         let path = false;
+        let pageObj = {}
         if(pageRow){
             console.log(pageRow);
-            path = pageRow[this.side=="left"?left_index:right_index]["file_path"]
+            pageObj = pageRow[this.side=="left"?left_index:right_index];
+            path = pageObj?pageObj.file_path:"";
         }
         return path;
     },

@@ -1,53 +1,72 @@
 <template>
-  <v-dialog v-model="show" persistent max-width="950px">
+  <v-dialog v-model="show" persistent max-width="1200px">
+    <v-card>
     <v-container grid-list-md text-xs-center>
-
       <v-layout row wrap>
-        <v-flex xs2>
+        <v-flex xs1.5>
           <v-card>
-            <v-switch
-              :label="$t('Edit')"
+            <v-switch              
+              :label="edit1?$t('Edit'):$t('No Edit')"
               v-model="edit1"
-              @change="changeValue({page:1,edit:$event})"
             ></v-switch>
             <v-switch
-              :label="$t('Black/White')"
+              :label="bw1?$t('Color'):$t('Black/White')"
               v-model="bw1"
             ></v-switch>
+            <v-text-field
+              v-if="edit1==true"
+              name="Edit"
+              label="Comment here"
+              textarea
+              ></v-text-field>
           </v-card>
         </v-flex>
-        <v-flex xs4 v-for="page in all_page" :key="page._id">
+        <v-flex xs9>
           <v-card>
             <v-container>
-              PageID - {{page._id}} <br>
-              {{page.title}} {{page.domain}} {{page.subdomain}} <br>
-              {{page.remark}}
-              <v-carousel>
-                <v-carousel-item v-for="item in page.preview_image_array" v-bind:src="item" :key="item._id" cycle="false"></v-carousel-item>
-              </v-carousel>
-              <router-link :to="`/upload_page/${page._id}`">
-                {{$t('Edit')}}
-              </router-link>
+              <v-layout row wrap   :style="{height:`${row_height}px`,overflow:'scroll'}" >
+                <v-flex xs12 sm12 md6 class="left_image"  >
+                  <book-row-image
+                    :all_pages="all_pages"
+                    :page="page"
+                    :row_height="row_height"
+                    side="left">
+                  </book-row-image>
+                </v-flex>
+                <v-flex xs12 sm12 md6 >
+                  <book-row-image
+                    :all_pages="all_pages"
+                    :page="page"
+                    :row_height="row_height"
+                    side="right">
+                  </book-row-image>
+                </v-flex>
+              </v-layout>
             </v-container>
           </v-card>
         </v-flex>
-        <v-flex xs2>
+        <v-flex xs1.5>
           <v-card>
-            <v-switch
-              :label="$t('Edit')"
+            <v-switch              
+              :label="edit2?$t('Edit'):$t('No Edit')"
               v-model="edit2"
-              @change="changeValue({page:2,edit:$event})"
             ></v-switch>
             <v-switch
-              label="Black/White"
+              :label="bw2?$t('Color'):$t('Black/White')"
               v-model="bw2"
             ></v-switch>
+            <v-text-field
+              v-if="edit2==true"
+              name="Edit"
+              label="Comment here"
+              textarea
+              ></v-text-field>
           </v-card>
         </v-flex>
         <v-layout row wrap >
           <v-flex>
-            <v-pagination :length="Math.ceil(page_paginator.total_count/2)" v-model="page_paginator.current_page" @input="fetchData"></v-pagination>
-            (Total Record:  {{page_paginator.total_count}})
+            <v-pagination :length="Math.ceil(row_record.length)" v-model="current_index" :total-visible="7"></v-pagination>
+            (Total Record:  {{row_record.length}})
           </v-flex>
         </v-layout>
       </v-layout>
@@ -57,14 +76,17 @@
             {{$t("Close")}}
           </v-btn>
       </v-card-actions>
-
   </v-container>
+    </v-card>
   </v-dialog>
 </template>
 <style scoped>
   input[type=file] {
     position: absolute;
     left: -99999px;
+  }
+  img.bw {
+	filter: grayscale(0);
   }
 </style>
 <script>
@@ -73,23 +95,26 @@
   import moment from 'moment' 
   import { getExtension } from '@/shared/helpers'
   
+  import BookRowImage from "@/components/partial/book-row-image"
+
   export default{
       name:"PageModalPreviewBook",
       components:{
-        
+        BookRowImage
       },
-      props:["show","row_record"],
+      props:["show","row_record","all_pages"],
       data(){
         return{
           edit1:false,
           edit2:false,
           bw1:false,
-          bw2:false
+          bw2:false,
+          current_index:1,
+          row_height:550
         }
       },
   created () {
        this.pageResetOption();
-       this.fetchData();
   },
   watch: {
     // call again the method if the route changes
@@ -105,29 +130,7 @@
           "getPageById",
           "pageResetOption",
           "getPages"
-        ]),
-        fetchData(){
-            // fetch the data when the view is created and the data is
-            // already being observed
-            let paginator = {};
-            paginator.limit = 2;
-            paginator.skip = (this.page_paginator.current_page-1)*2;
-
-
-            let filters = {};
-            filters.domain = this.current_page.domain;
-            filters.subdomain = this.current_page.area;
-            filters.sub_title = this.current_page.knowledge_unit;
-            filters.codex = this.current_page.codex;
-            filters.layout = this.current_page.syllabus;
-            filters.learning_objective = this.current_page.learning_objective;
-            let router  = this.$router;
-
-            this.getPages({paginator,filters,router});
-        },
-        changeValue(param){
-          console.log("vswitch",this,param);
-        }
+        ])
   },
   computed:{
         ...mapGetters({
@@ -135,7 +138,11 @@
             current_page:"currentPage",
             page_paginator:"pagePaginator",
             all_page:"allPages"
-        })
+        }),
+      page(){
+        console.log(this.all_pages); 
+        return this.row_record[this.current_index-1]||{};
+      }
   }
 };
 </script>
