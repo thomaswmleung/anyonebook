@@ -98,7 +98,7 @@
   import BookRowImage from "@/components/partial/book-row-image"
 
   export default{
-      name:"PageModalPreviewBook",
+      name:"BookModalPreviewBook",
       components:{
         BookRowImage
       },

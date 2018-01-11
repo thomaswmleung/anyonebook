@@ -122,12 +122,12 @@
             </v-flex>
 
         </v-layout>
-        <page-modal-preview-book
+        <book-modal-preview-book
             :show="show_preview_book"
             :row_record="area_rows"
             :all_pages="all_pages"
             @close_dialog = "show_preview_book=false">
-        </page-modal-preview-book>
+        </book-modal-preview-book>
      </v-container>
 </template>
 <style scoped>
@@ -146,13 +146,13 @@ import { Http,ApiPrivateHttp } from '@/shared/http-service'
 // import {syllabus} from "@/store/static-record";
 import _ from "lodash";
 
-import PageModalPreviewBook from "@/components/partial/page-modal-preview-book"
+import BookModalPreviewBook from "@/components/partial/book-modal-preview-book"
 import BookRowImage from "@/components/partial/book-row-image"
 
  export default {
   name: 'Pagination',
   components:{
-      PageModalPreviewBook,
+      BookModalPreviewBook,
       BookRowImage,
     },
   methods: {

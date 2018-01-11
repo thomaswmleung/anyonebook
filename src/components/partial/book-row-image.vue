@@ -48,7 +48,8 @@ export default {
   props:["all_pages",
     "page",
     "row_height",
-    "side","grey"],
+    "side",
+    "grey"],
   computed:{      
         ...mapGetters({
         })  
