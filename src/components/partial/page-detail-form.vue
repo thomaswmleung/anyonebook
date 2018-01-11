@@ -45,10 +45,13 @@
                     </v-flex>                                
 
                      <v-flex xs3>{{$t('Learning Objective')}}</v-flex>
-                    <v-flex xs9><v-select :items="option.learning_objective" 
-                    v-model="current_page.learning_objective"
-                                    @input="pageUpdateOption({type:'learning_objective',values:$event})"                                              
-                                    :label="$t('Learning Objective')" editable ></v-select>
+                    <v-flex xs9>
+                        <v-select 
+                            multiple
+                            :items="option.learning_objective" 
+                            v-model="current_page.learning_objective"
+                            @input="pageUpdateOption({type:'learning_objective',values:$event})"                                              
+                            :label="$t('Learning Objective')" editable ></v-select>
                     </v-flex> 
                     
                     <v-flex xs12 >

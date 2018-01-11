@@ -1,6 +1,11 @@
 <template>
     <v-container grid-list-md text-xs-center id="dragContainer">
         <v-layout row wrap>
+            <v-flex md12>
+                <!-- TODO MetaData form  -->
+            </v-flex>
+        </v-layout>
+        <v-layout row wrap>
             <v-flex md3>
                 <h2>Create Blank New Book / From Existing Book</h2>
                  <!-- Preview -->
@@ -58,7 +63,6 @@
                                <v-card >
                                 <v-card-text class="px-0">{{$t("Please Add Your Row")}}</v-card-text>
                               </v-card>
-                               
                            </v-flex>
                        </v-layout>
                        <v-layout row wrap 
@@ -94,18 +98,24 @@
                                             </h3>
                                         </v-flex>
                                     </v-layout>
-                                     <v-layout row wrap  :style="{height:page.preview?'450px':'0px',overflow:'scroll'}" >
-
-                                            <v-flex xs12 sm12 md6  >
-                                                    <v-card class="left_image">
-                                                        <img :src="getImage(page,'left')" alt="" height=100%>
-                                                    </v-card>
-                                                </v-flex>
-                                                <v-flex xs12 sm12 md6 >
-                                                    <v-card class="right_image">
-                                                        <img :src="getImage(page,'right')" alt="" height=100%>
-                                                    </v-card>
-                                                </v-flex>
+                                     <v-layout row wrap  :style="{height:page.preview?`${row_height}px`:'0px',overflow:'scroll'}" >
+                                            <v-flex xs12 sm12 md6 class="left_image"  >
+                                                <book-row-image
+                                                    :all_pages="all_pages"
+                                                    :page="page"
+                                                    :row_height="row_height"
+                                                    side="left">
+                                                </book-row-image>
+                                            </v-flex>
+                                            <v-flex xs12 sm12 md6 >
+                                                <book-row-image
+                                                    :all_pages="all_pages"
+                                                    :page="page"
+                                                    :row_height="row_height"
+                                                    @updatePageIndex="updatePageIndex"
+                                                    side="right">
+                                                </book-row-image>
+                                            </v-flex>
                                     </v-layout>
                            </v-flex>
                        </v-layout>
@@ -130,17 +140,19 @@
 
 <script>
  import Vue from 'vue';
- import PageModalPreviewBook from "@/components/partial/page-modal-preview-book"
 import {mapGetters,mapActions} from "vuex";
 import { Http,ApiPrivateHttp } from '@/shared/http-service'
 // import {syllabus} from "@/store/static-record";
 import _ from "lodash";
 
+import PageModalPreviewBook from "@/components/partial/page-modal-preview-book"
+import BookRowImage from "@/components/partial/book-row-image"
 
  export default {
   name: 'Pagination',
   components:{
       PageModalPreviewBook,
+      BookRowImage,
     },
   methods: {
       ...mapActions([
@@ -186,31 +198,17 @@ import _ from "lodash";
                 domain:this.current_page.domain,
                 area:this.current_page.area,
                 ku:this.current_page.knowledge_unit,
-                left_page_image_path:"",
-                right_page_image_path:"",             
+                left_index:0,
+                left_page_obj:{},
+                right_index:1,
+                right_page_obj:{},             
                 preview:false,
                 tools:false
             });
     },
 
 
-    //Base on domain and area to select array to display 
-    getPageArray({domain, area,ku,left_page_image_path, right_page_image_path}){
-        console.log(this.all_pages);
-        return _.filter(this.all_pages,{
-            domain,
-            area,
-            knowledge_unit:ku
-        })
-    },
-    getImage({domain, area,ku,left_page_image_path, right_page_image_path}){
-        let pageRow  = _.find(_.sortBy(this.all_pages,["level_of_"]),{
-            domain,
-            area,
-            knowledge_unit:ku
-        })
-        return pageRow.file_path
-    },
+
      handleDragEvent(event) {
           console.log(event.detail.to.container);
           let dragItemIndex = event.detail.draggedElement.id.split(/-+/).pop();              
@@ -234,6 +232,9 @@ import _ from "lodash";
             this.area_rows.splice(index,1);                                
         };
       },
+      updatePageIndex(params){
+
+      }
   },
   created () {
   },
@@ -247,6 +248,8 @@ import _ from "lodash";
         codex:"",
         all_pages:[], 
         area_rows:[], //domain, area  
+
+        row_height:450
 
         
     };
@@ -267,9 +270,6 @@ import _ from "lodash";
             option:"PageSyllabusOptions",   
             current_page:"currentPage",         
         })
-}
+  }
 };    
 </script>
-<style scoped>
-
-</style>

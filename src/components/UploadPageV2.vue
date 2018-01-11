@@ -152,23 +152,13 @@ export default {
             return _record?_record["label"]:"" 
         },
         updateCurrentVersion(opt){
-           
            let i ; 
-           
            for(i in opt){
                if(i != "label"){
                    this.pageUpdateVersion({attr:i,val:opt[i].code })
                }
            }
         },
-
-        //Delete PDF 
-        deletePDF(){
-
-        },
-        //Present Version
-        
-
     //Upload PDF process - trigger 
         uploadPDF() {
             //validate meta information filled or not 
