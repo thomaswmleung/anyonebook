@@ -17,7 +17,8 @@
                 <img
                     v-if="getImage()" 
                     :src="getImage()"
-                    :style="{height:`${row_height-70}px`}"                        
+                    :style="{height:`${row_height-70}px`}"
+                    :class="{bw:grey}"   
                  />
                 <v-card v-if="!getImage()" 
                    :style="{height:`${row_height-70}px`, margin:'auto'}"
@@ -47,7 +48,7 @@ export default {
   props:["all_pages",
     "page",
     "row_height",
-    "side"],
+    "side","grey"],
   computed:{      
         ...mapGetters({
         })  
@@ -113,4 +114,7 @@ export default {
         width: 20px;
         margin:0;
     }
+    img.bw {
+	filter: grayscale(100);
+  }
 </style>

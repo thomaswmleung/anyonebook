@@ -1,27 +1,27 @@
 <template>
-  <v-dialog v-model="show" persistent max-width="1200px">
+  <v-dialog v-model="show" persistent max-width="1500px">
     <v-card>
-    <v-container grid-list-md text-xs-center>
+    <v-container fluid text-xs-center>
       <v-layout row wrap>
-        <v-flex xs1.5>
+        <v-flex xs2>
           <v-card>
             <v-switch              
               :label="edit1?$t('Edit'):$t('No Edit')"
               v-model="edit1"
             ></v-switch>
             <v-switch
-              :label="bw1?$t('Color'):$t('Black/White')"
+              :label="bw1?$t('Black/White'):$t('Color')"
               v-model="bw1"
             ></v-switch>
             <v-text-field
-              v-if="edit1==true"
+              v-if="edit1"
               name="Edit"
               label="Comment here"
               textarea
-              ></v-text-field>
+            ></v-text-field>
           </v-card>
         </v-flex>
-        <v-flex xs9>
+        <v-flex xs8>
           <v-card>
             <v-container>
               <v-layout row wrap   :style="{height:`${row_height}px`,overflow:'scroll'}" >
@@ -30,6 +30,7 @@
                     :all_pages="all_pages"
                     :page="page"
                     :row_height="row_height"
+                    :grey="bw1"
                     side="left">
                   </book-row-image>
                 </v-flex>
@@ -38,6 +39,7 @@
                     :all_pages="all_pages"
                     :page="page"
                     :row_height="row_height"
+                    :grey="bw2"
                     side="right">
                   </book-row-image>
                 </v-flex>
@@ -45,14 +47,14 @@
             </v-container>
           </v-card>
         </v-flex>
-        <v-flex xs1.5>
+        <v-flex xs2>
           <v-card>
             <v-switch              
               :label="edit2?$t('Edit'):$t('No Edit')"
               v-model="edit2"
             ></v-switch>
             <v-switch
-              :label="bw2?$t('Color'):$t('Black/White')"
+              :label="bw2?$t('Black/White'):$t('Color')"
               v-model="bw2"
             ></v-switch>
             <v-text-field
@@ -63,13 +65,14 @@
               ></v-text-field>
           </v-card>
         </v-flex>
-        <v-layout row wrap >
+
+      </v-layout>
+         <v-layout row wrap >
           <v-flex>
             <v-pagination :length="Math.ceil(row_record.length)" v-model="current_index" :total-visible="7"></v-pagination>
             (Total Record:  {{row_record.length}})
           </v-flex>
         </v-layout>
-      </v-layout>
       <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="blue darken-1" flat @click.native="$emit('close_dialog');">
@@ -84,9 +87,6 @@
   input[type=file] {
     position: absolute;
     left: -99999px;
-  }
-  img.bw {
-	filter: grayscale(0);
   }
 </style>
 <script>
