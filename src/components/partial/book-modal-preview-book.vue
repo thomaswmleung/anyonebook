@@ -140,7 +140,6 @@
             all_page:"allPages"
         }),
       page(){
-        console.log(this.all_pages); 
         return this.row_record[this.current_index-1]||{};
       }
   }

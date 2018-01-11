@@ -50,10 +50,11 @@
                 </div>
               </figure>
             </template>
+            <div style="height:0px">
+                 {{imageGray}}
+            </div>
           </viewer>
         </div>
-
-
             <v-card v-if="!getImage()" 
                    :style="{height:`${row_height-70}px`, margin:'auto'}"
                  >
@@ -92,6 +93,9 @@ export default {
         ]),
      inited (viewer) {
       this.$viewer = viewer
+      if(this.grey ){
+        this.$viewer.image.style.filter ="grayscale(100)"
+      }
     },
     getImage(){
         let {
@@ -109,7 +113,6 @@ export default {
         let path = false;
         let pageObj = {}
         if(pageRow){
-            console.log(pageRow);
             pageObj = pageRow[this.side=="left"?left_index:right_index];
             path = pageObj?pageObj.file_path:"";
         }
@@ -132,14 +135,25 @@ export default {
         return flag;
     }
   },
+
   computed:{
        pages(){
           return _.sortBy(this.all_pages,["level_of_difficulty"])
       }, 
+       imageGray(){
+           let str = this.grey;
+           if(this.$viewer ){
+                this.$viewer.image.style.filter =this.grey?"grayscale(1)":"";
+                str = this.$viewer.image.style.filter;
+                console.log(str,this.$viewer.image.style.filter);
+            }
+            //return  this.$viewer.image.style.filter;
+            return str 
+       }
   },
   data(){
       return{
-          options:{ "inline": true, "button": true, "navbar": false, "title": false, "toolbar": true, "tooltip": true, "movable": true, "zoomable": true, "rotatable": false, "scalable": false, "transition": false, "fullscreen":true, "keyboard": false}
+          options:{"inline": true, "button": true, "navbar": false, "title": false, "toolbar": true, "tooltip": true, "movable": true, "zoomable": true, "rotatable": false, "scalable": false, "transition": false, "fullscreen":true, "keyboard": false}
       }
   },
    components:{
@@ -154,6 +168,7 @@ export default {
     }
     img.bw {
 	    filter: grayscale(100);
+       opacity: .2; 
     }
 
 .viewer-wrapper {
