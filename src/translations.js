@@ -14,10 +14,10 @@ const translationsTc = {
     "Privacy Policy":"私隱政策",
     "Legal Notice":"服務條款",
     "about":"關於AnyOneBook",
-    "shop":"選頁書店", 
+    "shop":"選頁書店",
     "Tasks":"工作清單",
-    confirm_remove_page:"你確認要刪除在第 {page} 頁上的{domain} - {area} 嗎?", 
-    "Delete":"刪除", 
+    confirm_remove_page:"你確認要刪除在第 {page} 頁上的{domain} - {area} 嗎?",
+    "Delete":"刪除",
     "Cancel":"取消",
     "User Email":"使用者Email",
     "Password":"用戶密碼",
@@ -32,7 +32,8 @@ const translationsTc = {
     "Edit":"修改",
     "Close":"關閉",
     "Submit":"提交",
-    "Login":"登入", 
+    "Login":"登入",
+    "Select":"選擇",
 
     Home:"首頁",
     UploadPage:"上載頁面",
@@ -43,14 +44,14 @@ const translationsTc = {
     OrderManagement:"訂單管理",
 
     "Page Information":"頁面資料",
-    
+
     "Page Preview":"預覽",
 
     "Affiliation":"相聯出版物",
 
     "version":"版本",
 
-    "Link Previous Page":"連結上一頁", 
+    "Link Previous Page":"連結上一頁",
 
     "indicates required field":"必須填寫",
 

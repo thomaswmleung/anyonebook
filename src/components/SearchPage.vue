@@ -164,9 +164,6 @@ import {mapGetters,mapActions} from "vuex";
 // import {syllabus} from "@/store/static-record";
 import _ from "lodash";
 
-import PageModalAffiliation from "@/components/partial/page-modal-affiliation"
-import PageModalUploadPdf from "@/components/partial/page-modal-upload-pdf"
-
 export default {
   name: "Pagination",
   components:{
