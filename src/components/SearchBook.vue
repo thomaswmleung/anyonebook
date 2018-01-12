@@ -14,7 +14,9 @@
                         <ul>
                             <li v-for="item in completed" :key="item" :style="{background:'lightgreen'}" >{{item}}</li> 
                         </ul>
-                        
+                        <v-btn color="blue darken-1" flat @click.native="getBooks">
+            {{$t('Show')}}
+          </v-btn>
           <v-btn color="blue darken-1" flat @click.native="deleteBooks">
             {{$t('Delete')}}
           </v-btn>
@@ -56,7 +58,8 @@
   },
    methods: {
     ...mapActions([
-      "deleteBook"
+      "deleteBook",
+      "getBook"
     ]),
 
     deleteBooks()
@@ -65,6 +68,13 @@
         book._id = "5a5877b9759b741cb12e25e3";
         this.deleteBook({book});
     }
+    },
+
+    getBooks()
+    {
+        let book = {};
+        book._id = "5a5877b9759b741cb12e25e3";
+        this.deleteBook({book});
     }
 };    
 </script>

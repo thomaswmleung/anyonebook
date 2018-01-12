@@ -27,11 +27,18 @@ const actions = {
         let {_id, page_code, content}=book;
         let method = _id!=""?"put":'post';
        
-        
+       
         
         // ApiPrivateHttp[method]('/static_html_page', JSON.stringify(book))
-        ApiPrivateHttp[method](`/static_html_page?page_code=${page_code}&content=${content}`)
-          .then((response) => {
+        // ApiPrivateHttp[method](`/static_html_page?page_code=${page_code}&content=${content}`,)
+        // ApiPrivateHttp({
+        //   method,
+        //   url: '/static_html_page',
+        //   params: {
+        //     page_code, content
+        //   }
+        // })
+        ApiPrivateHttp[method]('/book', JSON.stringify(book)).then((response) => {
             let message = `Book is ${_id!=""?"Updated":"Created"} successfully`;
             response.message = message;
             resolve(response);
