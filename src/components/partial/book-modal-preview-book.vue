@@ -76,7 +76,12 @@
         </v-layout>
         <v-layout row wrap >
           <v-flex>
-            <v-pagination :length="Math.ceil(row_record.length)" v-model="current_index" :total-visible="7" @click.stop="resetPage()"></v-pagination>
+            <v-pagination 
+                 :length="Math.ceil(row_record.length)" 
+                 v-model="current_index" 
+                 :total-visible="7" 
+                >
+            </v-pagination>
             (Total Record:  {{row_record.length}})
           </v-flex>
         </v-layout>
@@ -112,29 +117,36 @@
       props:["show","row_record","all_pages", "grey"],
       data(){
         return{
+          current_index:1,
           edit1:false,
           edit2:false,
           bw1:false,
           bw2:false,
           cm1:"",
           cm2:"",
-          current_index:1,
           row_height:550
         }
       },
   methods: {
+    //  resetPage()
+    //   {
+    //       // this.edit1=this.row_record[this.current_index].left_edit;
+    //       this.edit2=false;
+    //       this.bw1=false;
+    //       this.bw2=false;
+    //   },
      changeEvent(attr_key)
       {
-         console.log(attr_key);
+         let value = {};
          switch(attr_key){
-           case 'left_greyscale': value=bw1; break;
-           case 'right_greyscale': value=bw2; break;
-           case 'left_edit': value=edit1; break;
-           case 'right_edit': value=edit2; break;
-           case 'left_comment': value=cm1; break;
-           case 'right_comment': value=cm2; break;
+           case 'left_greyscale': value=this.bw1; break;
+           case 'right_greyscale': value=this.bw2; break;
+           case 'left_edit': value=this.edit1; break;
+           case 'right_edit': value=this.edit2; break;
+           case 'left_comment': value=this.cm1; break;
+           case 'right_comment': value=this.cm2; break;
          }
-          this.$emit("changeRowValue", {current_index:this.current_index, attr:attr_key, val:value});
+          this.$emit("changeRowValue", {current_index:this.current_index, attr:attr_key, value});
       }
   },
   computed:{
@@ -143,15 +155,7 @@
         }),
       page(){
         return this.row_record[this.current_index-1]||{};
-      },
-      resetPage()
-      {
-          edit1=false;
-          edit2=false;
-          bw1=false;
-          bw2=false;
-      },
-     
+      }     
   }
 };
 </script>
