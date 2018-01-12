@@ -167,8 +167,6 @@ import _ from "lodash";
 export default {
   name: "Pagination",
   components:{
-      PageModalAffiliation,
-      PageModalUploadPdf
     },
    created () {
        this.pageResetOption();
@@ -181,8 +179,6 @@ export default {
   methods: {
       ...mapActions([
           "pageUpdateOption",
-          "pageUpdateAffiliationIndex",
-          "pageDeleteAffiliation",
           "pageUpdateVersionIndex",
           "pageDeleteVersion",
           "getPageById",
