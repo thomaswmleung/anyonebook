@@ -80,7 +80,8 @@
                  :length="Math.ceil(row_record.length)" 
                  v-model="current_index" 
                  :total-visible="7" 
-                 >
+                 @input = "resetPage()"
+                >
             </v-pagination>
             (Total Record:  {{row_record.length}})
           </v-flex>
@@ -128,6 +129,15 @@
         }
       },
   methods: {
+     resetPage()
+      {
+          this.edit1=this.row_record[this.current_index-1].left_edit;
+          this.edit2=this.row_record[this.current_index-1].right_edit;
+          this.bw1=this.row_record[this.current_index-1].left_greyscale;
+          this.bw2=this.row_record[this.current_index-1].right_greyscale;
+          this.cm1=this.row_record[this.current_index-1].left_comment;
+          this.cm2=this.row_record[this.current_index-1].right_comment;
+      },
      changeEvent(attr_key)
       {
          let value = {};
@@ -139,7 +149,7 @@
            case 'left_comment': value=this.cm1; break;
            case 'right_comment': value=this.cm2; break;
          }
-          this.$emit("changeRowValue", {current_index:this.current_index, attr:attr_key, value});
+          this.$emit("changeRowValue", {current_index:this.current_index-1, attr:attr_key, value});
       }
   },
   computed:{
