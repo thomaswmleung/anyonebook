@@ -80,6 +80,7 @@
                  :length="Math.ceil(row_record.length)" 
                  v-model="current_index" 
                  :total-visible="7" 
+                 @input = "resetPage()"
                 >
             </v-pagination>
             (Total Record:  {{row_record.length}})
@@ -128,13 +129,13 @@
         }
       },
   methods: {
-    //  resetPage()
-    //   {
-    //       // this.edit1=this.row_record[this.current_index].left_edit;
-    //       this.edit2=false;
-    //       this.bw1=false;
-    //       this.bw2=false;
-    //   },
+     resetPage()
+      {
+          this.edit1=this.row_record[this.current_index-1].left_edit;
+          this.edit2=false;
+          this.bw1=false;
+          this.bw2=false;
+      },
      changeEvent(attr_key)
       {
          let value = {};
