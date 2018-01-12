@@ -8,16 +8,20 @@
               <v-switch              
                 :label="edit1?$t('Edit'):$t('No Edit')"
                 v-model="edit1"
+                @change="changeEvent('left_edit')"
               ></v-switch>
               <v-switch
                 :label="bw1?$t('Black/White'):$t('Color')"
                 v-model="bw1"
+                @change="changeEvent('left_greyscale')"
               ></v-switch>
               <v-text-field
                 v-if="edit1"
                 name="Edit"
                 label="Comment here"
+                v-model="cm1"
                 textarea
+                @input="changeEvent('left_comment')"
               ></v-text-field>
             </v-card>
           </v-flex>
@@ -52,16 +56,20 @@
               <v-switch              
                 :label="edit2?$t('Edit'):$t('No Edit')"
                 v-model="edit2"
+                @change="changeEvent('right_edit')"
               ></v-switch>
               <v-switch
                 :label="bw2?$t('Black/White'):$t('Color')"
                 v-model="bw2"
+                @change="changeEvent('right_greyscale')"
               ></v-switch>
               <v-text-field
                 v-if="edit2"
                 name="Edit"
                 label="Comment here"
+                v-model="cm2"
                 textarea
+                @input="changeEvent('right_comment')"
                 ></v-text-field>
             </v-card>
           </v-flex>
@@ -108,17 +116,25 @@
           edit2:false,
           bw1:false,
           bw2:false,
+          cm1:"",
+          cm2:"",
           current_index:1,
           row_height:550
         }
       },
   methods: {
-      resetPage()
+     changeEvent(attr_key)
       {
-          edit1=false;
-          edit2=false;
-          bw1=false;
-          bw2=false;
+         console.log(attr_key);
+         switch(attr_key){
+           case 'left_greyscale': value=bw1; break;
+           case 'right_greyscale': value=bw2; break;
+           case 'left_edit': value=edit1; break;
+           case 'right_edit': value=edit2; break;
+           case 'left_comment': value=cm1; break;
+           case 'right_comment': value=cm2; break;
+         }
+          this.$emit("changeRowValue", {current_index:this.current_index, attr:attr_key, val:value});
       }
   },
   computed:{
@@ -127,7 +143,15 @@
         }),
       page(){
         return this.row_record[this.current_index-1]||{};
-      }
+      },
+      resetPage()
+      {
+          edit1=false;
+          edit2=false;
+          bw1=false;
+          bw2=false;
+      },
+     
   }
 };
 </script>
