@@ -209,7 +209,7 @@ import BookRowImage from "@/components/partial/book-row-image"
                 right_page_obj:{},             
                 preview:false,
                 tools:false,
-                left_greyscale:true,
+                left_greyscale:false,
                 left_comment:"",
                 right_greyscale:false,
                 right_comment:"",
