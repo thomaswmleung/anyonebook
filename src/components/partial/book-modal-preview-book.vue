@@ -93,6 +93,9 @@
         </v-layout>
         <v-card-actions>
           <v-spacer></v-spacer>
+          <v-btn color="blue darken-1" flat @click.native="processBook">
+            {{$t('Save')}}
+          </v-btn>
           <v-btn color="blue darken-1" flat @click.native="$emit('close_dialog');">
             {{$t("Close")}}
           </v-btn>
@@ -114,6 +117,7 @@
   import { getExtension } from '@/shared/helpers'
   
   import BookRowImage from "@/components/partial/book-row-image"
+  import jsSHA from "jssha"
 
   export default{
       name:"BookModalPreviewBook",
@@ -134,6 +138,10 @@
         }
       },
   methods: {
+    ...mapActions([
+      "createBook",
+      "showFullscreenLoader"
+    ]),
     //reset the value of the switch for every page
      resetPage()
       {
@@ -158,11 +166,39 @@
          }
          //emit an event to CreateBook to handle the changes
           this.$emit("changeRowValue", {current_index:this.current_index-1, attr:attr_key, value});
+      },
+      processBook()
+      {
+         let _instance = this;
+        let book = {};
+        book._id = "";
+        book.content = JSON.stringify({
+                    row_pages: this.row_record, // from CreatBook component
+                    book_metadata:{} // from CreatBook component
+                });
+        let shaObj = new jsSHA('SHA-256', "TEXT");
+        shaObj.update(book.content); 
+        book.page_code = `${this.user_data._id}-${shaObj.getHash("B64")}` ; //user id from getters , hash obj return a set of string
+       
+        this.createBook({book}).then(
+                response=>{
+                  //hide loading
+                  _instance.showFullscreenLoader(false);
+                  _instance.$router.push(`/create_book/${book._id}`);
+                 _instance.$emit("close_dialog");
+                 },
+            error=>{
+              // Vue.toasted(_instance.$t('Fail to create Book Record'));
+              console.log(error);
+              _instance.showFullscreenLoader(false);
+            }
+            )
       }
   },
   computed:{
         ...mapGetters({
-            all_page:"allPages"
+            all_page:"allPages",
+            user_data: "userData"
         }),
       page(){
         return this.row_record[this.current_index-1]||{};
