@@ -167,8 +167,6 @@ import _ from "lodash";
 export default {
   name: "Pagination",
   components:{
-      PageModalAffiliation,
-      PageModalUploadPdf
     },
    created () {
        this.pageResetOption();
