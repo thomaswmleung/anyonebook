@@ -5,7 +5,7 @@
                 <v-layout row wrap>
                     <v-flex xs3>{{$t('Codex')}}</v-flex>
                     <v-flex xs9>
-                        <v-select :items="option.codex" 
+                        <v-select :items="option.codex"
                                     item-value="code"
                                     item-text="label"
                                     v-model="current_page.codex"
@@ -15,7 +15,7 @@
 
                     <v-flex xs3>{{$t('Syllabus')}}</v-flex>
                     <v-flex xs9>
-                        <v-select :items="option.syllabus" 
+                        <v-select :items="option.syllabus"
                                     item-value="code"
                                     item-text="label"
                                     v-model="current_page.syllabus_code"
@@ -25,35 +25,35 @@
 
                     <v-flex xs3>{{$t('Domain')}}</v-flex>
                     <v-flex xs9>
-                        <v-select :items="option.domain" 
+                        <v-select :items="option.domain"
                                     v-model="current_page.domain"
                                     @input="pageUpdateOption({type:'domain',values:$event})"
                                     :label="$t('Domain')" editable ></v-select>
                     </v-flex>
 
                     <v-flex xs3>{{$t('Area')}}</v-flex>
-                    <v-flex xs9><v-select :items="option.area" 
+                    <v-flex xs9><v-select :items="option.area"
                     v-model="current_page.area"
-                                    @input="pageUpdateOption({type:'area',values:$event})"                        
+                                    @input="pageUpdateOption({type:'area',values:$event})"
                                     :label="$t('Area')" editable ></v-select></v-flex>
-                    
+
                     <v-flex xs3>{{$t('Knowledge Unit')}}</v-flex>
-                    <v-flex xs9><v-select :items="option.knowledge_unit" 
+                    <v-flex xs9><v-select :items="option.knowledge_unit"
                     v-model="current_page.knowledge_unit"
-                                    @input="pageUpdateOption({type:'knowledge_unit',values:$event})"                                              
+                                    @input="pageUpdateOption({type:'knowledge_unit',values:$event})"
                                     :label="$t('Knowledge Unit')" editable ></v-select>
-                    </v-flex>                                
+                    </v-flex>
 
                      <v-flex xs3>{{$t('Learning Objective')}}</v-flex>
                     <v-flex xs9>
-                        <v-select 
+                        <v-select
                             multiple
-                            :items="option.learning_objective" 
+                            :items="option.learning_objective"
                             v-model="current_page.learning_objective"
-                            @input="pageUpdateOption({type:'learning_objective',values:$event})"                                              
+                            @input="pageUpdateOption({type:'learning_objective',values:$event})"
                             :label="$t('Learning Objective')" editable ></v-select>
-                    </v-flex> 
-                    
+                    </v-flex>
+
                     <v-flex xs12 >
                         <v-text-field
                             :label="$t('Particulars')"
@@ -74,15 +74,15 @@
                             v-model="current_page.remark"
                             @input="pageUpdateOption({type:'remark',values:$event})"
                         ></v-text-field>
-                    </v-flex>  
+                    </v-flex>
                     <v-flex xs8>
                         <!-- @TODO mapping existing page to previous page, if previous page is exist -->
-                        <v-btn v-if="current_page.previous_page_id==''">{{$t('Link Previous Page')}}</v-btn>
-                    </v-flex>              
-                </v-layout>                
+                        <v-btn v-if="current_page.previous_page_id==''" @click.stop="$emit('show_select_book')">{{$t('Link Previous Page')}}</v-btn>
+                    </v-flex>
+                </v-layout>
             </v-form>
         </v-container>
-    </v-card> 
+    </v-card>
 </template>
 <script>
 import Vue from 'vue';
@@ -92,11 +92,11 @@ import _ from "lodash";
 
 export default {
   name: "PageDetailForm",
-  computed:{      
+  computed:{
         ...mapGetters({
             current_page:"currentPage",
             option:"PageSyllabusOptions",
-        })  
+        })
   },
   methods: {
       ...mapActions([
@@ -106,9 +106,9 @@ export default {
         ]),
         addPreviousPageRecord(){
             //Add Page Record
-            //Get Page Record by Page ID 
+            //Get Page Record by Page ID
 
-            // Case has multiple pages 
+            // Case has multiple pages
         },
         updateSyllabusOption(){
 

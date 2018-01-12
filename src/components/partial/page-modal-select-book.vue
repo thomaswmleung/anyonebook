@@ -1,4 +1,5 @@
 <template>
+  <v-dialog v-model="show" persistent max-width="950px">
     <v-container grid-list-md >
         <v-layout row wrap>
 
@@ -132,10 +133,7 @@
                                 <v-carousel-item v-for="item in page.preview_image_array" v-bind:src="item" :key="item._id" cycle="false"></v-carousel-item>
                               </v-carousel>
                             </v-flex>
-                            <router-link :to="`/upload_page/${page._id}`" tag="button">
-                              <v-btn color="primary">{{$t('Edit')}}</v-btn>
-                            </router-link>
-                            <v-btn color="error" @click.stop="deletePage({page})">{{$t('Delete')}}</v-btn>
+                            <v-btn color="error" @click.native="$emit('close_dialog')">{{$t('Select')}}</v-btn>
                             </v-container>
                         </v-card>
                     </v-flex>
@@ -151,6 +149,7 @@
             </v-flex>
         </v-layout>
      </v-container>
+   </v-dialog>
 </template>
 <style scoped>
     li.complete {
@@ -165,11 +164,10 @@ import {mapGetters,mapActions} from "vuex";
 import _ from "lodash";
 
 export default {
-  name: "Pagination",
+  name: "PageModalSelectBook",
   components:{
-      PageModalAffiliation,
-      PageModalUploadPdf
-    },
+
+  },
    created () {
        this.pageResetOption();
        this.fetchData();

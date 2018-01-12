@@ -1,11 +1,11 @@
 <template>
-    <v-container fluid >        
+    <v-container fluid >
         <v-layout row wrap>
             <v-flex md3>
-                <v-card hover 
-                    v-for="option in version_option_list" 
+                <v-card hover
+                    v-for="option in version_option_list"
                     :key="option.label"
-                    style="margin-top:0.3em"                    
+                    style="margin-top:0.3em"
                     >
                     <div @click.stop="show_upload_pdf=true; updateCurrentVersion(option)">
                         <v-card-title style="font-size:1.2em">
@@ -31,18 +31,18 @@
                                 </v-btn>
                             </h3>
                         </v-card-title>
-                    <v-card-text>                        
+                    <v-card-text>
                         <v-btn x-large style="height:8em;width:100%" @click.stop="uploadPDF">
                             <v-icon x-large v-html="uploadIcon"></v-icon>
                         </v-btn>
-                    </v-card-text> 
+                    </v-card-text>
 
                     <v-layout row wrap>
                     <v-flex>
                         <v-card hover >
                             <v-card-title>
                                 <h3 class="subtitle">
-                                    <span>{{$t('version')}}</span> 
+                                    <span>{{$t('version')}}</span>
                                     <v-btn fab dark small color="primary" @click.stop="uploadPDF">
                                         <v-icon>{{uploadIcon}}</v-icon>
                                     </v-btn>
@@ -52,13 +52,13 @@
                             <!-- Listing PDF version-->
                                 <v-layout row wrap>
                                     <!-- user level nature position output file_path_btn preview_btn remove_btn -->
-                                    <v-flex  v-for="(row,idx) in current_page.version" 
-                                            :key="row.user+row.level+row.nature+row.position+row.output" 
+                                    <v-flex  v-for="(row,idx) in current_page.version"
+                                            :key="row.user+row.level+row.nature+row.position+row.output"
                                         xs12 md6 >
                                         <v-card>
                                             <div style="padding:1em;font-size:1.1em">
-                                                <span 
-                                                    v-for="lbl in ['user','level','nature','position','output']" 
+                                                <span
+                                                    v-for="lbl in ['user','level','nature','position','output']"
                                                     :key="lbl">
                                                     {{versionField(lbl,row[lbl])}}&nbsp;&nbsp;
                                                 </span>
@@ -72,29 +72,33 @@
                                                     </v-btn>
                                                 </span>
                                             </div>
-                                        </v-card>                                                    
-                                    </v-flex>                                                                                               
+                                        </v-card>
+                                    </v-flex>
                                 </v-layout>
                             </v-container>
                         </v-card>
-                    </v-flex>            
+                    </v-flex>
                 </v-layout>
-                <page-affiliaton-list></page-affiliaton-list>              
+                <page-affiliaton-list></page-affiliaton-list>
                 </v-card>
-                
+
             </v-flex>
              <v-flex md3>
-                 <page-detail-form></page-detail-form>
+                 <page-detail-form @show_select_book="show_select_book = true"></page-detail-form>
             </v-flex>
         </v-layout>
         <!--
-            include the modal(dialog) for different PDF version upload                       
+            include the modal(dialog) for different PDF version upload
         -->
         <page-modal-upload-pdf
             :show="show_upload_pdf"
             @close_dialog = "show_upload_pdf=false">
         </page-modal-upload-pdf>
-        
+        <page-modal-select-book
+            :show="show_select_book"
+            @close_dialog = "show_select_book=false">
+        </page-modal-select-book>
+
      </v-container>
 </template>
 <style scoped>
@@ -109,6 +113,7 @@ import {mapGetters,mapActions} from "vuex";
 // import {syllabus} from "@/store/static-record";
 import _ from "lodash";
 
+import PageModalSelectBook from "@/components/partial/page-modal-select-book"
 import PageModalUploadPdf from "@/components/partial/page-modal-upload-pdf"
 import PageAffiliatonList from "@/components/partial/page-affiliation-list"
 import PageDetailForm from "@/components/partial/page-detail-form"
@@ -117,6 +122,7 @@ import PageDetailForm from "@/components/partial/page-detail-form"
 export default {
   name: "Pagination",
   components:{
+      PageModalSelectBook,
       PageModalUploadPdf,
       PageAffiliatonList,
       PageDetailForm,
@@ -143,25 +149,25 @@ export default {
             if(this.$route.params.id){
                 this.getPageById(this.$route.params.id)
             }else{
-                this.pageResetOption();   
+                this.pageResetOption();
             }
         },
         //
         versionField(lbl,value){
             let _record =_.find(this.option[lbl],{code:value});
-            return _record?_record["label"]:"" 
+            return _record?_record["label"]:""
         },
         updateCurrentVersion(opt){
-           let i ; 
-           for(i in opt){
+            let i;
+            for(i in opt){
                if(i != "label"){
                    this.pageUpdateVersion({attr:i,val:opt[i].code })
                }
-           }
+            }
         },
-    //Upload PDF process - trigger 
+    //Upload PDF process - trigger
         uploadPDF() {
-            //validate meta information filled or not 
+            //validate meta information filled or not
             let processBoolFlag = true;
             let attr;
            ['codex','syllabus_code','domain','area'].forEach(
@@ -172,20 +178,20 @@ export default {
             //  console.log("Upload PDF",processBoolFlag, this.current_page,this.$t);
             if(processBoolFlag){
                 this.pageUpdateVersionIndex(-1);
-                //Show PDF upload modal 
+                //Show PDF upload modal
                 this.show_upload_pdf = true;
             }else{
                 // if not show a the toast require to fill the page information, and close the modal
-                Vue.toasted.error(this.$t('Please fill page information before upload')).goAway(3000);                
+                Vue.toasted.error(this.$t('Please fill page information before upload')).goAway(3000);
             }
         },
-    
+
   },
-  computed:{      
+  computed:{
         ...mapGetters({
             option:"PageSyllabusOptions",
-            current_page:"currentPage",  
-        })  
+            current_page:"currentPage",
+        })
   },
   data() {
     return {
@@ -199,12 +205,13 @@ export default {
       area:"",
       knowledge_unit:"",
     //   all_syllabus:syllabus,
-      
+
 
       previous_page_id:"",
-      
+
+      show_select_book: false,
       show_upload_pdf:false,
-      version_option_list:[ 
+      version_option_list:[
           {label:"Student Baseline B&W",
             user:{ code: "S", label: "Student Un-coded" },
             level:{ code: "B", label: "Baseline" },
