@@ -551,7 +551,7 @@ const actions= {
                       response=>{
                         let message = `Page is deleted successfully`;
                         response.message = message;
-                        resolve(response);
+                        resolve(response)
                       }
                   ).catch((errors) => {
                     reject(errors);

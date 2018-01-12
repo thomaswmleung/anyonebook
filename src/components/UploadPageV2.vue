@@ -99,7 +99,12 @@
             @update_previous_page_id="updatePrevPageId"
             @close_dialog = "show_select_book=false">
         </page-modal-select-book>
-
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn @click.native="save()">
+            {{$t("Submit")}}
+          </v-btn>
+        </v-card-actions>
      </v-container>
 </template>
 <style scoped>
@@ -143,6 +148,8 @@ export default {
           "pageDeleteVersion",
           "getPageById",
           "pageResetOption",
+          "createPage",
+          "showFullscreenLoader"
         ]),
         fetchData(){
             // fetch the data when the view is created and the data is
@@ -166,7 +173,7 @@ export default {
                }
             }
         },
-    //Upload PDF process - trigger
+        //Upload PDF process - trigger
         uploadPDF() {
             //validate meta information filled or not
             let processBoolFlag = true;
@@ -187,10 +194,46 @@ export default {
             }
         },
 
-      updatePrevPageId(id) {
-        console.log('previous pgae id ' + id)
-        this.pageUpdateOption({type:'previous_page_id',values:id})
-      }
+        updatePrevPageId(id) {
+          console.log('previous pgae id ' + id)
+          this.pageUpdateOption({type:'previous_page_id',values:id})
+        },
+
+        save(){
+          let page_parameter = {};
+          let _instance = this;
+          // this.pagePushOrModifyVersionArray()
+            //this.$emit('close_dialog');
+            //Check page group id is exist or not
+            this.showFullscreenLoader(true);
+              //If not,create a new page
+              page_parameter.page_group= _.clone(this.current_page);
+              page_parameter._id = page_parameter.page_group._id;
+              //custom mapping
+              page_parameter.page_group.subdomain = page_parameter.page_group.area;
+              page_parameter.page_group.sub_title = page_parameter.page_group.knowledge_unit;
+              page_parameter.page_group.layout = page_parameter.page_group.syllabus;
+              page_parameter.page_group.previous_page_id = page_parameter.page_group.previous_page_id;
+              // page_parameter.page_group.page = [];
+              // delete page_parameter.page_group._id;
+
+              //format the parameter and call page_group API, wait for return
+              this.createPage({page:page_parameter})
+                .then(response=>{
+                    //update page-group-id
+                    _instance.pageUpdateOption({
+                      type:"_id",
+                      values:response.page_group_id
+                    });
+                    _instance.showFullscreenLoader(false);
+                  },
+                  error=>{
+                    console.error($t('Fail to create Page Record'),error);
+                    Vue.toasted($t('Fail to create Page Record'));
+                    _instance.showFullscreenLoader(false);
+                  }
+                )
+        }
   },
   computed:{
         ...mapGetters({

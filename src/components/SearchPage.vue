@@ -135,7 +135,7 @@
                             <router-link :to="`/upload_page/${page._id}`" tag="button">
                               <v-btn color="primary">{{$t('Edit')}}</v-btn>
                             </router-link>
-                            <v-btn color="error" @click.stop="deletePage({page})">{{$t('Delete')}}</v-btn>
+                            <v-btn color="error" @click.stop="deletePage({page}); fetchData()">{{$t('Delete')}}</v-btn>
                             </v-container>
                         </v-card>
                     </v-flex>
