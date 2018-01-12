@@ -103,6 +103,7 @@
                                                     :all_pages="all_pages"
                                                     :page="page"
                                                     :row_height="row_height"
+                                                    :grey="page.left_greyscale"
                                                     side="left">
                                                 </book-row-image>
                                             </v-flex>
@@ -111,6 +112,7 @@
                                                     :all_pages="all_pages"
                                                     :page="page"
                                                     :row_height="row_height"
+                                                    :grey="page.right_greyscale"
                                                     @updatePageIndex="updatePageIndex"
                                                     side="right">
                                                 </book-row-image>
@@ -207,7 +209,7 @@ import BookRowImage from "@/components/partial/book-row-image"
                 right_page_obj:{},             
                 preview:false,
                 tools:false,
-                left_greyscale:false,
+                left_greyscale:true,
                 left_comment:"",
                 right_greyscale:false,
                 right_comment:"",
@@ -244,12 +246,10 @@ import BookRowImage from "@/components/partial/book-row-image"
       updatePageIndex(params){
 
       },
-      changeRowValue({index, attribute, value})
+      changeRowValue({current_index, attr, value})
       {
-          this.area_rows[index][attribute] = value;
-      },
-      changeRowValue(event){
-          console.log(event);
+          console.log(this.area_rows,current_index,attr,value);
+          this.area_rows[current_index][attr] = value;
       }
   },
   created () {

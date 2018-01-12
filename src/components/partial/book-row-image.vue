@@ -93,7 +93,7 @@ export default {
         ]),
      inited (viewer) {
       this.$viewer = viewer
-      if(this.grey ){
+      if(this.grey&&this.$viewer.image){
         this.$viewer.image.style.filter ="grayscale(100)"
       }
     },
