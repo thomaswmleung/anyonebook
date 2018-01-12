@@ -6684,6 +6684,12 @@ uuid@^2.0.2:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-2.0.3.tgz#67e2e863797215530dff318e5bf9dcebfd47b21a"
 
+v-viewer@^0.3.1:
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/v-viewer/-/v-viewer-0.3.1.tgz#5f17c1fd3688df406b8c16d57db751e3a4aea305"
+  dependencies:
+    viewerjs "^1.0.0-beta.1"
+
 validate-npm-package-license@^3.0.1:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/validate-npm-package-license/-/validate-npm-package-license-3.0.1.tgz#2804babe712ad3379459acfbe24746ab2c303fbc"
@@ -6706,6 +6712,10 @@ verror@1.10.0:
     assert-plus "^1.0.0"
     core-util-is "1.0.2"
     extsprintf "^1.2.0"
+
+viewerjs@^1.0.0-beta.1:
+  version "1.0.0-beta.1"
+  resolved "https://registry.yarnpkg.com/viewerjs/-/viewerjs-1.0.0-beta.1.tgz#52f04812fe232c68860832dafd8794cb3ca2b88a"
 
 vm-browserify@0.0.4:
   version "0.0.4"

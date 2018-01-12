@@ -125,7 +125,10 @@
             :show="show_preview_book"
             :row_record="area_rows"
             :all_pages="all_pages"
-            @close_dialog = "show_preview_book=false">
+            @close_dialog = "show_preview_book=false"
+            @changeRowValue="changeRowValue"
+            >
+
         </book-modal-preview-book>
      </v-container>
 </template>
@@ -203,7 +206,13 @@ import BookRowImage from "@/components/partial/book-row-image"
                 right_index:1,
                 right_page_obj:{},             
                 preview:false,
-                tools:false
+                tools:false,
+                left_greyscale:false,
+                left_comment:"",
+                right_greyscale:false,
+                right_comment:"",
+                left_edit:false,
+                right_edit:false
             });
     },
 
@@ -234,6 +243,13 @@ import BookRowImage from "@/components/partial/book-row-image"
       },
       updatePageIndex(params){
 
+      },
+      changeRowValue({index, attribute, value})
+      {
+          this.area_rows[index][attribute] = value;
+      },
+      changeRowValue(event){
+          console.log(event);
       }
   },
   created () {
