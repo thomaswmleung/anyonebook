@@ -1,5 +1,5 @@
 <template>
-    <v-container grid-list-md text-xs-center id="dragContainer">
+    <v-container grid-list-md text-xs-center >
         <v-layout row wrap>
             <v-flex md12>
                 <!-- TODO MetaData form  -->
@@ -57,17 +57,16 @@
                 </v-flex> 
 
             </v-flex>
-             <v-flex xs12 md9 class="rowContainer toc" id="toc" > 
-                       <v-layout row wrap v-if="area_rows.length==0">
-                           <v-flex xs12 class="title " >
-                               <v-card >
-                                <v-card-text class="px-0">{{$t("Please Add Your Row")}}</v-card-text>
-                              </v-card>
-                           </v-flex>
-                       </v-layout>
+            <v-flex x12 class="title"  v-if="area_rows.length==0">
+                <v-card >
+                    <v-card-text class="px-0">{{$t("Please Add Your Row")}}</v-card-text>
+                </v-card>
+            </v-flex>
+             <v-flex xs12 md9 id="dragContainer" class="rowContainer toc"  > 
+
                        <v-layout row wrap 
                             v-for="(page,index) in area_rows" 
-                            :key="page.domain+page.area+page.knowledge_unit" 
+                            :key="index+page.domain+page.area+page.ku" 
                             :data="page"
                             :id="`${index}`"
                             class="rowItem toc">
@@ -77,7 +76,7 @@
                                             <h3 class="title mb-1">{{page.area}} </h3>
                                             <span >{{page.domain}}</span>
                                         </v-flex>
-                                            <v-flex xs4  >
+                                        <v-flex xs4  >
                                             <h3 class="subtitle mb-1">{{page.ku}} </h3>
                                         </v-flex>
                                         <v-flex xs4 text-xs-right >
@@ -122,12 +121,12 @@
             </v-flex>
 
         </v-layout>
-        <page-modal-preview-book
+        <book-modal-preview-book
             :show="show_preview_book"
             :row_record="area_rows"
             :all_pages="all_pages"
             @close_dialog = "show_preview_book=false">
-        </page-modal-preview-book>
+        </book-modal-preview-book>
      </v-container>
 </template>
 <style scoped>
@@ -146,13 +145,13 @@ import { Http,ApiPrivateHttp } from '@/shared/http-service'
 // import {syllabus} from "@/store/static-record";
 import _ from "lodash";
 
-import PageModalPreviewBook from "@/components/partial/page-modal-preview-book"
+import BookModalPreviewBook from "@/components/partial/book-modal-preview-book"
 import BookRowImage from "@/components/partial/book-row-image"
 
  export default {
   name: 'Pagination',
   components:{
-      PageModalPreviewBook,
+      BookModalPreviewBook,
       BookRowImage,
     },
   methods: {

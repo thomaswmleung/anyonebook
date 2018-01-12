@@ -5,6 +5,7 @@ import Vuex from 'vuex'
 import Toasted from 'vue-toasted'
 // load vuex i18n module
 import vuexI18n from 'vuex-i18n';
+import Viewer from 'v-viewer'
 
 import {translationsEn, translationsTc} from "@/translations";
 
@@ -14,6 +15,7 @@ import {DEBUG} from '@/env';
 
 Vue.use(Vuex);
 Vue.use(Toasted);
+Vue.use(Viewer);
 // initialize the vuex store using the vuex module. note that you can change the
 //  name of the module if you wish
 // const store = new Vuex.Store();
