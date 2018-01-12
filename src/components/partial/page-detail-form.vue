@@ -78,6 +78,9 @@
                     <v-flex xs8>
                         <!-- @TODO mapping existing page to previous page, if previous page is exist -->
                         <v-btn v-if="current_page.previous_page_id==''" @click.stop="$emit('show_select_book')">{{$t('Link Previous Page')}}</v-btn>
+                        <v-flex v-else>
+                            {{$t('Link Previous Page')}}: {{current_page.previous_page_id}}<br>
+                        </v-flex>
                     </v-flex>
                 </v-layout>
             </v-form>

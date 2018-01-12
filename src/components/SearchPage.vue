@@ -179,8 +179,6 @@ export default {
   methods: {
       ...mapActions([
           "pageUpdateOption",
-          "pageUpdateAffiliationIndex",
-          "pageDeleteAffiliation",
           "pageUpdateVersionIndex",
           "pageDeleteVersion",
           "getPageById",

@@ -314,6 +314,9 @@ const mutations ={
             if(params.type=="_id"){
                 state.current_page._id = params.values;
             }
+            if(params.type=="previous_page_id"){
+                state.current_page._id = params.values;
+            }
             state.current_page[params.type]= params.values;
         },
         [types.PAGE_RESET_OPTION](state, params) {
