@@ -4,6 +4,8 @@
       <v-container fluid text-xs-center>
         <v-layout row wrap>
           <v-flex xs2>
+            <!-- Create a card for control button for the left image of the row -->
+                <!-- Edit by adding comment and control the color -->
             <v-card>
               <v-switch              
                 :label="edit1?$t('Edit'):$t('No Edit')"
@@ -26,6 +28,7 @@
             </v-card>
           </v-flex>
           <v-flex xs8>
+            <!-- Create a card for displaying the image of the row -->
             <v-card>
               <v-container>
                 <v-layout row wrap :style="{height:`${row_height}px`,overflow:'scroll'}" >
@@ -52,6 +55,8 @@
             </v-card>
           </v-flex>
           <v-flex xs2>
+            <!-- Create a card for control button for the right image of the row -->
+                <!-- Edit by adding comment and control the color -->
             <v-card>
               <v-switch              
                 :label="edit2?$t('Edit'):$t('No Edit')"
@@ -129,6 +134,7 @@
         }
       },
   methods: {
+    //reset the value of the switch for every page
      resetPage()
       {
           this.edit1=this.row_record[this.current_index-1].left_edit;
@@ -138,6 +144,7 @@
           this.cm1=this.row_record[this.current_index-1].left_comment;
           this.cm2=this.row_record[this.current_index-1].right_comment;
       },
+    //handle the value changed caused by the action
      changeEvent(attr_key)
       {
          let value = {};
@@ -149,6 +156,7 @@
            case 'left_comment': value=this.cm1; break;
            case 'right_comment': value=this.cm2; break;
          }
+         //emit an event to CreateBook to handle the changes
           this.$emit("changeRowValue", {current_index:this.current_index-1, attr:attr_key, value});
       }
   },

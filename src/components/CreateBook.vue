@@ -246,6 +246,7 @@ import BookRowImage from "@/components/partial/book-row-image"
       updatePageIndex(params){
 
       },
+      //handle the data changed passed from BookModalPreviewBook
       changeRowValue({current_index, attr, value})
       {
           console.log(this.area_rows,current_index,attr,value);
