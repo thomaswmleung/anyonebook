@@ -189,7 +189,7 @@ export default {
 
       updatePrevPageId(id) {
         console.log('previous pgae id ' + id)
-        this.previous_page_id = id;
+        this.pageUpdateOption({type:'previous_page_id',values:id})
       }
   },
   computed:{
