@@ -96,6 +96,7 @@
         </page-modal-upload-pdf>
         <page-modal-select-book
             :show="show_select_book"
+            @update_previous_page_id="updatePrevPageId"
             @close_dialog = "show_select_book=false">
         </page-modal-select-book>
 
@@ -186,6 +187,10 @@ export default {
             }
         },
 
+      updatePrevPageId(id) {
+        console.log('previous pgae id ' + id)
+        this.previous_page_id = id;
+      }
   },
   computed:{
         ...mapGetters({
