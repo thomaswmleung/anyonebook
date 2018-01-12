@@ -315,7 +315,7 @@ const mutations ={
                 state.current_page._id = params.values;
             }
             if(params.type=="previous_page_id"){
-                state.current_page._id = params.values;
+                state.current_page.previous_page_id = params.values;
             }
             state.current_page[params.type]= params.values;
         },
