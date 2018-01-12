@@ -1,5 +1,6 @@
 <template>
   <v-dialog v-model="show" persistent max-width="950px">
+  <v-card>
     <v-container grid-list-md >
         <v-layout row wrap>
 
@@ -133,7 +134,7 @@
                                 <v-carousel-item v-for="item in page.preview_image_array" v-bind:src="item" :key="item._id" cycle="false"></v-carousel-item>
                               </v-carousel>
                             </v-flex>
-                            <v-btn color="error" @click.native="$emit('close_dialog')">{{$t('Select')}}</v-btn>
+                            <v-btn color="error" @click.native="$emit('update_previous_page_id', page._id); $emit('close_dialog');">{{$t('Select')}}</v-btn>
                             </v-container>
                         </v-card>
                     </v-flex>
@@ -149,6 +150,14 @@
             </v-flex>
         </v-layout>
      </v-container>
+  <v-card-actions>
+    <v-spacer></v-spacer>
+    <v-btn color="blue darken-1" flat @click.native="$emit('close_dialog');pageResetVersion()">
+      {{$t("Close")}}
+    </v-btn>
+  </v-card-actions>
+
+  </v-card>
    </v-dialog>
 </template>
 <style scoped>
@@ -218,6 +227,7 @@ export default {
             all_page:"allPages"
         })
   },
+  props:["show"],
   data() {
     return {
       dialog: false,
