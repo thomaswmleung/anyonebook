@@ -104,6 +104,8 @@
                                                     :page="page"
                                                     :row_height="row_height"
                                                     :grey="page.left_greyscale"
+                                                    :current_index="index"
+                                                    @changeRowValue="changeRowValue"
                                                     side="left">
                                                 </book-row-image>
                                             </v-flex>
@@ -113,7 +115,8 @@
                                                     :page="page"
                                                     :row_height="row_height"
                                                     :grey="page.right_greyscale"
-                                                    @updatePageIndex="updatePageIndex"
+                                                    :current_index="index"
+                                                    @changeRowValue="changeRowValue"
                                                     side="right">
                                                 </book-row-image>
                                             </v-flex>

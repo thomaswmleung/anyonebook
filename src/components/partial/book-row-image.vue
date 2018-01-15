@@ -3,7 +3,7 @@
         <v-flex xs1 style="margin:auto">
             <v-btn fab dark small 
                   v-if="show_arrow('left')"
-                  @click.stop="updatePageIndex()"
+                  @click.stop="updatePageIndex('left')"
                   color="primary" 
                   class="xsBtn" >
                 <v-icon>keyboard_arrow_left</v-icon>
@@ -65,7 +65,10 @@
             </v-btn>
         </v-flex>
         <v-flex xs1 style="margin:auto">
-                <v-btn  fab dark small color="primary" class="xsBtn"  v-if="show_arrow('right')">
+            <v-btn  fab dark small color="primary" 
+                class="xsBtn"  
+                v-if="show_arrow('right')"                
+                @click.stop="updatePageIndex('right')">
                 <v-icon>keyboard_arrow_right</v-icon>
             </v-btn>
         </v-flex>                                                    
@@ -79,11 +82,14 @@ import _ from "lodash";
 
 export default {
   name: "BookRowImage",
-  props:["all_pages",
-    "page",
-    "row_height",
-    "side",
-    "grey"],
+  props:[
+      "all_pages",
+      "page",
+      "row_height",
+      "side",
+      "grey",
+      "current_index"
+      ],
   computed:{      
         ...mapGetters({
         })  
@@ -99,46 +105,70 @@ export default {
     },
     getImage(){
         let {
-             domain, 
-             area,
-             ku,
              left_index, 
-             right_index
+             right_index,
             } = this.page;
-        let pageRow  = _.filter(this.pages,{
-            domain,
-            area,
-            knowledge_unit:ku
-        });
         let path = false;
         let pageObj = {}
-        if(pageRow){
-            pageObj = pageRow[this.side=="left"?left_index:right_index];
+        if(this.pages){
+            pageObj = this.pages[this.side=="left"?left_index:right_index];
             path = pageObj?pageObj.file_path:"";
         }
         return path;
     },
     show_arrow(direction){
-        let flag=true;
+        let flag=!!this.getImage();
+        let {
+             left_index, 
+             right_index,
+            } = this.page;
+        let _index = this.side=="left"?left_index:right_index;
         if(direction=="up"){
             flag=false;
         }
         if(direction=="down"){
               flag=false;
         }
-        if(direction=="left"){
-            
+        if(direction=="left" ){
+            flag = !!this.pages[_index-1]
         }
         if(direction=="right"){
-            
+            flag = !!this.pages[_index+1]
         }
         return flag;
+    },
+    updatePageIndex(direction){
+        let row_index = 0 ;
+         let {
+             left_index, 
+             right_index,
+            } = this.page;
+        let _index = this.side=="left"?left_index:right_index;
+        if(direction=="left"){
+            _index -=1;
+        }
+        if(direction=="right"){
+            _index +=1;
+        }
+        this.$emit("changeRowValue", {current_index:this.current_index, attr:`${this.side}_index`, value:_index});
     }
   },
 
   computed:{
        pages(){
-          return _.sortBy(this.all_pages,["level_of_difficulty"])
+           let {
+             domain, 
+             area,
+             ku,
+            } = this.page;
+        return _.filter(
+                    _.sortBy(this.all_pages,["level_of_difficulty"])
+                    ,{
+                        domain,
+                        area,
+                        knowledge_unit:ku
+                    });
+           
       }, 
        imageGray(){
            let str = this.grey;
@@ -149,7 +179,8 @@ export default {
             }
             //return  this.$viewer.image.style.filter;
             return str 
-       }
+       },
+       
   },
   data(){
       return{
