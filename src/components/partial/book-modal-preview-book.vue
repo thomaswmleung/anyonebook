@@ -86,8 +86,7 @@
                  v-model="current_index" 
                  :total-visible="7" 
                  @input = "resetPage()"
-                >
-            </v-pagination>
+            ></v-pagination>
             (Total Record:  {{row_record.length}})
           </v-flex>
         </v-layout>
@@ -143,7 +142,7 @@
       "showFullscreenLoader"
     ]),
     //reset the value of the switch for every page
-     resetPage()
+    resetPage()
       {
           this.edit1=this.row_record[this.current_index-1].left_edit;
           this.edit2=this.row_record[this.current_index-1].right_edit;
@@ -169,13 +168,13 @@
       },
       processBook()
       {
-         let _instance = this;
+        let _instance = this;
         let book = {};
         book._id = "";
         book.content = JSON.stringify({
-                    row_pages: this.row_record, // from CreatBook component
-                    book_metadata:{} // from CreatBook component
-                });
+                                        row_pages: this.row_record, // from CreatBook component
+                                        book_metadata:{} // from CreatBook component
+                                      });
         let shaObj = new jsSHA('SHA-256', "TEXT");
         shaObj.update(book.content); 
         shaObj.update(Date()); 
@@ -196,29 +195,29 @@
         // book.organisation = "organization";
 
         this.createBook({book}).then(
-                response=>{
-                  //hide loading
-                  _instance.showFullscreenLoader(false);
-                  _instance.$router.push(`/create_book/${book._id}`);
-                 _instance.$emit("close_dialog");
-                 },
-            error=>{
-              // Vue.toasted(_instance.$t('Fail to create Book Record'));
-              console.log(error);
-              _instance.showFullscreenLoader(false);
-            }
-            )
+          response=>{
+            //hide loading
+            _instance.showFullscreenLoader(false);
+            _instance.$router.push(`/create_book/${book._id}`);
+            _instance.$emit("close_dialog");
+          },
+          error=>{
+            // Vue.toasted(_instance.$t('Fail to create Book Record'));
+            console.log(error);
+            _instance.showFullscreenLoader(false);
+          }
+        )
       }
-  },
+    },
   computed:{
-        ...mapGetters({
-            all_page:"allPages",
-            user_data: "userData"
-        }),
-      page(){
+    ...mapGetters({
+        all_page:"allPages",
+        user_data: "userData"
+      }),
+    page(){
         return this.row_record[this.current_index-1]||{};
       }     
-  }
-};
+    }
+  };
 </script>
 

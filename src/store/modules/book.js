@@ -9,16 +9,21 @@ import {syllabus} from "@/store/static-record";
 import _ from "lodash";
 import _axios from "axios";
 
-const state = {}
+const state = {
+  all_books:[]
+
+}
 
 // retrive the value from the state 
 const getters = {
-  
+  books:state=>_.clone(state.all_books)  
 }
 
 // modify value in the state
 const mutations = {
-
+  mutUpdateBooks(state, books) {
+      state.all_books= books;
+  }
 }
 
 // connect with external source or multiple mutation in single action
@@ -26,10 +31,7 @@ const actions = {
   createBook({commit,dispatch},{book}){
     return new Promise((resolve,reject)=>{
         let {_id, page_code, content}=book;
-        let method = _id!=""?"put":'post';
-       
-       
-        
+        let method = _id!=""?"put":'post';  
         // ApiPrivateHttp[method]('/static_html_page', JSON.stringify(book))
         // ApiPrivateHttp[method](`/static_html_page?page_code=${page_code}&content=${content}`,)
         // ApiPrivateHttp({
@@ -60,10 +62,10 @@ const actions = {
           .catch((errors) => {
             reject(errors);
           });
-    });
-  },
+        });
+    },
   
-  deleteBook({commit},{book}){
+  deleteBook({commit,dispatch},{book}){
     var instance = _axios.create({
       baseURL: API_BASE_URL,
       timeout: 8000,
@@ -71,7 +73,7 @@ const actions = {
         'accept': 'application/json',
         'token': getUser().token
       }
-    })
+    });
     let processBool = window.confirm("Are you sure?");
     if (processBool){
         // console.log(JSON.stringify(payload.page));
@@ -86,6 +88,7 @@ const actions = {
                   response=>{
                     let message = `Book is deleted successfully`;
                     response.message = message;
+                    dispatch("getBook",{paginator:{}});
                     resolve(response);
                   }
               ).catch((errors) => {
@@ -94,7 +97,7 @@ const actions = {
         })
     }
   },
-  getBook({commit,dispatch},{paginator,router}){
+  getBook({commit,dispatch},{paginator}){
     var instance = _axios.create({
       baseURL: API_BASE_URL,
       timeout: 8000,
@@ -113,8 +116,19 @@ const actions = {
         }
       }).then((response) => {
         commit('COMMOM_UPDATE_FULLSCREEN_LOADER',false) //Common Loader Module
-        console.log(response);
-        
+        var result = [];
+        let pageObj = {};
+        for (var i = 0; i < response.data.total_count; i++)
+        {
+
+          pageObj = JSON.parse(response.data.data[i].content); // TODO need to check it is a valid JSON string 
+          pageObj._id = response.data.data[i]._id;
+          pageObj.created_at = response.data.data[i].created_at;
+          result.push(pageObj);
+        }
+        console.log(result[0]);
+        commit("mutUpdateBooks",result)
+        // return result;
       }).catch((errors) => {
         dispatch('handleErrorResponse', { errors: errors, router })
         commit('COMMOM_UPDATE_FULLSCREEN_LOADER',false) //Common Loader Module
