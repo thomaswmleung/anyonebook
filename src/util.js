@@ -64,3 +64,14 @@ function find (list, f) {
   export function assert (condition, msg) {
     if (!condition) throw new Error(`[vuex] ${msg}`)
   }
+
+  export function checkImageExists(imageUrl, callBack) {
+      var imageData = new Image();
+      imageData.onload = function() {
+        callBack(true);
+      };
+      imageData.onerror = function() {
+        callBack(false);
+      };
+      imageData.src = imageUrl;
+  }

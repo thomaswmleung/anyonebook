@@ -134,7 +134,7 @@
           bw2:false,
           cm1:"",
           cm2:"",
-          row_height:550
+          row_height:500
         }
       },
   methods: {
@@ -172,27 +172,27 @@
          let _instance = this;
         let book = {};
         book._id = "";
-        // book.content = JSON.stringify({
-        //             row_pages: this.row_record, // from CreatBook component
-        //             book_metadata:{} // from CreatBook component
-        //         });
-        // let shaObj = new jsSHA('SHA-256', "TEXT");
-        // shaObj.update(book.content); 
-        // book.page_code = `${this.user_data._id}-${shaObj.getHash("B64")}` ; //user id from getters , hash obj return a set of string
-        book.title = "title";
-        book.subtitle = "subtitle";
-        book.codex_id = "codexid";
-        book.author = "author";
-        book.published_year = 2017;
-        book.publisher = "publisher";
-        book.isbn = "isbn";
-        book.price = 100;
-        book.page = [];
-        book.toc = this.row_record;
-        book.cover = {};
-        book.syllabus = {};
-        book.keyword = [];
-        book.organisation = "organization";
+        book.content = JSON.stringify({
+                    row_pages: this.row_record, // from CreatBook component
+                    book_metadata:{} // from CreatBook component
+                });
+        let shaObj = new jsSHA('SHA-256', "TEXT");
+        shaObj.update(book.content); 
+        book.page_code = `${this.user_data._id}-${shaObj.getHash("B64")}` ; //user id from getters , hash obj return a set of string
+        // book.title = "title";
+        // book.subtitle = "subtitle";
+        // book.codex_id = "codexid";
+        // book.author = "author";
+        // book.published_year = 2017;
+        // book.publisher = "publisher";
+        // book.isbn = "isbn";
+        // book.price = 100;
+        // book.page = [];
+        // book.toc = this.row_record;
+        // book.cover = {};
+        // book.syllabus = {};
+        // book.keyword = [];
+        // book.organisation = "organization";
 
         this.createBook({book}).then(
                 response=>{

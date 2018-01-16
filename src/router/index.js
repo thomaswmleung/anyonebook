@@ -63,6 +63,12 @@ export default new Router({
       beforeEnter:authenticated
     },
     {
+      path:"/openpage_write",
+      name:'OpenPageWrite',
+      component:load('OpenpageWrite'),
+      beforeEnter:authenticated
+    },
+    {
       path:"/login",
       name:'Login',
       component:load('Login'),
