@@ -181,7 +181,7 @@
         // book.page_code = `${this.user_data._id}-${shaObj.getHash("B64")}` ; //user id from getters , hash obj return a set of string
         book.title = "title";
         book.subtitle = "subtitle";
-        book.codex_id = "codexid";
+        book.codex_id = "59f70fe4759b7465c269f092";
         book.author = "author";
         book.published_year = 2017;
         book.publisher = "publisher";
