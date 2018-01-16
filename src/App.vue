@@ -178,6 +178,10 @@
           icon: 'description',
           title: 'OrderManagement',
           path:"/order_management"
+        },{
+          icon: 'remove_red_eye',
+          title: 'OpenPageWrite',
+          path:"/openpage_write"
         }],
         miniVariant: false,
         right: true,

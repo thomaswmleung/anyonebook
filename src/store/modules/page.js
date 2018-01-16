@@ -66,10 +66,10 @@ const state = {
 
         //Information
         codex: [
-            { code: "math-quick-and-accurate", label: "Math AnyOne",syllabus:"hk-maths-2002" },
+            { code: "mathany", label: "Math AnyOne",syllabus:"hk-maths-2002"},
             { code: "math-mock-100", label: "數學模擬試一百",syllabus:"hk-maths-2002"},
-            { code: "math-learn-free", label: "數學自由識",syllabus:"hk-maths-2002" },
-            { code: "chinese-mock-100", label: "中文模擬試一百",syllabus:"hk-chinese" },
+            { code: "math-learn-free", label: "數學自由識",syllabus:"hk-maths-2002"},
+            { code: "chinese-mock-100", label: "中文模擬試一百",syllabus:"hk-chinese"},
             { code: "chinese-reading", label: "閱讀 + 理解" ,syllabus:"hk-chinese"},
             { code: "chinese-learn-free", label: "語文自由識" ,syllabus:"hk-chinese"},
         ],

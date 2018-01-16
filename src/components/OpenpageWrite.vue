@@ -2,7 +2,7 @@
     <v-container grid-list-md >
         <v-layout row wrap>
             <v-flex xs4>
-                <h2>Search Book </h2>
+                <h2>OpenPageWrite</h2>
             </v-flex>
             <v-flex xs8>
                 <v-layout row wrap>
@@ -14,15 +14,15 @@
                         <ul>
                             <li v-for="item in completed" :key="item" :style="{background:'lightgreen'}" >{{item}}</li> 
                         </ul>
-                        <v-btn color="blue darken-1" flat @click.native="getBooks">
-            {{$t('Show')}}
-          </v-btn>
-          <v-btn color="blue darken-1" flat @click.native="deleteBooks">
-            {{$t('Delete')}}
-          </v-btn>
+
                     </v-flex>
                     <v-flex xs4>
-                        Try
+                        <v-card>
+                            <div style="padding:2.2em">
+                                <p>Provide a web form for user to create / edit page online line</p>
+                                <p>Different QuestionType would have different web form to handle various attributes</p>
+                            </div>
+                        </v-card>
                     </v-flex>
                 </v-layout>
             </v-flex>
@@ -36,47 +36,22 @@
 </style>
 
 <script>
- import Vue from 'vue';
- import {mapGetters,mapActions} from "vuex"
-  import moment from 'moment' 
-
  export default {
-  name: 'Pagination',
+  name: 'OpenPageWrite',
   data() {
     return {
         unit:[],
         page:[],
         meta:{},
         items:[
-            "Codex List",
-            "Public Book from the Codex, Different Textbook will have different Books",
-            "Get User books"
+            "Break down the page into JSON object",
+            "UI for handling different Question Type",
         ],
         completed:[
+            
         ]
     };
   },
-   methods: {
-    ...mapActions([
-      "deleteBook",
-      "getBook"
-    ]),
-
-    deleteBooks()
-    {
-        let book = {};
-        book._id = "5a5db2ec759b745c0755dca2";
-        this.deleteBook({book});
-    },
-    getBooks()
-    {
-        let paginator = {};
-            paginator.limit = 10;
-            paginator.skip =0;
-            let router  = this.$router;
-        this.getBook({paginator,router});
-    }
-   }
 };    
 </script>
 <style scoped>

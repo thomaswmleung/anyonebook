@@ -7,6 +7,7 @@ import { getUser } from '@/shared/auth-service'
 
 import {syllabus} from "@/store/static-record";
 import _ from "lodash";
+import _axios from "axios";
 
 const state = {}
 
@@ -32,13 +33,26 @@ const actions = {
         // ApiPrivateHttp[method]('/static_html_page', JSON.stringify(book))
         // ApiPrivateHttp[method](`/static_html_page?page_code=${page_code}&content=${content}`,)
         // ApiPrivateHttp({
-        //   method,
-        //   url: '/static_html_page',
-        //   params: {
-        //     page_code, content
-        //   }
-        // })
-        ApiPrivateHttp[method]('/book', JSON.stringify(book)).then((response) => {
+        //     method,
+        //     url: '/static_html_page',
+        //     params: {
+        //       page_code, content
+        //     }
+        //   })
+        var instance = _axios.create({
+          baseURL: API_BASE_URL,
+          timeout: 8000,
+          headers: {
+            'accept': 'application/json',
+            'token': getUser().token,
+            'content-type': 'application/x-www-form-urlencoded'
+          }
+        });
+        instance({
+              method,
+              url: `/static_html_page?page_code=${page_code}`,
+              data:`content=${content}`
+            }).then((response) => {
             let message = `Book is ${_id!=""?"Updated":"Created"} successfully`;
             response.message = message;
             resolve(response);
@@ -50,11 +64,19 @@ const actions = {
   },
   
   deleteBook({commit},{book}){
+    var instance = _axios.create({
+      baseURL: API_BASE_URL,
+      timeout: 8000,
+      headers: {
+        'accept': 'application/json',
+        'token': getUser().token
+      }
+    })
     let processBool = window.confirm("Are you sure?");
     if (processBool){
         // console.log(JSON.stringify(payload.page));
         return new Promise((resolve,reject)=>{
-            ApiPrivateHttp({
+            instance({
                 method: 'delete',
                 url: '/static_html_page',
                 params: {
@@ -71,7 +93,33 @@ const actions = {
               });
         })
     }
-}
+  },
+  getBook({commit,dispatch},{paginator,router}){
+    var instance = _axios.create({
+      baseURL: API_BASE_URL,
+      timeout: 8000,
+      headers: {
+        'accept': 'application/json'
+      }
+    })
+      commit('COMMOM_UPDATE_FULLSCREEN_LOADER',true)   //Common Loader Module
+      instance({
+          method: 'get',
+          url: '/static_html_page',
+        params: {
+          limit: paginator.limit ||10,
+          skip: paginator.skip|| 0,
+          search_key: getUser()._id 
+        }
+      }).then((response) => {
+        commit('COMMOM_UPDATE_FULLSCREEN_LOADER',false) //Common Loader Module
+        console.log(response);
+        
+      }).catch((errors) => {
+        dispatch('handleErrorResponse', { errors: errors, router })
+        commit('COMMOM_UPDATE_FULLSCREEN_LOADER',false) //Common Loader Module
+      })
+},
 }
 
 

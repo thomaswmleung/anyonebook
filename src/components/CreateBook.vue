@@ -11,7 +11,7 @@
                  <!-- Preview -->
                  <v-layout row wrap>
                         <v-flex xs12 >
-                            <v-select :items="option.codex"
+                            <v-select :items="option.codex" class="compact"
                                         item-value="code"
                                         item-text="label"
                                         v-model="current_page.codex"
@@ -19,7 +19,7 @@
                                         :label="$t('Codex')" editable ></v-select>
                             </v-flex>
                                 <v-flex xs12 >
-                                    <v-select :items="option.syllabus"
+                                    <v-select :items="option.syllabus" class="compact"
                                               item-value="code"
                                               item-text="label"
                                               v-model="current_page.syllabus_code"
@@ -27,30 +27,31 @@
                                               :label="$t('Syllabus')" editable ></v-select>
                                 </v-flex>
                                 <v-flex xs12 >
-                                    <v-select :items="option.domain"
+                                    <v-select :items="option.domain" class="compact"
                                               v-model="current_page.domain"
                                               @input="pageUpdateOption({type:'domain',values:$event})"
                                               :label="$t('Domain')" editable ></v-select>
                                 </v-flex>
 
-                                <v-flex xs12 ><v-select :items="option.area"
+                                <v-flex xs12 ><v-select :items="option.area" class="compact"
                                 v-model="current_page.area"
                                               @input="pageUpdateOption({type:'area',values:$event})"
                                               :label="$t('Area')" editable ></v-select>
                                 </v-flex>
 
-                                <v-flex xs12 ><v-select :items="option.knowledge_unit"
+                                <v-flex xs12 ><v-select :items="option.knowledge_unit" class="compact"
                                 v-model="current_page.knowledge_unit"
                                               @input="pageUpdateOption({type:'knowledge_unit',values:$event})"
                                               :label="$t('Knowledge Unit')" editable ></v-select>
                                 </v-flex>  
                                 <v-flex>
                                     <v-btn color="primary" @click.stop="addAreaRow">{{$t("Add Page")}}</v-btn>
+                                    <v-btn outline color="indigo" @click.stop="show_preview_book=true;">preview</v-btn>
                                 </v-flex>                      
                 
                  </v-layout>
                  <!-- Codex List -->
-                <v-btn outline color="indigo" @click.stop="show_preview_book=true;">preview</v-btn>
+                
                  <v-flex v-for="row in all_pages" :key="row.file_path">
                      <!-- {{row.domain}} - {{row.area}} -->
                      <!-- <img style="width=95%" :src="row.file_path"/> -->
@@ -132,7 +133,7 @@
             :all_pages="all_pages"
             @close_dialog = "show_preview_book=false"
             @changeRowValue="changeRowValue"
-            >
+           >
 
         </book-modal-preview-book>
      </v-container>
@@ -144,12 +145,16 @@
     .rowItem.toc{
         border:lightgrey 1px solid
     }
+    .compact{
+        margin-bottom: -2.2em;
+    }
 </style>
 
 <script>
- import Vue from 'vue';
+import Vue from 'vue';
 import {mapGetters,mapActions} from "vuex";
 import { Http,ApiPrivateHttp } from '@/shared/http-service'
+import {checkImageExists} from "@/util"
 // import {syllabus} from "@/store/static-record";
 import _ from "lodash";
 
@@ -198,6 +203,9 @@ import BookRowImage from "@/components/partial/book-row-image"
         let codexInstance = _.find(this.option.codex, {code:codex});
         this.pageUpdateOption({type:'codex',values:codex})
         this.pageUpdateOption({type:'syllabus_code',values:codexInstance.syllabus})
+
+        //Show Image if the image is exist 
+
     },
     //Add Area Row  
     addAreaRow(){
@@ -270,7 +278,7 @@ import BookRowImage from "@/components/partial/book-row-image"
         area_rows:[], //domain, area  
 
         row_height:450
-
+        
         
     };
   },
