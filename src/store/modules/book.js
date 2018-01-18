@@ -13,12 +13,13 @@ const state = {
   all_books:[],
   book_paginator:{
     total_count:0,
-    limit:10,
+    limit:8,
     current_page:1
   },
   current_book:{
     _id:"",
-    row_record:[]
+    row_record:[],
+    metadata:{}
   },
 
 }
@@ -47,7 +48,12 @@ const mutations = {
 const actions = {
   createBook({commit,dispatch},{book}){
     return new Promise((resolve,reject)=>{
-        let {_id, page_code, content}=book;
+        let {_id, page_code, content, metadata}=book;
+        let reference1=getUser().id,
+            reference2=metadata.codex, 
+            reference3=metadata.grade,
+            reference4=metadata.school_name, 
+            reference5=metadata.publicity; //temporary bug
         let method = _id!=""?"put":'post';  
         //create an instance
         var instance = _axios.create({
@@ -61,9 +67,12 @@ const actions = {
         });
         instance({
               method,
-              url: `/static_html_page?page_code=${page_code}`,
-              data:`content=${content}`
-            }).then((response) => {
+              url: method=="post"?`/static_html_page?page_code=${page_code}`:  //url used if post
+                              `/static_html_page?static_html_page_id=${_id}&page_code=${page_code}`, //url used if put
+              data: method=="post"? `content=${content}`: //data needed if post
+                                `content=${content}&reference_1=${reference1}&reference_2=${reference2}&reference_3=${reference3}&reference_4=${reference4}&reference_5=${reference5}`
+                                //data needed if put
+              }).then((response) => {
             let message = `Book is ${_id!=""?"Updated":"Created"} successfully`;
             response.message = message;
             resolve(response);
@@ -124,7 +133,7 @@ const actions = {
           method: 'get',
           url: '/static_html_page',
         params: {
-          limit: paginator.limit ||10,
+          limit: paginator.limit ||8,
           skip: paginator.skip|| 0,
           search_key: getUser()._id 
         }
@@ -163,12 +172,12 @@ const actions = {
           url: `/static_html_page/${id}`
       }).then((response) => {
         commit('COMMOM_UPDATE_FULLSCREEN_LOADER',false) //Common Loader Module
-        console.log(response)
+        let _data = JSON.parse(response.data.data.content)
         let current_book_obj = {
           _id:id,
-          row_record: JSON.parse(response.data.data.content)
+          row_record:_data.row_pages,
+          metadata:_data.book_metadata
         };
-        console.log(current_book_obj.row_record)
         commit("mutUpdateCurrentBook", current_book_obj);
         if(typeof callback=="function"){
           callback(current_book_obj);

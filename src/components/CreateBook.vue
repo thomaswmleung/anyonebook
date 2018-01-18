@@ -1,10 +1,6 @@
 <template>
     <v-container grid-list-md text-xs-center >
-        <v-layout row wrap>
-            <v-flex md12>
-                <!-- TODO MetaData form  -->
-            </v-flex>
-        </v-layout>
+
         <v-layout row wrap>
             <v-flex md3>
                 <h2>{{$t(current_book._id==""?"Create Blank New Book":"Edit Existing Book")}}</h2>
@@ -18,7 +14,7 @@
                                         item-value="code"
                                         item-text="label"
                                         v-model="current_page.codex"
-                                        @input="updateCodex($event)"
+                                        @input="updateCodex($event, 'option')"
                                         :label="$t('Codex')" editable ></v-select>
                             </v-flex>
                                 <v-flex xs12 >
@@ -65,9 +61,66 @@
                 <v-card >
                     <v-card-text class="px-0">{{$t("Please Add Your Row")}}</v-card-text>
                 </v-card>
-            </v-flex>
-             <v-flex xs12 md9 id="dragContainer" class="rowContainer toc"  > 
-
+            </v-flex>  
+             <v-flex xs12 md9 >
+                        <v-layout row wrap style="padding-left: 1.3em;border: 1px solid lightskyblue;" >
+                            <!-- TODO MetaData form  -->
+                            <v-flex xs6 md2>
+                            <v-select :items="option.codex" class="compact"
+                                        item-value="code"
+                                        item-text="label"
+                                        v-model="book_metadata.codex"
+                                        @input="updateCodex($event, 'book')"
+                                        :label="$t('Codex')" editable ></v-select>
+                            </v-flex>
+                            <v-flex xs6 md2>
+                                <v-select
+                                    v-bind:items="grade_items"
+                                    v-model="book_metadata.grade"
+                                    label="Grade"
+                                    single-line
+                                ></v-select>
+                            </v-flex>
+                            <v-flex xs6 md2>
+                                <v-text-field
+                                    label="School Name"
+                                    v-model="book_metadata.school_name"
+                                ></v-text-field>
+                            </v-flex>
+                            <v-flex xs6 md2>
+                                <v-text-field
+                                    label="School Logo"
+                                    v-model="book_metadata.school_logo"
+                                ></v-text-field>
+                            </v-flex>
+                            <v-flex xs6 md2>
+                                <v-text-field
+                                    label="Book Title"
+                                    v-model="book_metadata.title"
+                                ></v-text-field>
+                            </v-flex>
+                            <v-flex xs6 md2>
+                                <v-text-field
+                                    label="Book Subtitle"
+                                    v-model="book_metadata.subtitle"
+                                ></v-text-field>
+                            </v-flex>
+                            <v-flex xs6 md2>
+                                <v-select
+                                    v-bind:items = "publicity_item"
+                                    v-model="book_metadata.publicity"
+                                    label="Publicity"
+                                    single-line
+                                ></v-select>
+                            </v-flex>
+                            <v-flex xs6 md8>
+                                <v-text-field
+                                    label="Remarks"
+                                    v-model="book_metadata.remark"
+                                ></v-text-field>
+                            </v-flex>
+                        </v-layout>
+                        <v-container  id="dragContainer" class="rowContainer toc" >
                        <v-layout row wrap 
                             v-for="(page,index) in area_rows" 
                             :key="index+page.domain+page.area+page.ku" 
@@ -127,12 +180,14 @@
                                     </v-layout>
                            </v-flex>
                        </v-layout>
+                       </v-container> 
             </v-flex>
 
         </v-layout>
         <book-modal-preview-book
             :show="show_preview_book"
             :row_record="area_rows"
+            :metadata="book_metadata"
             :all_pages="all_pages"
             @close_dialog = "show_preview_book=false"
             @changeRowValue="changeRowValue"
@@ -204,13 +259,13 @@ import BookRowImage from "@/components/partial/book-row-image"
          this.initialize()
     },
     //Update Codex 
-    updateCodex(codex){
+    updateCodex(codex, updateWhich){
         let codexInstance = _.find(this.option.codex, {code:codex});
         this.pageUpdateOption({type:'codex',values:codex})
         this.pageUpdateOption({type:'syllabus_code',values:codexInstance.syllabus})
-
         //Show Image if the image is exist 
-        
+        updateWhich=='book'?this.current_page.codex = this.book_metadata.codex:
+                            this.book_metadata.codex = this.current_page.codex
     },
     //Add Area Row  
     addAreaRow(){
@@ -272,7 +327,8 @@ import BookRowImage from "@/components/partial/book-row-image"
             this.getBookById({
                 id:this.$route.params.id,
                 callback:()=>{
-                    this.area_rows = this.current_book.row_record
+                    this.area_rows = this.current_book.row_record;
+                    this.book_metadata = this.current_book.metadata;
                 }
             })
           }
@@ -295,9 +351,20 @@ import BookRowImage from "@/components/partial/book-row-image"
         row_height:450,
 
         cover_image:"",
-        show_cover_image:false
+        show_cover_image:false,
 
-        
+        book_metadata:{
+            codex:"",
+            grade:"",
+            title:"",
+            subtitle:"",
+            school_name:"",
+            school_logo:"",
+            pulicity:"",
+            remark:""
+        },
+        grade_items:["p1A", "p1B", "p2A", "p2B", "p3A", "p3B", "p4A", "p4B", "p5A", "p5B", "p6A", "p6B"],
+        publicity_item:["Public", "Private"]
     };
   },
   mounted(){

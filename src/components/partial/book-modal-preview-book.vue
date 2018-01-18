@@ -123,7 +123,7 @@
       components:{
         BookRowImage
       },
-      props:["show","row_record","all_pages", "grey"],
+      props:["show","row_record","metadata","all_pages", "grey"],
       data(){
         return{
           current_index:1,
@@ -170,10 +170,11 @@
       {
         let _instance = this;
         let book = {};
-        book._id = "";
+        book._id = this.current_book._id=""?"":this.current_book._id;
+        book.metadata = this.metadata;
         book.content = JSON.stringify({
                                         row_pages: this.row_record, // from CreatBook component
-                                        book_metadata:{} // from CreatBook component
+                                        book_metadata: this.metadata // from CreatBook component
                                       });
         let shaObj = new jsSHA('SHA-256', "TEXT");
         shaObj.update(book.content); 
@@ -212,7 +213,8 @@
   computed:{
     ...mapGetters({
         all_page:"allPages",
-        user_data: "userData"
+        user_data: "userData",
+        current_book:"currentBook"    
       }),
     page(){
         return this.row_record[this.current_index-1]||{};

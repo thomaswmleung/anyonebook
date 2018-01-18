@@ -1,27 +1,32 @@
 <template>
     <v-container grid-list-md >
-        <v-layout row wrap>
-            <v-flex md6 v-for="book in books" :key="book._id">
+        <v-layout row wrap text-xs-center>
+            <v-flex md3 v-for="book in books" :key="book._id">
                 <v-card>
                     <v-container>
-                        BookID - {{book._id}} <br>
-                        {{book.created_at}} <br>
-                        <router-link :to="`/create_book/${book._id}`" tag="button">
-                            <img src="/static/cover/mathany_1a.jpeg" height="500px" width="100%"></img>
-                        </router-link>
-                        <router-link :to="`/create_book/${book._id}`" tag="button">
-                            <v-btn color="primary">
-                                {{$t('Edit')}}
-                            </v-btn>
-                        </router-link>
-                        <v-btn color="error" @click.stop="deleteBook({book,callback:getBooks}); ">
-                            {{$t('Delete')}}
-                        </v-btn>
+                        <v-layout row wrap >
+                            <v-flex xs12>
+                                BookID - {{book._id}} <br>
+                                <router-link :to="`/create_book/${book._id}`" tag="button">
+                                    <img src="/static/cover/mathany_1a.jpeg" height="200px" />
+                                </router-link>
+                                <router-link :to="`/create_book/${book._id}`" tag="button">
+                                    <v-btn small color="primary" >
+                                        {{$t('Edit')}}
+                                    </v-btn>
+                                </router-link>
+                                <v-btn small color="error" 
+                                    @click.stop="deleteBook({book,callback:getBooks}); ">
+                                    {{$t('Delete')}}
+                                </v-btn><br>
+                                {{book.created_at}}
+                            </v-flex>
+                        </v-layout>
                     </v-container>
                 </v-card>
             </v-flex>
         </v-layout>
-        <v-layout row wrap >
+        <v-layout row wrap text-xs-center>
             <v-flex>
                 <v-pagination 
                     :length="Math.ceil(book_paginator.total_count/book_paginator.limit)" 
