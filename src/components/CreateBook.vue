@@ -66,12 +66,13 @@
                         <v-layout row wrap style="padding-left: 1.3em;border: 1px solid lightskyblue;" >
                             <!-- TODO MetaData form  -->
                             <v-flex xs6 md2>
-                            <v-select :items="option.codex" class="compact"
-                                        item-value="code"
-                                        item-text="label"
-                                        v-model="book_metadata.codex"
-                                        @input="updateCodex($event, 'book')"
-                                        :label="$t('Codex')" editable ></v-select>
+                                <v-select :items="option.codex" class="compact"
+                                    item-value="code"
+                                    item-text="label"
+                                    v-model="book_metadata.codex"
+                                    @input="updateCodex($event, 'book')"
+                                    :label="$t('Codex')"
+                                ></v-select>
                             </v-flex>
                             <v-flex xs6 md2>
                                 <v-select
@@ -107,11 +108,25 @@
                             </v-flex>
                             <v-flex xs6 md2>
                                 <v-select
-                                    v-bind:items = "publicity_item"
+                                    v-bind:items = "publicity_items"
                                     v-model="book_metadata.publicity"
                                     label="Publicity"
                                     single-line
                                 ></v-select>
+                            </v-flex>
+                            <v-flex xs6 md2>
+                                <v-text-field
+                                    label="No. of Student Copy"
+                                    v-model="book_metadata.student_copy"
+                                    @input="validation($event,'student_copy')"
+                                ></v-text-field>
+                            </v-flex>
+                            <v-flex xs6 md2>
+                                <v-text-field
+                                    label="No. of Teacher Copy"
+                                    v-model="book_metadata.teacher_copy"
+                                    @input="validation($event,'teacher_copy')"
+                                ></v-text-field>
                             </v-flex>
                             <v-flex xs6 md8>
                                 <v-text-field
@@ -266,6 +281,7 @@ import BookRowImage from "@/components/partial/book-row-image"
         //Show Image if the image is exist 
         updateWhich=='book'?this.current_page.codex = this.book_metadata.codex:
                             this.book_metadata.codex = this.current_page.codex
+        //to link the two codex column
     },
     //Add Area Row  
     addAreaRow(){
@@ -332,6 +348,23 @@ import BookRowImage from "@/components/partial/book-row-image"
                 }
             })
           }
+      },
+      validation(inputText, type)
+      {
+        console.log(type, this.book_metadata.type)
+        console.log(inputText)
+        for (var i = 0; i < inputText.length; i++) {
+            inputText[i].replace(/[\D\s\._\-]+/g, '');}
+        inputText = inputText?parseInt( inputText, 10 ):0;
+        if(inputText>=0)
+        {
+            this.book_metadata.type = inputText;
+        }
+        else
+        {
+            this.book_metadata.type = 0;
+        }
+        console.log(type, this.book_metadata.type)
       }
   },
   created () {
@@ -361,10 +394,10 @@ import BookRowImage from "@/components/partial/book-row-image"
             school_name:"",
             school_logo:"",
             pulicity:"",
-            remark:""
-        },
-        grade_items:["p1A", "p1B", "p2A", "p2B", "p3A", "p3B", "p4A", "p4B", "p5A", "p5B", "p6A", "p6B"],
-        publicity_item:["Public", "Private"]
+            remark:"",
+            student_copy:1,
+            teacher_copy:1
+        }
     };
   },
   mounted(){
@@ -382,7 +415,9 @@ import BookRowImage from "@/components/partial/book-row-image"
         ...mapGetters({
             option:"PageSyllabusOptions",   
             current_page:"currentPage",
-            current_book:"currentBook"         
+            current_book:"currentBook",
+            grade_items:"gradeItem",
+            publicity_items:"publicityItem"         
         })
   }
 };    

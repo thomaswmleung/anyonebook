@@ -21,6 +21,8 @@ const state = {
     row_record:[],
     metadata:{}
   },
+  grade_items:["p1A", "p1B", "p2A", "p2B", "p3A", "p3B", "p4A", "p4B", "p5A", "p5B", "p6A", "p6B"],
+  publicity_items:["Public", "Private"]
 
 }
 
@@ -28,7 +30,9 @@ const state = {
 const getters = {
   books:state=>_.clone(state.all_books),
   bookPaginator:state=>state.book_paginator,
-  currentBook: state =>_.clone(state.current_book)   
+  currentBook: state =>_.clone(state.current_book),
+  gradeItem: state=>_.clone(state.grade_items),
+  publicityItem: state=>_.clone(state.publicity_items)   
 }
 
 // modify value in the state
@@ -146,6 +150,7 @@ const actions = {
           pageObj = JSON.parse(response.data.data[i].content); // TODO need to check it is a valid JSON string 
           pageObj._id = response.data.data[i]._id;
           pageObj.created_at = response.data.data[i].created_at;
+          pageObj.metadata = JSON.parse(response.data.data[i].content).book_metadata;
           result.push(pageObj);
         }
         commit("mutUpdateBooks",result); // return result;

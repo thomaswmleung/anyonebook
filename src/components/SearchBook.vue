@@ -1,12 +1,34 @@
 <template>
     <v-container grid-list-md >
+        <v-layout row wrap>                
+            <v-flex xs12 md4>
+                <v-select :items="option.codex"
+                    item-value="code"
+                    item-text="label"
+                    v-model="filter.codex"
+                    :label="$t('Codex')"
+                    autocomplete
+                ></v-select>
+            </v-flex>
+            <v-flex xs6 md2>
+                <v-select
+                    :items="grade_items"
+                    v-model="filter.grade"
+                    label="Grade"
+                    autocomplete
+                ></v-select>
+            </v-flex>
+        </v-layout>
         <v-layout row wrap text-xs-center>
             <v-flex md3 v-for="book in books" :key="book._id">
                 <v-card>
                     <v-container>
                         <v-layout row wrap >
                             <v-flex xs12>
-                                BookID - {{book._id}} <br>
+                                <div style="font-weight: bold; font-size: 1.5em;">
+                                    {{book.metadata.title}} <br>
+                                </div>
+                                {{book.metadata.codex}} ({{book.metadata.grade}})<br>
                                 <router-link :to="`/create_book/${book._id}`" tag="button">
                                     <img src="/static/cover/mathany_1a.jpeg" height="200px" />
                                 </router-link>
@@ -19,7 +41,9 @@
                                     @click.stop="deleteBook({book,callback:getBooks}); ">
                                     {{$t('Delete')}}
                                 </v-btn><br>
-                                {{book.created_at}}
+                                <div style="color: darkgrey">
+                                    {{book.created_at}}
+                                </div>
                             </v-flex>
                         </v-layout>
                     </v-container>
@@ -60,6 +84,10 @@
   },
   data() {
     return {
+        filter:{
+            codex:"",
+            grade:""
+        }
     };
   },
    methods: {
@@ -78,7 +106,11 @@
   computed:{
         ...mapGetters({
             books: "books",
-            book_paginator:"bookPaginator"
+            book_paginator:"bookPaginator",
+            option:"PageSyllabusOptions",
+            current_book:"currentBook",
+            grade_items:"gradeItem",
+            publicity_items:"publicityItem"      
         })
   },
 };    
