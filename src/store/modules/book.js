@@ -118,9 +118,8 @@ const actions = {
         commit('COMMOM_UPDATE_FULLSCREEN_LOADER',false) //Common Loader Module
         var result = [];
         let pageObj = {};
-        for (var i = 0; i < response.data.total_count; i++)
+        for (var i = 0; i < response.data.data.length; i++)
         {
-
           pageObj = JSON.parse(response.data.data[i].content); // TODO need to check it is a valid JSON string 
           pageObj._id = response.data.data[i]._id;
           pageObj.created_at = response.data.data[i].created_at;
@@ -130,7 +129,8 @@ const actions = {
         commit("mutUpdateBooks",result)
         // return result;
       }).catch((errors) => {
-        dispatch('handleErrorResponse', { errors: errors, router })
+        // dispatch('handleErrorResponse', { errors: errors, router })
+        console.log(errors);
         commit('COMMOM_UPDATE_FULLSCREEN_LOADER',false) //Common Loader Module
       })
 },
