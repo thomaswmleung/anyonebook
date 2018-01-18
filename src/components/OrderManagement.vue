@@ -17,7 +17,12 @@
 
                     </v-flex>
                     <v-flex xs4>
-                        Try
+                         <v-card>
+                            <div style="padding:.8em">
+                                <p>Connected with backend ERP system</p>
+                                <p>Using ERP System to create package in each order</p>
+                            </div>
+                        </v-card>
                     </v-flex>
                 </v-layout>
             </v-flex>

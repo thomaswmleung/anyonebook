@@ -205,7 +205,7 @@ import BookRowImage from "@/components/partial/book-row-image"
         this.pageUpdateOption({type:'syllabus_code',values:codexInstance.syllabus})
 
         //Show Image if the image is exist 
-
+        
     },
     //Add Area Row  
     addAreaRow(){
@@ -228,8 +228,6 @@ import BookRowImage from "@/components/partial/book-row-image"
                 right_edit:false
             });
     },
-
-
 
      handleDragEvent(event) {
           console.log(event.detail.to.container);
@@ -277,8 +275,11 @@ import BookRowImage from "@/components/partial/book-row-image"
         all_pages:[], 
         area_rows:[], //domain, area  
 
-        row_height:450
-        
+        row_height:450,
+
+        cover_image:"",
+        show_cover_image:false
+
         
     };
   },
