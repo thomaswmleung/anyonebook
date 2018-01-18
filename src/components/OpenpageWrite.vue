@@ -10,11 +10,9 @@
                         <ul>
                             <li v-for="item in items" :key="item" >{{item}}</li> 
                         </ul>
-
                         <ul>
                             <li v-for="item in completed" :key="item" :style="{background:'lightgreen'}" >{{item}}</li> 
                         </ul>
-
                     </v-flex>
                     <v-flex xs4>
                         <v-card>
