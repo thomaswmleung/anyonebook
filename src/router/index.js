@@ -40,7 +40,7 @@ export default new Router({
       component:load('SearchPage'),
     },
     {
-      path:"/create_book",
+      path:"/create_book/:id?",
       name:'CreateBook',
       component:load('CreateBook'),
       beforeEnter:authenticated

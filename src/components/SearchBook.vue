@@ -6,14 +6,15 @@
                     <v-container>
                         BookID - {{book._id}} <br>
                         {{book.created_at}} <br>
-                        <v-card-media src="/static/cover/mathany_1a.jpeg" height="500px">
-                        </v-card-media>
+                        <router-link :to="`/create_book/${book._id}`" tag="button">
+                            <img src="/static/cover/mathany_1a.jpeg" height="500px" width="100%"></img>
+                        </router-link>
                         <router-link :to="`/create_book/${book._id}`" tag="button">
                             <v-btn color="primary">
                                 {{$t('Edit')}}
                             </v-btn>
                         </router-link>
-                        <v-btn color="blue darken-1" flat @click.native="deleteBook({book})">
+                        <v-btn color="error" @click.stop="deleteBook({book,callback:getBooks}); ">
                             {{$t('Delete')}}
                         </v-btn>
                     </v-container>
@@ -21,15 +22,15 @@
             </v-flex>
         </v-layout>
         <v-layout row wrap >
-                     <v-flex>
-                        <v-pagination 
-                        :length="Math.ceil(book_paginator.total_count/book_paginator.limit)" 
-                        v-model="book_paginator.current_page" 
-                        @input="getBooks"
-                        ></v-pagination>
-                        (Total Record:  {{book_paginator.total_count}})
-                     </v-flex>
-                 </v-layout>
+            <v-flex>
+                <v-pagination 
+                    :length="Math.ceil(book_paginator.total_count/book_paginator.limit)" 
+                    v-model="book_paginator.current_page" 
+                    @input="getBooks"
+                ></v-pagination>
+                (Total Record:  {{book_paginator.total_count}})
+            </v-flex>
+        </v-layout>
      </v-container>
 </template>
 <style scoped>
@@ -48,13 +49,12 @@
   created () {
        this.getBooks();
   },
+  watch: {
+    // call again the method if the route changes
+    '$route': 'getBooks'
+  },
   data() {
     return {
-        book_paginator:{
-            total_count:4,
-            limit:10,
-            current_page:0
-        }
     };
   },
    methods: {
@@ -63,22 +63,17 @@
       "getBook"
     ]),
 
-    deleteBooks()
-    {
-        let book = {};
-        book._id = "5a5db2ec759b745c0755dca2";
-        this.deleteBook({book});
-    },
     getBooks() {
         let paginator = {};
-            paginator.limit = 10;
-            paginator.skip =0;
+            paginator.limit = this.book_paginator.limit;
+            paginator.skip = (this.book_paginator.current_page-1)*this.book_paginator.limit;
         this.getBook({paginator});
     }
    },
   computed:{
         ...mapGetters({
-            books: "books"
+            books: "books",
+            book_paginator:"bookPaginator"
         })
   },
 };    

@@ -7,7 +7,10 @@
         </v-layout>
         <v-layout row wrap>
             <v-flex md3>
-                <h2>Create Blank New Book / From Existing Book</h2>
+                <h2>{{$t(current_book._id==""?"Create Blank New Book":"Edit Existing Book")}}</h2>
+                <span v-if="current_book._id!=''">
+                    BookID - {{current_book._id}}
+                </span>
                  <!-- Preview -->
                  <v-layout row wrap>
                         <v-flex xs12 >
@@ -170,6 +173,7 @@ import BookRowImage from "@/components/partial/book-row-image"
   methods: {
       ...mapActions([
            "pageUpdateOption",
+           "getBookById"
         ]),
     getPageTsv(){
         let page_file_name = "page-rows";
@@ -197,6 +201,7 @@ import BookRowImage from "@/components/partial/book-row-image"
     fetchData(){
         //Get demo page array 
         this.getPageTsv().then(list=>this.all_pages=list);
+         this.initialize()
     },
     //Update Codex 
     updateCodex(codex){
@@ -260,9 +265,21 @@ import BookRowImage from "@/components/partial/book-row-image"
       {
           console.log(this.area_rows,current_index,attr,value);
           this.area_rows[current_index][attr] = value;
+      },
+      initialize()
+      {
+          if(this.$route.params.id){
+            this.getBookById({
+                id:this.$route.params.id,
+                callback:()=>{
+                    this.area_rows = this.current_book.row_record
+                }
+            })
+          }
       }
   },
   created () {
+     
   },
   watch: {
     // call again the method if the route changes
@@ -297,7 +314,8 @@ import BookRowImage from "@/components/partial/book-row-image"
    computed:{      
         ...mapGetters({
             option:"PageSyllabusOptions",   
-            current_page:"currentPage",         
+            current_page:"currentPage",
+            current_book:"currentBook"         
         })
   }
 };    

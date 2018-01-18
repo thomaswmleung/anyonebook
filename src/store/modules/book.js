@@ -10,19 +10,36 @@ import _ from "lodash";
 import _axios from "axios";
 
 const state = {
-  all_books:[]
+  all_books:[],
+  book_paginator:{
+    total_count:0,
+    limit:10,
+    current_page:1
+  },
+  current_book:{
+    _id:"",
+    row_record:[]
+  },
 
 }
 
 // retrive the value from the state 
 const getters = {
-  books:state=>_.clone(state.all_books)  
+  books:state=>_.clone(state.all_books),
+  bookPaginator:state=>state.book_paginator,
+  currentBook: state =>_.clone(state.current_book)   
 }
 
 // modify value in the state
 const mutations = {
   mutUpdateBooks(state, books) {
       state.all_books= books;
+  },
+  mutUpdateBookPaginator(state, total_count) {
+      state.book_paginator.total_count = total_count;
+  },
+  mutUpdateCurrentBook(state, book) {
+      state.current_book = book;
   }
 }
 
@@ -32,15 +49,7 @@ const actions = {
     return new Promise((resolve,reject)=>{
         let {_id, page_code, content}=book;
         let method = _id!=""?"put":'post';  
-        // ApiPrivateHttp[method]('/static_html_page', JSON.stringify(book))
-        // ApiPrivateHttp[method](`/static_html_page?page_code=${page_code}&content=${content}`,)
-        // ApiPrivateHttp({
-        //     method,
-        //     url: '/static_html_page',
-        //     params: {
-        //       page_code, content
-        //     }
-        //   })
+        //create an instance
         var instance = _axios.create({
           baseURL: API_BASE_URL,
           timeout: 8000,
@@ -63,9 +72,10 @@ const actions = {
             reject(errors);
           });
         });
-    },
+  },
   
-  deleteBook({commit,dispatch},{book}){
+  deleteBook({commit,dispatch},{book,callback}){
+    //create an instance
     var instance = _axios.create({
       baseURL: API_BASE_URL,
       timeout: 8000,
@@ -76,7 +86,6 @@ const actions = {
     });
     let processBool = window.confirm("Are you sure?");
     if (processBool){
-        // console.log(JSON.stringify(payload.page));
         return new Promise((resolve,reject)=>{
             instance({
                 method: 'delete',
@@ -88,7 +97,10 @@ const actions = {
                   response=>{
                     let message = `Book is deleted successfully`;
                     response.message = message;
-                    dispatch("getBook",{paginator:{}});
+                    //fetchdata after delete
+                    if( typeof callback == "function"){
+                      callback(response);
+                    }
                     resolve(response);
                   }
               ).catch((errors) => {
@@ -97,7 +109,9 @@ const actions = {
         })
     }
   },
+
   getBook({commit,dispatch},{paginator}){
+    //create an instance
     var instance = _axios.create({
       baseURL: API_BASE_URL,
       timeout: 8000,
@@ -125,14 +139,42 @@ const actions = {
           pageObj.created_at = response.data.data[i].created_at;
           result.push(pageObj);
         }
-        console.log(result[0]);
-        commit("mutUpdateBooks",result)
-        // return result;
+        commit("mutUpdateBooks",result); // return result;
+        commit("mutUpdateBookPaginator", response.data.total_count)
       }).catch((errors) => {
-        // dispatch('handleErrorResponse', { errors: errors, router })
         console.log(errors);
         commit('COMMOM_UPDATE_FULLSCREEN_LOADER',false) //Common Loader Module
       })
+  },
+
+  getBookById({commit,getters},{id,callback}){
+    commit('COMMOM_UPDATE_FULLSCREEN_LOADER',true) //Common Loader Module
+    //create an instance
+    var instance = _axios.create({
+      baseURL: API_BASE_URL,
+      timeout: 8000,
+      headers: {
+        'accept': 'application/json'
+      }
+    })
+      commit('COMMOM_UPDATE_FULLSCREEN_LOADER',true)   //Common Loader Module
+      instance({
+          method: 'get',
+          url: `/static_html_page/${id}`
+      }).then((response) => {
+        commit('COMMOM_UPDATE_FULLSCREEN_LOADER',false) //Common Loader Module
+        console.log(response)
+        let current_book_obj = {
+          _id:id,
+          row_record: JSON.parse(response.data.data.content)
+        };
+        console.log(current_book_obj.row_record)
+        commit("mutUpdateCurrentBook", current_book_obj);
+        if(typeof callback=="function"){
+          callback(current_book_obj);
+        }
+    });
+
 },
 }
 
