@@ -42,26 +42,26 @@
                                 v-model="current_page.knowledge_unit"
                                               @input="pageUpdateOption({type:'knowledge_unit',values:$event})"
                                               :label="$t('Knowledge Unit')" editable ></v-select>
-                                </v-flex>  
+                                </v-flex>
                                 <v-flex>
                                     <v-btn color="primary" @click.stop="addAreaRow">{{$t("Add Page")}}</v-btn>
                                     <v-btn outline color="indigo" @click.stop="show_preview_book=true;">preview</v-btn>
-                                </v-flex>                      
-                
+                                </v-flex>
+
                  </v-layout>
                  <!-- Codex List -->
-                
+
                  <v-flex v-for="row in all_pages" :key="row.file_path">
                      <!-- {{row.domain}} - {{row.area}} -->
                      <!-- <img style="width=95%" :src="row.file_path"/> -->
-                </v-flex> 
+                </v-flex>
 
             </v-flex>
             <v-flex x12 class="title"  v-if="area_rows.length==0">
                 <v-card >
                     <v-card-text class="px-0">{{$t("Please Add Your Row")}}</v-card-text>
                 </v-card>
-            </v-flex>  
+            </v-flex>
              <v-flex xs12 md9 >
                         <v-layout row wrap style="padding-left: 1.3em;border: 1px solid lightskyblue;" >
                             <!-- TODO MetaData form  -->
@@ -74,7 +74,7 @@
                                     :label="$t('Codex')"
                                 ></v-select>
                             </v-flex>
-                            <v-flex xs6 md2>
+                            <v-flex xs2 md1>
                                 <v-select
                                     v-bind:items="grade_items"
                                     v-model="book_metadata.grade"
@@ -114,16 +114,16 @@
                                     single-line
                                 ></v-select>
                             </v-flex>
-                            <v-flex xs6 md2>
+                            <v-flex xs2 md2>
                                 <v-text-field
-                                    label="No. of Student Copy"
+                                    label="Student Copy"
                                     v-model="book_metadata.student_copy"
                                     @input="validation($event,'student_copy')"
                                 ></v-text-field>
                             </v-flex>
-                            <v-flex xs6 md2>
+                            <v-flex xs2 md2>
                                 <v-text-field
-                                    label="No. of Teacher Copy"
+                                    label="Teacher Copy"
                                     v-model="book_metadata.teacher_copy"
                                     @input="validation($event,'teacher_copy')"
                                 ></v-text-field>
@@ -136,9 +136,9 @@
                             </v-flex>
                         </v-layout>
                         <v-container  id="dragContainer" class="rowContainer toc" >
-                       <v-layout row wrap 
-                            v-for="(page,index) in area_rows" 
-                            :key="index+page.domain+page.area+page.ku" 
+                       <v-layout row wrap
+                            v-for="(page,index) in area_rows"
+                            :key="index+page.domain+page.area+page.ku"
                             :data="page"
                             :id="`${index}`"
                             class="rowItem toc">
@@ -155,16 +155,16 @@
                                             <h3 class="content mb-1">
                                                 <div  v-if="!page.tools">{{(index+1)*2}} </div>
                                                     <div  v-if="page.tools">
-                                                        {{(index+1)*2}} 
-                                                        <v-btn  fab dark small color="primary" 
+                                                        {{(index+1)*2}}
+                                                        <v-btn  fab dark small color="primary"
                                                             @click.stop="updatePageRecord(index,'preview')">
                                                             <v-icon dark>remove_red_eye</v-icon>
                                                         </v-btn>
-                                                        <v-btn  fab dark small color="error" 
+                                                        <v-btn  fab dark small color="error"
                                                             @click.stop="confirmDelete(index)">
                                                             <v-icon  @click.stop="updatePageRecord(index,'tools')" >delete</v-icon>
                                                         </v-btn>
-                                                        <v-icon class="handle">drag_handle</v-icon>                  
+                                                        <v-icon class="handle">drag_handle</v-icon>
                                                     </div>
                                             </h3>
                                         </v-flex>
@@ -195,7 +195,7 @@
                                     </v-layout>
                            </v-flex>
                        </v-layout>
-                       </v-container> 
+                       </v-container>
             </v-flex>
 
         </v-layout>
@@ -243,7 +243,8 @@ import BookRowImage from "@/components/partial/book-row-image"
   methods: {
       ...mapActions([
            "pageUpdateOption",
-           "getBookById"
+           "getBookById",
+           "resetBook"
         ]),
     getPageTsv(){
         let page_file_name = "page-rows";
@@ -267,47 +268,46 @@ import BookRowImage from "@/components/partial/book-row-image"
             });
         })
     },
-    //FetchData 
+    //FetchData
     fetchData(){
-        //Get demo page array 
+        //Get demo page array
         this.getPageTsv().then(list=>this.all_pages=list);
          this.initialize()
     },
-    //Update Codex 
+    //Update Codex
     updateCodex(codex, updateWhich){
         let codexInstance = _.find(this.option.codex, {code:codex});
         this.pageUpdateOption({type:'codex',values:codex})
         this.pageUpdateOption({type:'syllabus_code',values:codexInstance.syllabus})
-        //Show Image if the image is exist 
+        //Show Image if the image is exist
         updateWhich=='book'?this.current_page.codex = this.book_metadata.codex:
                             this.book_metadata.codex = this.current_page.codex
         //to link the two codex column
     },
-    //Add Area Row  
+    //Add Area Row
     addAreaRow(){
-          
-          this.area_rows.push({   
-                domain:this.current_page.domain,
-                area:this.current_page.area,
-                ku:this.current_page.knowledge_unit,
-                left_index:0,
-                left_page_obj:{},
-                right_index:1,
-                right_page_obj:{},             
-                preview:false,
-                tools:false,
-                left_greyscale:false,
-                left_comment:"",
-                right_greyscale:false,
-                right_comment:"",
-                left_edit:false,
-                right_edit:false
-            });
+      this.area_rows.push({
+            domain:this.current_page.domain,
+            area:this.current_page.area,
+            ku:this.current_page.knowledge_unit,
+            left_index:0,
+            left_page_obj:{},
+            right_index:1,
+            right_page_obj:{},
+            preview:false,
+            tools:false,
+            left_greyscale:false,
+            left_comment:"",
+            right_greyscale:false,
+            right_comment:"",
+            left_edit:false,
+            right_edit:false
+        });
     },
 
      handleDragEvent(event) {
           console.log(event.detail.to.container);
-          let dragItemIndex = event.detail.draggedElement.id.split(/-+/).pop();              
+          let dragItemIndex = event.detail.draggedElement.id.split(/-+/).pop();
           this.area_rows.splice(
               event.detail.to.index,
               0,
@@ -325,7 +325,7 @@ import BookRowImage from "@/components/partial/book-row-image"
                                     page:(index+1)*2
                                 }))
         ){
-            this.area_rows.splice(index,1);                                
+            this.area_rows.splice(index,1);
         };
       },
       updatePageIndex(params){
@@ -337,38 +337,30 @@ import BookRowImage from "@/components/partial/book-row-image"
           console.log(this.area_rows,current_index,attr,value);
           this.area_rows[current_index][attr] = value;
       },
-      initialize()
-      {
+      initialize(){
           if(this.$route.params.id){
             this.getBookById({
                 id:this.$route.params.id,
                 callback:()=>{
-                    this.area_rows = this.current_book.row_record;
-                    this.book_metadata = this.current_book.metadata;
+                    this.area_rows = _.cloneDeep(this.current_book.row_record);
+                    this.book_metadata = _.cloneDeep(this.current_book.metadata);
                 }
             })
+          }else{
+            //reset current_book
+            this.resetBook();
           }
       },
-      validation(inputText, type)
-      {
-        console.log(type, this.book_metadata.type)
-        console.log(inputText)
+      validation(inputText, type){
         for (var i = 0; i < inputText.length; i++) {
-            inputText[i].replace(/[\D\s\._\-]+/g, '');}
-        inputText = inputText?parseInt( inputText, 10 ):0;
-        if(inputText>=0)
-        {
-            this.book_metadata.type = inputText;
+          inputText[i].replace(/[\D\s\._\-]+/g, '');}
+          inputText = inputText?parseInt( inputText, 10 ):0;
+          if(inputText>=0){
+              this.book_metadata.type = inputText;
+          }else{
+              this.book_metadata.type = 0;
+          }
         }
-        else
-        {
-            this.book_metadata.type = 0;
-        }
-        console.log(type, this.book_metadata.type)
-      }
-  },
-  created () {
-     
   },
   watch: {
     // call again the method if the route changes
@@ -378,8 +370,8 @@ import BookRowImage from "@/components/partial/book-row-image"
     return {
         show_preview_book:false,
         codex:"",
-        all_pages:[], 
-        area_rows:[], //domain, area  
+        all_pages:[],
+        area_rows:[], //domain, area
 
         row_height:450,
 
@@ -411,14 +403,14 @@ import BookRowImage from "@/components/partial/book-row-image"
     this.$el.addEventListener('lmddend', this.handleDragEvent);
     this.fetchData();
   },
-   computed:{      
+   computed:{
         ...mapGetters({
-            option:"PageSyllabusOptions",   
+            option:"PageSyllabusOptions",
             current_page:"currentPage",
             current_book:"currentBook",
             grade_items:"gradeItem",
-            publicity_items:"publicityItem"         
+            publicity_items:"publicityItem"
         })
   }
-};    
+};
 </script>
