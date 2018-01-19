@@ -31,12 +31,27 @@
                                 </v-btn>
                             </h3>
                         </v-card-title>
-                    <v-card-text>
-                        <v-btn x-large style="height:8em;width:100%" @click.stop="uploadPDF">
+                    <v-flex v-for="(row,idx) in current_page.version"
+                            :key="row.user+row.level+row.nature+row.position+row.output"
+                            xs12 md6 >
+                    <v-card v-if="idx == currentPreview">
+                      <v-card-media style="height: 30rem; width: 100%" :src="row.students_preview_image"></v-card-media>
+                    </v-card>
+                    </v-flex>
+                    <v-flex v-if="current_page.version">
+                    <v-card-text v-if="current_page.version.length == 0">
+                        <v-btn x-large  style="height:10em; width: 100%" @click.stop="uploadPDF">
                             <v-icon x-large v-html="uploadIcon"></v-icon>
                         </v-btn>
                     </v-card-text>
-
+                    </v-flex>
+                    <v-flex v-else>
+                    <v-card-text>
+                        <v-btn x-large  style="height:10em; width: 100%" @click.stop="uploadPDF">
+                            <v-icon x-large v-html="uploadIcon"></v-icon>
+                        </v-btn>
+                    </v-card-text>
+                    </v-flex>
                     <v-layout row wrap>
                     <v-flex>
                         <v-card hover >
@@ -52,7 +67,7 @@
                             <!-- Listing PDF version-->
                                 <v-layout row wrap>
                                     <!-- user level nature position output file_path_btn preview_btn remove_btn -->
-                                    <v-flex  v-for="(row,idx) in current_page.version"
+                                    <v-flex v-for="(row,idx) in current_page.version"
                                             :key="row.user+row.level+row.nature+row.position+row.output"
                                         xs12 md6 >
                                         <v-card>
@@ -64,11 +79,18 @@
                                                 </span>
                                                 <br>
                                                 <span>
-                                                    <v-btn  dark small color="primary" @click.stop="pageUpdateVersionIndex(idx);show_upload_pdf=true;">
+                                                    <v-btn fab dark small color="primary" @click.stop="pageUpdateVersionIndex(idx);show_upload_pdf=true;">
                                                         <v-icon dark>mode_edit</v-icon>
                                                     </v-btn>
-                                                    <v-btn   dark small color="error" @click.stop="pageDeleteVersion(idx)">
+                                                    <v-btn  fab dark small color="error" @click.stop="pageDeleteVersion(idx)">
                                                         <v-icon dark>delete_forever</v-icon>
+                                                    </v-btn>
+                                                    <v-btn
+                                                      fab
+                                                      dark
+                                                      small
+                                                      @click.stop="currentPreview = idx">
+                                                      <v-icon dark>visibility</v-icon>
                                                     </v-btn>
                                                 </span>
                                             </div>
@@ -270,6 +292,7 @@ export default {
       knowledge_unit:"",
     //   all_syllabus:syllabus,
 
+      currentPreview: 0,
 
       previous_page_id:"",
 
