@@ -7,7 +7,7 @@
                     :key="option.label"
                     style="margin-top:0.3em"
                     >
-                    <div @click.stop="show_upload_pdf=true; updateCurrentVersion(option)">
+                    <div @click.stop="updateCurrentVersion(option)">
                         <v-card-title style="font-size:1.2em">
                             {{$t(option.label)}}
                         </v-card-title>
@@ -166,11 +166,26 @@ export default {
             return _record?_record["label"]:""
         },
         updateCurrentVersion(opt){
-            let i;
-            for(i in opt){
-               if(i != "label"){
-                   this.pageUpdateVersion({attr:i,val:opt[i].code })
-               }
+           //validate meta information filled or not
+           let processBoolFlag = true;
+           let attr;
+          ['codex','syllabus_code','domain','area'].forEach(
+              attr=>{
+                   if(this.current_page[attr]==""){processBoolFlag=false;}
+              }
+          );
+           //  console.log("Upload PDF",processBoolFlag, this.current_page,this.$t);
+           if(processBoolFlag){
+              let i;
+              for(i in opt){
+                 if(i != "label"){
+                     this.pageUpdateVersion({attr:i,val:opt[i].code })
+                 }
+              }
+              this.show_upload_pdf=true;
+            }else{
+                // if not show a the toast require to fill the page information, and close the modal
+                Vue.toasted.error(this.$t('Please fill page information before upload')).goAway(3000);
             }
         },
         //Upload PDF process - trigger
@@ -218,6 +233,7 @@ export default {
               // delete page_parameter.page_group._id;
 
               //format the parameter and call page_group API, wait for return
+              console.log("save page with page_parameter" + JSON.stringify(page_parameter))
               this.createPage({page:page_parameter})
                 .then(response=>{
                     //update page-group-id
