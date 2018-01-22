@@ -39,7 +39,7 @@
                                 </div>
                                 <div>
                                     <router-link :to="`/create_book/${book._id}`" tag="button">
-                                        <img src="/static/cover/mathany_1a.jpeg" height="200px" />
+                                        <img src="static/cover/mathany_1a.jpeg" height="200px" />
                                     </router-link>
                                 </div>
                                 <div>

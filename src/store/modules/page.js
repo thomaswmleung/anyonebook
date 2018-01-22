@@ -417,7 +417,7 @@ const actions= {
         return new Promise((resolve,reject)=>{
           Http({
               method: 'get',
-              url: `/static/${syllabusCode}.tsv`,
+              url: `static/${syllabusCode}.tsv`,
             }).then(
                 response=>{
                   let items=[];

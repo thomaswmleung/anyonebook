@@ -251,7 +251,7 @@ import BookRowImage from "@/components/partial/book-row-image"
         return new Promise((resolve,reject)=>{
             Http({
                 methods:"get",
-                url: `/static/${page_file_name}.tsv`,
+                url: `static/${page_file_name}.tsv`,
             }).then(response=>{
                 let items=[];
                     let fields = ["file_path", "codex", "syllabus_code", "domain", "area", "knowledge_unit", "learning_objective", "particular", "level_of _difficulty", "copyright_content", "copyright_artwork", "copyright_photo", "linkage", "user", "level", "nature", "position", "output"];
