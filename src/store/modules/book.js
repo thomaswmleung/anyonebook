@@ -21,7 +21,7 @@ const state = {
     row_record:[],
     metadata:{}
   },
-  grade_items:["p1A", "p1B", "p2A", "p2B", "p3A", "p3B", "p4A", "p4B", "p5A", "p5B", "p6A", "p6B"],
+  grade_items:["p1A", "p2A",  "p3A",  "p4A",  "p5A",  "p6A"],
   publicity_items:["Public", "Private"]
 
 }
