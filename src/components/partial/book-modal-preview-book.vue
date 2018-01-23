@@ -1,13 +1,12 @@
 <template>
-  <v-dialog v-model="show" persistent max-width="1500px">
-    <v-card>
-      <v-container fluid text-xs-center>
+  <v-dialog v-model="show" persistent max-width="1500px" >
+      <v-container fluid text-xs-center style="background-color:#ffffff;">
         <v-layout row wrap>
           <v-flex xs2>
             <!-- Create a card for control button for the left image of the row -->
                 <!-- Edit by adding comment and control the color -->
             <v-card>
-              <v-switch              
+              <v-switch
                 :label="edit1?$t('Edit'):$t('No Edit')"
                 v-model="edit1"
                 @change="changeEvent('left_edit')"
@@ -29,36 +28,32 @@
           </v-flex>
           <v-flex xs8>
             <!-- Create a card for displaying the image of the row -->
-            <v-card>
-              <v-container>
-                <v-layout row wrap :style="{height:`${row_height}px`,overflow:'scroll'}" >
-                  <v-flex xs12 sm12 md6 class="left_image"  >
-                    <book-row-image
-                      :all_pages="all_pages"
-                      :page="page"
-                      :row_height="row_height"
-                      :grey="bw1"
-                      side="left">
-                    </book-row-image>
-                  </v-flex>
-                  <v-flex xs12 sm12 md6 >
-                    <book-row-image
-                      :all_pages="all_pages"
-                      :page="page"
-                      :row_height="row_height"
-                      :grey="bw2"
-                      side="right">
-                    </book-row-image>
-                  </v-flex>
-                </v-layout>
-              </v-container>
-            </v-card>
+            <v-layout row wrap >
+              <v-flex xs12 sm12 md6 class="left_image"  >
+                <book-row-image
+                  :all_pages="all_pages"
+                  :page="page"
+                  :row_height="row_height"
+                  :grey="bw1"
+                  side="left">
+                </book-row-image>
+              </v-flex>
+              <v-flex xs12 sm12 md6 >
+                <book-row-image
+                  :all_pages="all_pages"
+                  :page="page"
+                  :row_height="row_height"
+                  :grey="bw2"
+                  side="right">
+                </book-row-image>
+              </v-flex>
+            </v-layout>
           </v-flex>
           <v-flex xs2>
             <!-- Create a card for control button for the right image of the row -->
                 <!-- Edit by adding comment and control the color -->
             <v-card>
-              <v-switch              
+              <v-switch
                 :label="edit2?$t('Edit'):$t('No Edit')"
                 v-model="edit2"
                 @change="changeEvent('right_edit')"
@@ -80,27 +75,25 @@
           </v-flex>
         </v-layout>
         <v-layout row wrap >
-          <v-flex>
-            <v-pagination 
-                 :length="Math.ceil(row_record.length)" 
-                 v-model="current_index" 
-                 :total-visible="7" 
+          <v-flex md8>
+            <v-pagination
+                 :length="Math.ceil(row_record.length)"
+                 v-model="current_index"
+                 :total-visible="7"
                  @input = "resetPage()"
             ></v-pagination>
             (Total Record:  {{row_record.length}})
           </v-flex>
-        </v-layout>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" flat @click.native="processBook">
+          <v-flex md4>
+            <v-btn color="blue darken-1" flat @click.native="processBook">
             {{$t('Save')}}
           </v-btn>
           <v-btn color="blue darken-1" flat @click.native="$emit('close_dialog');">
             {{$t("Close")}}
           </v-btn>
-        </v-card-actions>
+          </v-flex>
+        </v-layout>
       </v-container>
-    </v-card>
   </v-dialog>
 </template>
 <style scoped>
@@ -112,9 +105,9 @@
 <script>
   import Vue from 'vue'
   import {mapGetters,mapActions} from "vuex"
-  import moment from 'moment' 
+  import moment from 'moment'
   import { getExtension } from '@/shared/helpers'
-  
+
   import BookRowImage from "@/components/partial/book-row-image"
   import jsSHA from "jssha"
 
@@ -177,8 +170,8 @@
                                         book_metadata: this.metadata // from CreatBook component
                                       });
         let shaObj = new jsSHA('SHA-256', "TEXT");
-        shaObj.update(book.content); 
-        shaObj.update(Date()); 
+        shaObj.update(book.content);
+        shaObj.update(Date());
         book.page_code = `${this.user_data._id}-${shaObj.getHash("B64")}` ; //user id from getters , hash obj return a set of string
         // book.title = "title";
         // book.subtitle = "subtitle";
@@ -214,11 +207,11 @@
     ...mapGetters({
         all_page:"allPages",
         user_data: "userData",
-        current_book:"currentBook"    
+        current_book:"currentBook"
       }),
     page(){
         return this.row_record[this.current_index-1]||{};
-      }     
+      }
     }
   };
 </script>

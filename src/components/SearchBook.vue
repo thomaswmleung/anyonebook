@@ -39,7 +39,7 @@
                                 </div>
                                 <div>
                                     <router-link :to="`/create_book/${book._id}`" tag="button">
-                                        <img src="static/cover/mathany_1a.jpeg" height="200px" />
+                                        <img :src="getCoverImage(book.metadata)" height="200px" />
                                     </router-link>
                                 </div>
                                 <div>
@@ -117,7 +117,10 @@
 
     getOptionLabel({type,code}){
         return _.find(this.option[type],{code})["label"]
-    }
+    },
+      getCoverImage(book_metadata){
+        return `static/cover/${book_metadata.codex}_${book_metadata.grade.toLocaleLowerCase().slice(1,3)}.jpeg`;
+    },
    },
   computed:{
         ...mapGetters({

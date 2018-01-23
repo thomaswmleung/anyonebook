@@ -48,13 +48,11 @@
                                     <v-btn outline color="indigo" @click.stop="show_preview_book=true;">preview</v-btn>
                                 </v-flex>
 
-                 </v-layout>
-                 <!-- Codex List -->
+                                <v-flex>
+                                    <img :src="cover_image" width="100%" alt="">
+                                </v-flex>
 
-                 <v-flex v-for="row in all_pages" :key="row.file_path">
-                     <!-- {{row.domain}} - {{row.area}} -->
-                     <!-- <img style="width=95%" :src="row.file_path"/> -->
-                </v-flex>
+                 </v-layout>
 
             </v-flex>
             <v-flex x12 class="title"  v-if="area_rows.length==0">
@@ -62,15 +60,15 @@
                     <v-card-text class="px-0">{{$t("Please Add Your Row")}}</v-card-text>
                 </v-card>
             </v-flex>
-             <v-flex xs12 md9 >
-                        <v-layout row wrap style="padding-left: 1.3em;border: 1px solid lightskyblue;" >
+             <v-flex xs12 md9>
+                        <v-layout row wrap style="padding-left: 1.3em;border: 1px solid lightskyblue;"   v-if="area_rows.length!=0">
                             <!-- TODO MetaData form  -->
                             <v-flex xs6 md2>
                                 <v-select :items="option.codex" class="compact"
                                     item-value="code"
                                     item-text="label"
                                     v-model="book_metadata.codex"
-                                    @input="updateCodex($event, 'book')"
+                                    @input="updateCodex($event,'book')"
                                     :label="$t('Codex')"
                                 ></v-select>
                             </v-flex>
@@ -79,6 +77,7 @@
                                     v-bind:items="grade_items"
                                     v-model="book_metadata.grade"
                                     label="Grade"
+                                    @input="updateCoverImage"
                                     single-line
                                 ></v-select>
                             </v-flex>
@@ -136,68 +135,67 @@
                             </v-flex>
                         </v-layout>
                         <v-container  id="dragContainer" class="rowContainer toc" >
-                       <v-layout row wrap
-                            v-for="(page,index) in area_rows"
-                            :key="index+page.domain+page.area+page.ku"
-                            :data="page"
-                            :id="`${index}`"
-                            class="rowItem toc">
-                           <v-flex xs12  >
-                                    <v-layout row wrap @click.stop="updatePageRecord(index,'tools')" >
-                                        <v-flex xs4  >
-                                            <h3 class="title mb-1">{{page.area}} </h3>
-                                            <span >{{page.domain}}</span>
-                                        </v-flex>
-                                        <v-flex xs4  >
-                                            <h3 class="subtitle mb-1">{{page.ku}} </h3>
-                                        </v-flex>
-                                        <v-flex xs4 text-xs-right >
-                                            <h3 class="content mb-1">
-                                                <div  v-if="!page.tools">{{(index+1)*2}} </div>
-                                                    <div  v-if="page.tools">
-                                                        {{(index+1)*2}}
-                                                        <v-btn  fab dark small color="primary"
-                                                            @click.stop="updatePageRecord(index,'preview')">
-                                                            <v-icon dark>remove_red_eye</v-icon>
-                                                        </v-btn>
-                                                        <v-btn  fab dark small color="error"
-                                                            @click.stop="confirmDelete(index)">
-                                                            <v-icon  @click.stop="updatePageRecord(index,'tools')" >delete</v-icon>
-                                                        </v-btn>
-                                                        <v-icon class="handle">drag_handle</v-icon>
-                                                    </div>
-                                            </h3>
-                                        </v-flex>
-                                    </v-layout>
-                                     <v-layout row wrap  :style="{height:page.preview?`${row_height}px`:'0px',overflow:'scroll'}" >
-                                            <v-flex xs12 sm12 md6 class="left_image"  >
-                                                <book-row-image
-                                                    :all_pages="all_pages"
-                                                    :page="page"
-                                                    :row_height="row_height"
-                                                    :grey="page.left_greyscale"
-                                                    :current_index="index"
-                                                    @changeRowValue="changeRowValue"
-                                                    side="left">
-                                                </book-row-image>
+                          <v-layout row wrap
+                                v-for="(page,index) in area_rows"
+                                :key="index+page.domain+page.area+page.ku"
+                                :data="page"
+                                :id="`${index}`"
+                                class="rowItem toc">
+                              <v-flex xs12  >
+                                        <v-layout row wrap @click.stop="updatePageRecord(index,'tools')" >
+                                            <v-flex xs4  >
+                                                <h3 class="title mb-1">{{page.area}} </h3>
+                                                <span >{{page.domain}}</span>
                                             </v-flex>
-                                            <v-flex xs12 sm12 md6 >
-                                                <book-row-image
-                                                    :all_pages="all_pages"
-                                                    :page="page"
-                                                    :row_height="row_height"
-                                                    :grey="page.right_greyscale"
-                                                    :current_index="index"
-                                                    @changeRowValue="changeRowValue"
-                                                    side="right">
-                                                </book-row-image>
+                                            <v-flex xs4  >
+                                                <h3 class="subtitle mb-1">{{page.ku}} </h3>
                                             </v-flex>
-                                    </v-layout>
-                           </v-flex>
-                       </v-layout>
+                                            <v-flex xs4 text-xs-right >
+                                                <h3 class="content mb-1">
+                                                    <div  v-if="!page.tools">{{(index+1)*2}} </div>
+                                                        <div  v-if="page.tools">
+                                                            {{(index+1)*2}}
+                                                            <v-btn  fab dark small color="primary"
+                                                                @click.stop="updatePageRecord(index,'preview')">
+                                                                <v-icon dark>remove_red_eye</v-icon>
+                                                            </v-btn>
+                                                            <v-btn  fab dark small color="error"
+                                                                @click.stop="confirmDelete(index)">
+                                                                <v-icon  @click.stop="updatePageRecord(index,'tools')" >delete</v-icon>
+                                                            </v-btn>
+                                                            <v-icon class="handle">drag_handle</v-icon>
+                                                        </div>
+                                                </h3>
+                                            </v-flex>
+                                        </v-layout>
+                                        <v-layout row wrap  :style="{height:page.preview?`${row_height}px`:'0px',overflow:'scroll'}" >
+                                                <v-flex xs12 sm12 md6 class="left_image"  >
+                                                    <book-row-image
+                                                        :all_pages="all_pages"
+                                                        :page="page"
+                                                        :row_height="row_height"
+                                                        :grey="page.left_greyscale"
+                                                        :current_index="index"
+                                                        @changeRowValue="changeRowValue"
+                                                        side="left">
+                                                    </book-row-image>
+                                                </v-flex>
+                                                <v-flex xs12 sm12 md6 >
+                                                    <book-row-image
+                                                        :all_pages="all_pages"
+                                                        :page="page"
+                                                        :row_height="row_height"
+                                                        :grey="page.right_greyscale"
+                                                        :current_index="index"
+                                                        @changeRowValue="changeRowValue"
+                                                        side="right">
+                                                    </book-row-image>
+                                                </v-flex>
+                                        </v-layout>
+                              </v-flex>
+                          </v-layout>
                        </v-container>
             </v-flex>
-
         </v-layout>
         <book-modal-preview-book
             :show="show_preview_book"
@@ -272,17 +270,32 @@ import BookRowImage from "@/components/partial/book-row-image"
     fetchData(){
         //Get demo page array
         this.getPageTsv().then(list=>this.all_pages=list);
-         this.initialize()
+        this.initialize();
+
     },
     //Update Codex
     updateCodex(codex, updateWhich){
         let codexInstance = _.find(this.option.codex, {code:codex});
         this.pageUpdateOption({type:'codex',values:codex})
         this.pageUpdateOption({type:'syllabus_code',values:codexInstance.syllabus})
-        //Show Image if the image is exist
+
         updateWhich=='book'?this.current_page.codex = this.book_metadata.codex:
-                            this.book_metadata.codex = this.current_page.codex
-        //to link the two codex column
+                            this.book_metadata.codex = this.current_page.codex;
+        this.updateCoverImage();
+
+    },
+    updateCoverImage(){
+      //Show Image if the image is exist
+        this.show_cover_image = false;
+        this.cover_image = `static/cover/${this.book_metadata.codex}_${this.book_metadata.grade.toLocaleLowerCase().slice(1,3)}.jpeg`;
+        checkImageExists({imageUrl:this.cover_image, callBack:flag=>{
+          if(flag){
+            this.show_cover_image= true;
+          }else{
+            this.show_cover_image= false;
+            //this.cover_image="";
+          }
+        }});
     },
     //Add Area Row
     addAreaRow(){
@@ -344,6 +357,7 @@ import BookRowImage from "@/components/partial/book-row-image"
                 callback:()=>{
                     this.area_rows = _.cloneDeep(this.current_book.row_record);
                     this.book_metadata = _.cloneDeep(this.current_book.metadata);
+                    this.updateCoverImage();
                 }
             })
           }else{
