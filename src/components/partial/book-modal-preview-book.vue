@@ -72,6 +72,36 @@
                 @input="changeEvent('right_comment')"
                 ></v-text-field>
             </v-card>
+            <v-card color="yellow lighten-4">
+              <v-container>
+                <table class="summary_table">
+                  <tr>
+                    <td class="attr">{{$t("Teacher Copy")}}</td>
+                    <td class="value">{{summary.teacher_copy}}</td>
+                  </tr>
+                  <tr>
+                   <td class="attr">{{$t("Student Copy")}}</td>
+                    <td class="value">{{summary.student_copy}}</td>
+                  </tr>
+                  <tr>
+                    <td class="attr">{{$t("B&W Pages")}}</td>
+                    <td class="value">{{summary.bw_page}}</td>
+                  </tr>
+                  <tr>
+                    <td class="attr">{{$t("Color Pages")}}</td>
+                    <td class="value">{{summary.color_page}}</td>
+                  </tr>
+                  <tr>
+                    <td class="attr">{{$t("Required Edit")}}</td>
+                    <td class="value">{{summary.edit_page}}</td>
+                  </tr>
+                  <tr>
+                    <td class="attr">{{$t("Average Price")}}</td>
+                    <td class="value">HKD ${{summary.average_price}}</td>
+                  </tr>
+                </table>
+              </v-container>
+            </v-card>
           </v-flex>
         </v-layout>
         <v-layout row wrap >
@@ -101,6 +131,17 @@
     position: absolute;
     left: -99999px;
   }
+  table.summary_table td.attr{
+    color:grey;
+    font-size: 0.85em;
+    text-align: left;
+  }
+  table.summary_table td.values{
+    color:darkolivegreen;
+    font-size: 0.95em;
+    text-align: left;
+
+  }
 </style>
 <script>
   import Vue from 'vue'
@@ -116,7 +157,7 @@
       components:{
         BookRowImage
       },
-      props:["show","row_record","metadata","all_pages", "grey"],
+      props:["show","row_record","metadata","all_pages", "grey","summary"],
       data(){
         return{
           current_index:1,
@@ -126,7 +167,14 @@
           bw2:false,
           cm1:"",
           cm2:"",
-          row_height:500
+          row_height:550,
+          summary:{
+            teacher_copy:0,
+            student_copy:0,
+            bw_page:0,
+            color_page:0,
+            average_price:60
+          }
         }
       },
   methods: {
@@ -201,17 +249,18 @@
             _instance.showFullscreenLoader(false);
           }
         )
-      }
+      },
     },
   computed:{
     ...mapGetters({
         all_page:"allPages",
         user_data: "userData",
-        current_book:"currentBook"
+        current_book:"currentBook",
       }),
-    page(){
+     page(){
         return this.row_record[this.current_index-1]||{};
-      }
+      },
+
     }
   };
 </script>
