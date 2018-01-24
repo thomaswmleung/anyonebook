@@ -21,18 +21,18 @@ const state = {
     row_record:[],
     metadata:{}
   },
-  grade_items:["p1A", "p1B", "p2A", "p2B", "p3A", "p3B", "p4A", "p4B", "p5A", "p5B", "p6A", "p6B"],
+  grade_items:["p1A", "p2A",  "p3A",  "p4A",  "p5A",  "p6A"],
   publicity_items:["Public", "Private"]
 
 }
 
-// retrive the value from the state 
+// retrive the value from the state
 const getters = {
   books:state=>_.clone(state.all_books),
   bookPaginator:state=>state.book_paginator,
   currentBook: state =>_.clone(state.current_book),
   gradeItem: state=>_.clone(state.grade_items),
-  publicityItem: state=>_.clone(state.publicity_items)   
+  publicityItem: state=>_.clone(state.publicity_items)
 }
 
 // modify value in the state
@@ -45,6 +45,13 @@ const mutations = {
   },
   mutUpdateCurrentBook(state, book) {
       state.current_book = book;
+  },
+  mutResetBook(state){
+    state.current_book= {
+        _id:"",
+        row_record:[],
+        metadata:{}
+    }
   }
 }
 
@@ -54,11 +61,11 @@ const actions = {
     return new Promise((resolve,reject)=>{
         let {_id, page_code, content, metadata}=book;
         let reference1=getUser().id,
-            reference2=metadata.codex, 
+            reference2=metadata.codex,
             reference3=metadata.grade,
-            reference4=metadata.school_name, 
+            reference4=metadata.school_name,
             reference5=metadata.publicity; //temporary bug
-        let method = _id!=""?"put":'post';  
+        let method = _id!=""?"put":'post';
         //create an instance
         var instance = _axios.create({
           baseURL: API_BASE_URL,
@@ -86,7 +93,7 @@ const actions = {
           });
         });
   },
-  
+
   deleteBook({commit,dispatch},{book,callback}){
     //create an instance
     var instance = _axios.create({
@@ -139,7 +146,7 @@ const actions = {
         params: {
           limit: paginator.limit ||8,
           skip: paginator.skip|| 0,
-          search_key: getUser()._id 
+          search_key: getUser()._id
         }
       }).then((response) => {
         commit('COMMOM_UPDATE_FULLSCREEN_LOADER',false) //Common Loader Module
@@ -147,7 +154,7 @@ const actions = {
         let pageObj = {};
         for (var i = 0; i < response.data.data.length; i++)
         {
-          pageObj = JSON.parse(response.data.data[i].content); // TODO need to check it is a valid JSON string 
+          pageObj = JSON.parse(response.data.data[i].content); // TODO need to check it is a valid JSON string
           pageObj._id = response.data.data[i]._id;
           pageObj.created_at = response.data.data[i].created_at;
           pageObj.metadata = JSON.parse(response.data.data[i].content).book_metadata;
@@ -161,7 +168,7 @@ const actions = {
       })
   },
 
-  getBookById({commit,getters},{id,callback}){
+  getBookById({commit},{id,callback}){
     commit('COMMOM_UPDATE_FULLSCREEN_LOADER',true) //Common Loader Module
     //create an instance
     var instance = _axios.create({
@@ -188,8 +195,10 @@ const actions = {
           callback(current_book_obj);
         }
     });
-
-},
+  },
+  resetBook({commit}){
+    commit("mutResetBook");
+  }
 }
 
 

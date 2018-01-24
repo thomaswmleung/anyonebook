@@ -9,7 +9,7 @@
 function find (list, f) {
     return list.filter(f)[0]
   }
-  
+
   /**
    * Deep copy the given object considering circular structure.
    * This function caches all nested objects and its copies.
@@ -24,13 +24,13 @@ function find (list, f) {
     if (obj === null || typeof obj !== 'object') {
       return obj
     }
-  
+
     // if obj is hit, it is in circular structure
     const hit = find(cache, c => c.original === obj)
     if (hit) {
       return hit.copy
     }
-  
+
     const copy = Array.isArray(obj) ? [] : {}
     // put the copy into cache at first
     // because we want to refer it in recursive deepCopy
@@ -38,34 +38,34 @@ function find (list, f) {
       original: obj,
       copy
     })
-  
+
     Object.keys(obj).forEach(key => {
       copy[key] = deepCopy(obj[key], cache)
     })
-  
+
     return copy
   }
-  
+
   /**
    * forEach for object
    */
   export function forEachValue (obj, fn) {
     Object.keys(obj).forEach(key => fn(obj[key], key))
   }
-  
+
   export function isObject (obj) {
     return obj !== null && typeof obj === 'object'
   }
-  
+
   export function isPromise (val) {
     return val && typeof val.then === 'function'
   }
-  
+
   export function assert (condition, msg) {
     if (!condition) throw new Error(`[vuex] ${msg}`)
   }
 
-  export function checkImageExists(imageUrl, callBack) {
+  export function checkImageExists({imageUrl, callBack}) {
       var imageData = new Image();
       imageData.onload = function() {
         callBack(true);

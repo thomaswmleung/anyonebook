@@ -417,7 +417,7 @@ const actions= {
         return new Promise((resolve,reject)=>{
           Http({
               method: 'get',
-              url: `/static/${syllabusCode}.tsv`,
+              url: `static/${syllabusCode}.tsv`,
             }).then(
                 response=>{
                   let items=[];
@@ -437,23 +437,26 @@ const actions= {
 
         });
     },
-    pageUpdateOption({commit},params){
+    pageUpdateOption({commit},{type, values, callback}){
 
-        if(params.type=="syllabus_code"
-            && !state.page_syllabus_options.all_syllabus[params.values]){
-            actions.getStyllabus(params.values).then(response=>{
-                commit(types.PAGE_UPDATE_SYLLABUS,{code:params.values, list:response});
-                commit(types.PAGE_UPDATE_OPTION, params);
+        if(type=="syllabus_code"
+            && !state.page_syllabus_options.all_syllabus[values]){
+            actions.getStyllabus(values).then(response=>{
+                commit(types.PAGE_UPDATE_SYLLABUS,{code:values, list:response});
+                commit(types.PAGE_UPDATE_OPTION, {type,values});
+                if(typeof callback=="function"){
+                    callback();
+                }
             })
         }else{
-            commit(types.PAGE_UPDATE_OPTION, params);
+            commit(types.PAGE_UPDATE_OPTION,  {type,values});
         }
 
     },
     pageResetOption({commit}){
         commit(types.PAGE_RESET_OPTION);
     },
-    getPageById({commit,getters},id){
+    getPageById({commit,dispatch,getters},id){
         commit('COMMOM_UPDATE_FULLSCREEN_LOADER',true) //Common Loader Module
 
         // const {title,sub_title,subject,domain,subdomain,startDate,endDate} = filter;
@@ -464,7 +467,7 @@ const actions= {
             let current_page_obj = {
                 _id:response.data._id,
                 codex:response.data.codex,
-                syllabus:response.data.layout||"hk_primary_chinese",
+                syllabus_code:response.data.syllabus_code||"hk_primary_chinese",
                 subject:response.data.subject,
                 domain:response.data.domain,
                 area:response.data.subdomain,
@@ -478,11 +481,15 @@ const actions= {
                 author:"",
                 remark:response.data.remark
             };
-            commit(types.PAGE_UPDATE_OPTION,
-                {type:"syllabus",
-                values:current_page_obj.syllabus}
-            );
-            commit(types.PAGE_SET_CURRENT_PAGE,current_page_obj);
+            // commit(types.PAGE_UPDATE_OPTION,
+            //     {type:"syllabus_code",
+            //     values:current_page_obj.syllabus_code}
+            // );
+            dispatch('pageUpdateOption', {type:"syllabus_code",
+                values:current_page_obj.syllabus_code,
+                callback:()=>{commit(types.PAGE_SET_CURRENT_PAGE,current_page_obj);}
+            });
+
         });
 
     },

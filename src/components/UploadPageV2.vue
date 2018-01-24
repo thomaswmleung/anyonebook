@@ -7,7 +7,7 @@
                     :key="option.label"
                     style="margin-top:0.3em"
                     >
-                    <div @click.stop="show_upload_pdf=true; updateCurrentVersion(option)">
+                    <div @click.stop="updateCurrentVersion(option)">
                         <v-card-title style="font-size:1.2em">
                             {{$t(option.label)}}
                         </v-card-title>
@@ -31,12 +31,27 @@
                                 </v-btn>
                             </h3>
                         </v-card-title>
-                    <v-card-text>
-                        <v-btn x-large style="height:8em;width:100%" @click.stop="uploadPDF">
+                    <v-flex v-for="(row,idx) in current_page.version"
+                            :key="row.user+row.level+row.nature+row.position+row.output"
+                            xs12 md6 >
+                    <v-card v-if="idx == currentPreview">
+                      <v-card-media style="height: 30rem; width: 100%" :src="row.students_preview_image"></v-card-media>
+                    </v-card>
+                    </v-flex>
+                    <v-flex v-if="current_page.version">
+                    <v-card-text v-if="current_page.version.length == 0">
+                        <v-btn x-large  style="height:10em; width: 100%" @click.stop="uploadPDF">
                             <v-icon x-large v-html="uploadIcon"></v-icon>
                         </v-btn>
                     </v-card-text>
-
+                    </v-flex>
+                    <v-flex v-else>
+                    <v-card-text>
+                        <v-btn x-large  style="height:10em; width: 100%" @click.stop="uploadPDF">
+                            <v-icon x-large v-html="uploadIcon"></v-icon>
+                        </v-btn>
+                    </v-card-text>
+                    </v-flex>
                     <v-layout row wrap>
                     <v-flex>
                         <v-card hover >
@@ -52,7 +67,7 @@
                             <!-- Listing PDF version-->
                                 <v-layout row wrap>
                                     <!-- user level nature position output file_path_btn preview_btn remove_btn -->
-                                    <v-flex  v-for="(row,idx) in current_page.version"
+                                    <v-flex v-for="(row,idx) in current_page.version"
                                             :key="row.user+row.level+row.nature+row.position+row.output"
                                         xs12 md6 >
                                         <v-card>
@@ -64,11 +79,18 @@
                                                 </span>
                                                 <br>
                                                 <span>
-                                                    <v-btn  dark small color="primary" @click.stop="pageUpdateVersionIndex(idx);show_upload_pdf=true;">
+                                                    <v-btn fab dark small color="primary" @click.stop="pageUpdateVersionIndex(idx);show_upload_pdf=true;">
                                                         <v-icon dark>mode_edit</v-icon>
                                                     </v-btn>
-                                                    <v-btn   dark small color="error" @click.stop="pageDeleteVersion(idx)">
+                                                    <v-btn  fab dark small color="error" @click.stop="pageDeleteVersion(idx)">
                                                         <v-icon dark>delete_forever</v-icon>
+                                                    </v-btn>
+                                                    <v-btn
+                                                      fab
+                                                      dark
+                                                      small
+                                                      @click.stop="currentPreview = idx">
+                                                      <v-icon dark>visibility</v-icon>
                                                     </v-btn>
                                                 </span>
                                             </div>
@@ -166,11 +188,26 @@ export default {
             return _record?_record["label"]:""
         },
         updateCurrentVersion(opt){
-            let i;
-            for(i in opt){
-               if(i != "label"){
-                   this.pageUpdateVersion({attr:i,val:opt[i].code })
-               }
+           //validate meta information filled or not
+           let processBoolFlag = true;
+           let attr;
+          ['codex','syllabus_code','domain','area'].forEach(
+              attr=>{
+                   if(this.current_page[attr]==""){processBoolFlag=false;}
+              }
+          );
+           //  console.log("Upload PDF",processBoolFlag, this.current_page,this.$t);
+           if(processBoolFlag){
+              let i;
+              for(i in opt){
+                 if(i != "label"){
+                     this.pageUpdateVersion({attr:i,val:opt[i].code })
+                 }
+              }
+              this.show_upload_pdf=true;
+            }else{
+                // if not show a the toast require to fill the page information, and close the modal
+                Vue.toasted.error(this.$t('Please fill page information before upload')).goAway(3000);
             }
         },
         //Upload PDF process - trigger
@@ -218,6 +255,7 @@ export default {
               // delete page_parameter.page_group._id;
 
               //format the parameter and call page_group API, wait for return
+              console.log("save page with page_parameter" + JSON.stringify(page_parameter))
               this.createPage({page:page_parameter})
                 .then(response=>{
                     //update page-group-id
@@ -254,6 +292,7 @@ export default {
       knowledge_unit:"",
     //   all_syllabus:syllabus,
 
+      currentPreview: 0,
 
       previous_page_id:"",
 
