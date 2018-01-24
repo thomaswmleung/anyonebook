@@ -34,7 +34,7 @@
                   :all_pages="all_pages"
                   :page="page"
                   :row_height="row_height"
-                  :grey="bw1"
+                  :grey="page[`left_greyscale`]"
                   side="left">
                 </book-row-image>
               </v-flex>
@@ -43,7 +43,7 @@
                   :all_pages="all_pages"
                   :page="page"
                   :row_height="row_height"
-                  :grey="bw2"
+                  :grey="page[`right_greyscale`]"
                   side="right">
                 </book-row-image>
               </v-flex>
@@ -167,21 +167,28 @@
           bw2:false,
           cm1:"",
           cm2:"",
-          row_height:550,
-          summary:{
-            teacher_copy:0,
-            student_copy:0,
-            bw_page:0,
-            color_page:0,
-            average_price:60
-          }
+          row_height:550
         }
-      },
+      }, 
+      watch: {
+    // call again the method if the route changes
+    'show': 'fetchData'
+    },
   methods: {
     ...mapActions([
       "createBook",
       "showFullscreenLoader"
     ]),
+    fetchData()
+    {
+        this.edit1=this.page[`left_edit`];
+        this.edit2=this.page[`right_edit`];
+        this.bw1=this.page[`left_greyscale`];
+        this.bw2=this.page[`right_greyscale`];
+        this.cm1=this.page[`left_comment`];
+        this.cm2=this.page[`right_comment`]
+        console.log(this.bw1)
+    },
     //reset the value of the switch for every page
     resetPage()
       {
@@ -221,20 +228,6 @@
         shaObj.update(book.content);
         shaObj.update(Date());
         book.page_code = `${this.user_data._id}-${shaObj.getHash("B64")}` ; //user id from getters , hash obj return a set of string
-        // book.title = "title";
-        // book.subtitle = "subtitle";
-        // book.codex_id = "codexid";
-        // book.author = "author";
-        // book.published_year = 2017;
-        // book.publisher = "publisher";
-        // book.isbn = "isbn";
-        // book.price = 100;
-        // book.page = [];
-        // book.toc = this.row_record;
-        // book.cover = {};
-        // book.syllabus = {};
-        // book.keyword = [];
-        // book.organisation = "organization";
 
         this.createBook({book}).then(
           response=>{

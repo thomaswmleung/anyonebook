@@ -427,7 +427,7 @@ import BookRowImage from "@/components/partial/book-row-image"
             subtitle:"",
             school_name:"",
             school_logo:"",
-            pulicity:"",
+            publicity:"",
             remark:"",
             student_copy:1,
             teacher_copy:1

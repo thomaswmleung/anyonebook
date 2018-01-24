@@ -64,7 +64,7 @@ const actions = {
             reference2=metadata.codex,
             reference3=metadata.grade,
             reference4=metadata.school_name,
-            reference5=metadata.publicity; //temporary bug
+            reference5=metadata.publicity;
         let method = _id!=""?"put":'post';
         //create an instance
         var instance = _axios.create({
@@ -130,8 +130,9 @@ const actions = {
     }
   },
 
-  getBook({commit,dispatch},{paginator, filter}){
+  getBook({commit,dispatch},{paginator, book_filter}){
     //create an instance
+    console.log(paginator, book_filter)
     var instance = _axios.create({
       baseURL: API_BASE_URL,
       timeout: 8000,
@@ -146,7 +147,11 @@ const actions = {
         params: {
           limit: paginator.limit ||8,
           skip: paginator.skip|| 0,
-          search_key: getUser()._id
+          reference_1: book_filter.publicity=="Private"? getUser()._id:"",
+          reference_2: book_filter.codex,
+          reference_3: book_filter.grade,
+          reference_4: book_filter.school_name,
+          reference_5: book_filter.publicity
         }
       }).then((response) => {
         commit('COMMOM_UPDATE_FULLSCREEN_LOADER',false) //Common Loader Module

@@ -33,7 +33,7 @@
                 ></v-select>
             </v-flex>
             <v-flex xs2 md1>
-                <v-btn  color="primary" fab small dark>
+                <v-btn  color="primary" fab small dark @click.stop = "getBooks()">
                   <v-icon>search</v-icon>
                 </v-btn>
             </v-flex>
@@ -57,6 +57,9 @@
                                     </router-link>
                                 </div>
                                 <div>
+                                    <v-btn small color="primary" flat @click.stop="purchaseBook(book._id)">
+                                        {{$t('Purchase')}}
+                                    </v-btn>
                                     <router-link :to="`/create_book/${book._id}`" tag="button">
                                         <v-btn small color="primary" >
                                             {{$t('Edit')}}
@@ -86,6 +89,13 @@
                 (Total Record:  {{book_paginator.total_count}})
             </v-flex>
         </v-layout>
+        <book-modal-purchase-book
+            :show="show_purchase_book"
+            :all_pages="all_pages"
+            :row_record="area_rows"
+            :metadata="book_metadata"
+            @close_dialog = "show_purchase_book=false"
+        ></book-modal-purchase-book>
      </v-container>
 </template>
 <style scoped>
@@ -97,12 +107,18 @@
 <script>
  import Vue from 'vue';
  import {mapGetters,mapActions} from "vuex"
-  import moment from 'moment'
+ import moment from 'moment'
+ import { Http,ApiPrivateHttp } from '@/shared/http-service'
+ import BookModalPurchaseBook from "@/components/partial/book-modal-purchase-book"
 
  export default {
   name: 'Pagination',
+  components:{
+      BookModalPurchaseBook
+  },
   created () {
        this.getBooks();
+       this.fetchData();
   },
   watch: {
     // call again the method if the route changes
@@ -115,20 +131,57 @@
             grade:"",
             publicity:"Private",
             school_name:""
-        }
+        },
+        show_purchase_book:false,
+        all_pages:[],
+        area_rows:[],
+        book_metadata:{}
     };
   },
    methods: {
     ...mapActions([
       "deleteBook",
-      "getBook"
+      "getBook",
+      "getBookById"
     ]),
+        getPageTsv(){
+        let page_file_name = "page-rows";
+        return new Promise((resolve,reject)=>{
+            Http({
+                methods:"get",
+                url: `static/${page_file_name}.tsv`,
+            }).then(response=>{
+                let items=[];
+                    let fields = ["file_path", "codex", "syllabus_code", "domain", "area", "knowledge_unit", "learning_objective", "particular", "level_of _difficulty", "copyright_content", "copyright_artwork", "copyright_photo", "linkage", "user", "level", "nature", "position", "output"];
+                    let rowArray = response.split('\n');
+                    rowArray.forEach(row=>{
+                        let obj = {};
+                        let attrs = row.split('\t');
+                        fields.forEach((str,idx)=>{
+                            obj[str] = attrs[idx];
+                        })
+                        items.push(obj);
+                    });
+                resolve(items);
+            });
+        })
+    },
+    //FetchData
+    fetchData(){
+        //Get demo page array
+        this.getPageTsv().then(list=>this.all_pages=list);
 
+    },
     getBooks() {
         let paginator = {};
             paginator.limit = this.book_paginator.limit;
             paginator.skip = (this.book_paginator.current_page-1)*this.book_paginator.limit;
-        this.getBook({paginator}, this.filter);
+        let book_filter = {};
+            book_filter.codex = this.filter.codex;
+            book_filter.grade = this.filter.grade;
+            book_filter.publicity = this.filter.publicity;
+            book_filter.school_name = this.filter.school_name;
+        this.getBook({paginator, book_filter});
     },
 
     getOptionLabel({type,code}){
@@ -137,6 +190,19 @@
       getCoverImage(book_metadata){
         return `static/cover/${book_metadata.codex}_${book_metadata.grade.toLocaleLowerCase().slice(1,3)}.jpeg`;
     },
+    purchaseBook(id)
+    {
+        this.getBookById({
+            id,
+            callback:()=>{
+                this.area_rows = _.cloneDeep(this.current_book.row_record);
+                this.book_metadata = _.cloneDeep(this.current_book.metadata);
+                // this.updateCoverImage();
+                // this.updateBookSummary();
+            }
+        });
+        this.show_purchase_book=true;
+    }
    },
   computed:{
         ...mapGetters({
