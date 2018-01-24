@@ -61,7 +61,9 @@
                 </v-card>
             </v-flex>
              <v-flex xs12 md9>
-                        <v-layout row wrap style="padding-left: 1.3em;border: 1px solid lightskyblue;"   v-if="area_rows.length!=0">
+                        <v-layout row wrap
+                                  style="padding-left: 1.3em;border: 1px solid lightskyblue;"
+                                  v-if="area_rows.length!=0">
                             <!-- TODO MetaData form  -->
                             <v-flex xs6 md2>
                                 <v-select :items="option.codex" class="compact"
@@ -201,6 +203,7 @@
             :show="show_preview_book"
             :row_record="area_rows"
             :metadata="book_metadata"
+            :summary="summary"
             :all_pages="all_pages"
             @close_dialog = "show_preview_book=false"
             @changeRowValue="changeRowValue"
@@ -282,7 +285,6 @@ import BookRowImage from "@/components/partial/book-row-image"
         updateWhich=='book'?this.current_page.codex = this.book_metadata.codex:
                             this.book_metadata.codex = this.current_page.codex;
         this.updateCoverImage();
-
     },
     updateCoverImage(){
       //Show Image if the image is exist
@@ -341,14 +343,41 @@ import BookRowImage from "@/components/partial/book-row-image"
             this.area_rows.splice(index,1);
         };
       },
-      updatePageIndex(params){
+      updateBookSummary(){
+        let count = 0;
+        let i = 0 ;
+        let rows = this.area_rows;
+        this.summary = {
+            student_copy:0,
+            teacher_copy:0,
+            bw_page:0,
+            color_page:0,
+            edit_page:0,
+            average_price:44
+          }
+        for(i =0;i< rows.length;i++){
+            this.summary.bw_page +=rows[i]["left_greyscale"]?1:0;
+            this.summary.bw_page +=rows[i]["right_greyscale"]?1:0;
+            this.summary.color_page +=rows[i]["left_greyscale"]?0:1;
+            this.summary.color_page +=rows[i]["right_greyscale"]?0:1;
+            this.summary.edit_page +=rows[i]["left_edit"]?1:0;
+            this.summary.edit_page +=rows[i]["right_edit"]?1:0;
+        }
+        this.summary.student_copy = this.book_metadata.student_copy;
+        this.summary.teacher_copy = this.book_metadata.teacher_copy;
+
+        let total_cost = _.min([60, this.summary.color_page*0.5+44])
+                          * this.summary.student_copy
+                          +this.summary.edit_page*70
+                          +60*this.summary.teacher_copy;
+        this.summary.average_price = _.ceil(total_cost / this.summary.student_copy);
 
       },
       //handle the data changed passed from BookModalPreviewBook
-      changeRowValue({current_index, attr, value})
-      {
-          console.log(this.area_rows,current_index,attr,value);
+      changeRowValue({current_index, attr, value}){
           this.area_rows[current_index][attr] = value;
+          //Update Summary of the Book
+          this.updateBookSummary();
       },
       initialize(){
           if(this.$route.params.id){
@@ -358,6 +387,7 @@ import BookRowImage from "@/components/partial/book-row-image"
                     this.area_rows = _.cloneDeep(this.current_book.row_record);
                     this.book_metadata = _.cloneDeep(this.current_book.metadata);
                     this.updateCoverImage();
+                    this.updateBookSummary();
                 }
             })
           }else{
@@ -367,14 +397,16 @@ import BookRowImage from "@/components/partial/book-row-image"
       },
       validation(inputText, type){
         for (var i = 0; i < inputText.length; i++) {
-          inputText[i].replace(/[\D\s\._\-]+/g, '');}
+          inputText[i].replace(/[\D\s\._\-]+/g, '');
+        }
           inputText = inputText?parseInt( inputText, 10 ):0;
           if(inputText>=0){
               this.book_metadata.type = inputText;
           }else{
               this.book_metadata.type = 0;
           }
-        }
+        this.updateBookSummary();
+     }
   },
   watch: {
     // call again the method if the route changes
@@ -403,7 +435,15 @@ import BookRowImage from "@/components/partial/book-row-image"
             remark:"",
             student_copy:1,
             teacher_copy:1
-        }
+        },
+          summary:{
+            student_copy:0,
+            teacher_copy:0,
+            bw_page:0,
+            color_page:0,
+            edit_page:0,
+            average_price:44
+          }
     };
   },
   mounted(){
