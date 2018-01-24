@@ -1,10 +1,10 @@
 <template>
     <v-layout >
         <v-flex xs1 style="margin:auto">
-            <v-btn fab dark small 
+            <v-btn fab dark small
                   v-if="show_arrow('left')"
                   @click.stop="updatePageIndex('left')"
-                  color="primary" 
+                  color="primary"
                   class="xsBtn" >
                 <v-icon>keyboard_arrow_left</v-icon>
             </v-btn>
@@ -14,24 +14,24 @@
                 <v-icon>keyboard_arrow_up</v-icon>
             </v-btn>
             <!--
-            <p 
-               v-if="getImage()" 
-               style="margin-bottom:0px">                                 
-                <img                   
+            <p
+               v-if="getImage()"
+               style="margin-bottom:0px">
+                <img
                     :src="getImage()"
                     :style="{height:`${row_height-70}px`}"
-                    :class="{bw:grey}"   
-                 /> 
-            </p> 
-            
+                    :class="{bw:grey}"
+                 />
+            </p>
+
             <div v-if="getImage()">
                 <viewer>
-                    <img 
-                        :src="getImage()" 
+                    <img
+                        :src="getImage()"
                         :class="{bw:grey}"
                     />
                 </viewer>
-            </div>--> 
+            </div>-->
         <div class="viewer-wrapper" v-if="getImage()">
           <viewer :options="options" :images="[getImage()]"
                   @inited="inited"
@@ -41,9 +41,8 @@
               <figure class="images">
                 <div class="image-wrapper" >
                   <img class="image bw"
-                    
-                       :src="getImage()" 
-                       :data-source="getImage()" 
+                       :src="getImage()"
+                       :data-source="getImage()"
                        :alt="getImage().split('/').pop()"
                       :style="{height:`${row_height-70}px`}"
                   >
@@ -55,7 +54,7 @@
             </div>
           </viewer>
         </div>
-            <v-card v-if="!getImage()" 
+            <v-card v-if="!getImage()"
                    :style="{height:`${row_height-70}px`, margin:'auto'}"
                  >
                     <span>{{$t("No Page available")}}</span>
@@ -65,13 +64,13 @@
             </v-btn>
         </v-flex>
         <v-flex xs1 style="margin:auto">
-            <v-btn  fab dark small color="primary" 
-                class="xsBtn"  
-                v-if="show_arrow('right')"                
+            <v-btn  fab dark small color="primary"
+                class="xsBtn"
+                v-if="show_arrow('right')"
                 @click.stop="updatePageIndex('right')">
                 <v-icon>keyboard_arrow_right</v-icon>
             </v-btn>
-        </v-flex>                                                    
+        </v-flex>
     </v-layout>
 </template>
 <script>
@@ -90,9 +89,9 @@ export default {
       "grey",
       "current_index"
       ],
-  computed:{      
+  computed:{
         ...mapGetters({
-        })  
+        })
   },
   methods: {
       ...mapActions([
@@ -105,7 +104,7 @@ export default {
     },
     getImage(){
         let {
-             left_index, 
+             left_index,
              right_index,
             } = this.page;
         let path = false;
@@ -119,7 +118,7 @@ export default {
     show_arrow(direction){
         let flag=!!this.getImage();
         let {
-             left_index, 
+             left_index,
              right_index,
             } = this.page;
         let _index = this.side=="left"?left_index:right_index;
@@ -140,7 +139,7 @@ export default {
     updatePageIndex(direction){
         let row_index = 0 ;
          let {
-             left_index, 
+             left_index,
              right_index,
             } = this.page;
         let _index = this.side=="left"?left_index:right_index;
@@ -157,7 +156,7 @@ export default {
   computed:{
        pages(){
            let {
-             domain, 
+             domain,
              area,
              ku,
             } = this.page;
@@ -168,8 +167,8 @@ export default {
                         area,
                         knowledge_unit:ku
                     });
-           
-      }, 
+
+      },
        imageGray(){
            let str = this.grey;
            if(this.$viewer ){
@@ -178,9 +177,9 @@ export default {
                 console.log(str,this.$viewer.image.style.filter);
             }
             //return  this.$viewer.image.style.filter;
-            return str 
+            return str
        },
-       
+
   },
   data(){
       return{
@@ -188,7 +187,7 @@ export default {
       }
   },
    components:{
-   }
+   },
 }
 </script>
 <<style scoped>
@@ -199,7 +198,7 @@ export default {
     }
     img.bw {
 	    filter: grayscale(100);
-       opacity: .2; 
+       opacity: .2;
     }
 
 .viewer-wrapper {
@@ -246,5 +245,5 @@ export default {
         }
       }
     }
-  }    
+  }
 </style>

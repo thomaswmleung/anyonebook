@@ -3,6 +3,7 @@
         <v-container>
             <v-form  ref="page_meta" lazy-validation>
                 <v-layout row wrap>
+
                     <v-flex xs3>{{$t('Codex')}}</v-flex>
                     <v-flex xs9>
                         <v-select :items="option.codex"
@@ -45,6 +46,7 @@
                     </v-flex>
 
                      <v-flex xs3>{{$t('Learning Objective')}}</v-flex>
+
                     <v-flex xs9>
                         <v-select
                             multiple
@@ -53,7 +55,6 @@
                             @input="pageUpdateOption({type:'learning_objective',values:$event})"
                             :label="$t('Learning Objective')" editable ></v-select>
                     </v-flex>
-
                     <v-flex xs12 >
                         <v-text-field
                             :label="$t('Particulars')"
@@ -105,7 +106,6 @@ export default {
       ...mapActions([
           "pageUpdateOption",
           "pageResetOption",
-
         ]),
         addPreviousPageRecord(){
             //Add Page Record

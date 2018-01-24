@@ -329,7 +329,10 @@ const mutations ={
             state.current_page.version = [];
         },
         [types.PAGE_SET_CURRENT_PAGE](state,params){
-            console.log(types.PAGE_SET_CURRENT_PAGE,params);
+            // console.log(types.PAGE_SET_CURRENT_PAGE,params);
+            if(!params.learning_objective){
+              params.learning_objective= [];
+            }
             state.current_page = params;
         },
         [types.PAGE_SET_LIST](state,params){
@@ -438,7 +441,7 @@ const actions= {
         });
     },
     pageUpdateOption({commit},{type, values, callback}){
-
+      // console.log("pageUpdateOption",{type, values, callback});
         if(type=="syllabus_code"
             && !state.page_syllabus_options.all_syllabus[values]){
             actions.getStyllabus(values).then(response=>{
@@ -450,6 +453,9 @@ const actions= {
             })
         }else{
             commit(types.PAGE_UPDATE_OPTION,  {type,values});
+            if(typeof callback=="function"){
+              callback();
+           }
         }
 
     },
@@ -472,9 +478,10 @@ const actions= {
                 domain:response.data.domain,
                 area:response.data.subdomain,
                 knowledge_unit:response.data.sub_title,
-                previous_page_id:"",
-                level_of_difficulty:"",
-                affiliation:[],
+                previous_page_id:response.data.previous_page_id||1,
+                level_of_difficulty:response.data.level_of_difficulty||1,
+                learning_objective:response.data.learning_objective||[],
+                affiliation:response.data.affiliation||[],
                 version:response.data.versions,
                 created_at:"",
                 created_by:"",
@@ -485,9 +492,10 @@ const actions= {
             //     {type:"syllabus_code",
             //     values:current_page_obj.syllabus_code}
             // );
+
             dispatch('pageUpdateOption', {type:"syllabus_code",
                 values:current_page_obj.syllabus_code,
-                callback:()=>{commit(types.PAGE_SET_CURRENT_PAGE,current_page_obj);}
+                callback:()=>{commit(types.PAGE_SET_CURRENT_PAGE,current_page_obj); }
             });
 
         });

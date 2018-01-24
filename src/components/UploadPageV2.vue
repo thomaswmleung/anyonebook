@@ -33,10 +33,29 @@
                         </v-card-title>
                     <v-flex v-for="(row,idx) in current_page.version"
                             :key="row.user+row.level+row.nature+row.position+row.output"
-                            xs12 md6 >
-                    <v-card v-if="idx == currentPreview">
+                            xs12
+                            text-xs-center
+                            >
+                    <!-- <v-card v-if="idx == currentPreview">
                       <v-card-media style="height: 30rem; width: 100%" :src="row.students_preview_image"></v-card-media>
-                    </v-card>
+                    </v-card> -->
+                           <div class="viewer-wrapper" v-if="idx == currentPreview">
+                              <viewer :options="options" :images="[row.students_preview_image]"
+                                      class="viewer" ref="viewer"
+                              >
+                                <template slot-scope="scope">
+                                  <figure class="images">
+                                    <div class="image-wrapper" style="text-align: center;">
+                                      <img class="image bw"
+                                          :src="row.students_preview_image"
+                                          :data-source="row.students_preview_image"
+                                          :style="{width:'65%'}"
+                                      >
+                                    </div>
+                                  </figure>
+                                </template>
+                              </viewer>
+                            </div>
                     </v-flex>
                     <v-flex v-if="current_page.version">
                     <v-card-text v-if="current_page.version.length == 0">
@@ -133,6 +152,53 @@
 li.complete {
   background: #ddd;
 }
+
+
+.viewer-wrapper {
+    position: relative;
+    background: #333;
+    height: 100%;
+  }
+  .methods {
+    margin-bottom: 1em;
+    flex-wrap: wrap;
+    & > * {
+      margin-right: 0.75rem;
+    }
+  }
+  .options-panel {
+    .panel-block {
+      padding: 0;
+      .checkbox {
+        display: block;
+        width: 100%;
+        margin: 0;
+        padding: 0.5em 0.75em;
+      }
+    }
+  }
+  .viewer {
+    height: 100%;
+    .images {
+      width:100%;
+      display: flex;
+      justify-content: center;
+      align-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+      padding: 5px;
+      .image-wrapper {
+        display: inline-block;
+        width: calc(33% - 20px);
+        margin: 5px 5px 0 5px;
+        .image {
+          width: 100%;
+          cursor: pointer;
+          display: inline-block;
+        }
+      }
+    }
+  }
 </style>
 
 <script>
@@ -155,7 +221,7 @@ export default {
       PageAffiliatonList,
       PageDetailForm,
     },
-   created () {
+   mounted () {
     this.fetchData();
   },
   watch: {
@@ -251,6 +317,11 @@ export default {
               page_parameter.page_group.sub_title = page_parameter.page_group.knowledge_unit;
               page_parameter.page_group.layout = page_parameter.page_group.syllabus;
               page_parameter.page_group.previous_page_id = page_parameter.page_group.previous_page_id;
+              page_parameter.affiliation = page_parameter.page_group.affiliation;
+              page_parameter.version = page_parameter.page_group.version;
+
+              delete page_parameter.page_group.affiliation;
+              delete  page_parameter.page_group.version;
               // page_parameter.page_group.page = [];
               // delete page_parameter.page_group._id;
 
@@ -281,6 +352,8 @@ export default {
   },
   data() {
     return {
+      options:{"inline": true, "button": true, "navbar": false, "title": false, "toolbar": true, "tooltip": true, "movable": true, "zoomable": true, "rotatable": false, "scalable": false, "transition": false, "fullscreen":true, "keyboard": false},
+
       valid: "",
       uploadIcon:"attachment",
       showTaskItem: false,
