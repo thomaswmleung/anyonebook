@@ -63,7 +63,7 @@
              <v-flex xs12 md9>
                         <v-layout row wrap style="padding-left: 1.3em;border: 1px solid lightskyblue;"   v-if="area_rows.length!=0">
                             <!-- TODO MetaData form  -->
-                            <v-flex xs6 md2>
+                            <v-flex xs6 md3>
                                 <v-select :items="option.codex" class="compact"
                                     item-value="code"
                                     item-text="label"
@@ -72,7 +72,7 @@
                                     :label="$t('Codex')"
                                 ></v-select>
                             </v-flex>
-                            <v-flex xs2 md1>
+                            <v-flex xs2 md2>
                                 <v-select
                                     v-bind:items="grade_items"
                                     v-model="book_metadata.grade"
@@ -81,7 +81,7 @@
                                     single-line
                                 ></v-select>
                             </v-flex>
-                            <v-flex xs6 md2>
+                            <v-flex xs6 md3>
                                 <v-text-field
                                     label="School Name"
                                     v-model="book_metadata.school_name"
@@ -117,17 +117,19 @@
                                 <v-text-field
                                     label="Student Copy"
                                     v-model="book_metadata.student_copy"
-                                    @input="validation($event,'student_copy')"
+                                    onkeypress='return event.charCode >= 48 && event.charCode <= 57'
+                                    @input="validation($event, 'student_copy')"
                                 ></v-text-field>
                             </v-flex>
                             <v-flex xs2 md2>
                                 <v-text-field
                                     label="Teacher Copy"
                                     v-model="book_metadata.teacher_copy"
-                                    @input="validation($event,'teacher_copy')"
+                                    onkeypress='return event.charCode >= 48 && event.charCode <= 57'
+                                    @input="validation($event, 'teacher_copy')"
                                 ></v-text-field>
                             </v-flex>
-                            <v-flex xs6 md8>
+                            <v-flex xs6 md6>
                                 <v-text-field
                                     label="Remarks"
                                     v-model="book_metadata.remark"
@@ -363,22 +365,17 @@ import BookRowImage from "@/components/partial/book-row-image"
             this.resetBook();
           }
       },
-      validation(inputText, type)
+      validation(input, type)
       {
-        console.log(type, this.book_metadata)
-        console.log(inputText)
-        // for (var i = 0; i < inputText.length; i++) {
-        //     inputText[i].replace(/[\D\s\._\-]+/g, '');
-        // }
-        // this.book_metadata[type] = inputText;
-        inputText = inputText.replace(/\D/g,'');
-        inputText = inputText ? parseInt( inputText, 10 ):0;
-        this.$set(this.book_metadata, type, inputText)
-
-        // this.book_metadata.student_copy = this.book_metadata.student_copy.replace(/\D/g,'');
-        // this.book_metadata.student_copy = this.book_metadata.student_copy ? parseInt( this.book_metadata.student_copy, 10 ):0;
-        // this.$forceUpdate();
-        console.log(type, this.book_metadata[type])
+          if (input=="")
+          {
+              this.book_metadata[type] = 0;
+          }
+          else
+          {
+              this.book_metadata[type] = input?parseInt(input, 10):0
+          }
+          console.log(this.book_metadata[type])
       }
   },
   created () {
