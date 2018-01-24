@@ -206,9 +206,7 @@
             :all_pages="all_pages"
             @close_dialog = "show_preview_book=false"
             @changeRowValue="changeRowValue"
-           >
-
-        </book-modal-preview-book>
+        ></book-modal-preview-book>
      </v-container>
 </template>
 <style scoped>
@@ -351,20 +349,20 @@ import BookRowImage from "@/components/partial/book-row-image"
       },
       validation(inputText, type)
       {
-        console.log(type, this.book_metadata.type)
+        console.log(type, this.book_metadata)
         console.log(inputText)
-        for (var i = 0; i < inputText.length; i++) {
-            inputText[i].replace(/[\D\s\._\-]+/g, '');}
-        inputText = inputText?parseInt( inputText, 10 ):0;
-        if(inputText>=0)
-        {
-            this.book_metadata.type = inputText;
-        }
-        else
-        {
-            this.book_metadata.type = 0;
-        }
-        console.log(type, this.book_metadata.type)
+        // for (var i = 0; i < inputText.length; i++) {
+        //     inputText[i].replace(/[\D\s\._\-]+/g, '');
+        // }
+        // this.book_metadata[type] = inputText;
+        inputText = inputText.replace(/\D/g,'');
+        inputText = inputText ? parseInt( inputText, 10 ):0;
+        this.$set(this.book_metadata, type, inputText)
+
+        // this.book_metadata.student_copy = this.book_metadata.student_copy.replace(/\D/g,'');
+        // this.book_metadata.student_copy = this.book_metadata.student_copy ? parseInt( this.book_metadata.student_copy, 10 ):0;
+        // this.$forceUpdate();
+        console.log(type, this.book_metadata[type])
       }
   },
   created () {
