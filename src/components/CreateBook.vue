@@ -396,12 +396,13 @@ import BookRowImage from "@/components/partial/book-row-image"
           }
       },
       validation(input, type){
-          if (input=="") {
-              this.book_metadata[type] = 0;
+          if (input=="" || input=="0") {
+              this.book_metadata[type] = 1;
           } else {
-              this.book_metadata[type] = input?parseInt(input, 10):0
+              this.book_metadata[type] = input?parseInt(input, 10):1
           }
           this.updateBookSummary();
+          console.log(this.book_metadata)
       }
   },
   watch: {

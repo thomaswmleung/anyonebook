@@ -106,18 +106,11 @@
       components:{
         BookRowImage
       },
-      props:["show","all_pages", "row_record", "metadata"],
+      props:["show","all_pages", "row_record", "metadata", "summary"],
       data(){
         return{
           current_index:1,
-          row_height:550,
-          summary:{
-            teacher_copy:0,
-            student_copy:0,
-            bw_page:0,
-            color_page:0,
-            average_price:60
-          }
+          row_height:550
         }
       },
   methods: {

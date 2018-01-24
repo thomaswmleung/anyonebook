@@ -93,6 +93,7 @@
             :show="show_purchase_book"
             :all_pages="all_pages"
             :row_record="area_rows"
+            :summary="summary"
             :metadata="book_metadata"
             @close_dialog = "show_purchase_book=false"
         ></book-modal-purchase-book>
@@ -118,7 +119,6 @@
   },
   created () {
        this.getBooks();
-       this.fetchData();
   },
   watch: {
     // call again the method if the route changes
@@ -135,7 +135,14 @@
         show_purchase_book:false,
         all_pages:[],
         area_rows:[],
-        book_metadata:{}
+        book_metadata:{},
+        summary:{
+            teacher_copy:0,
+            student_copy:0,
+            bw_page:0,
+            color_page:0,
+            average_price:60
+        }
     };
   },
    methods: {
@@ -166,12 +173,7 @@
             });
         })
     },
-    //FetchData
-    fetchData(){
-        //Get demo page array
-        this.getPageTsv().then(list=>this.all_pages=list);
 
-    },
     getBooks() {
         let paginator = {};
             paginator.limit = this.book_paginator.limit;
@@ -182,6 +184,8 @@
             book_filter.publicity = this.filter.publicity;
             book_filter.school_name = this.filter.school_name;
         this.getBook({paginator, book_filter});
+        //get all pages
+        this.getPageTsv().then(list=>this.all_pages=list);
     },
 
     getOptionLabel({type,code}){
@@ -189,6 +193,36 @@
     },
       getCoverImage(book_metadata){
         return `static/cover/${book_metadata.codex}_${book_metadata.grade.toLocaleLowerCase().slice(1,3)}.jpeg`;
+    },
+    updateBookSummary(){
+    let count = 0;
+    let i = 0 ;
+    let rows = this.area_rows;
+    this.summary = {
+        student_copy:0,
+        teacher_copy:0,
+        bw_page:0,
+        color_page:0,
+        edit_page:0,
+        average_price:44
+        }
+    for(i =0;i< rows.length;i++){
+        this.summary.bw_page +=rows[i]["left_greyscale"]?1:0;
+        this.summary.bw_page +=rows[i]["right_greyscale"]?1:0;
+        this.summary.color_page +=rows[i]["left_greyscale"]?0:1;
+        this.summary.color_page +=rows[i]["right_greyscale"]?0:1;
+        this.summary.edit_page +=rows[i]["left_edit"]?1:0;
+        this.summary.edit_page +=rows[i]["right_edit"]?1:0;
+    }
+    this.summary.student_copy = this.book_metadata.student_copy;
+    this.summary.teacher_copy = this.book_metadata.teacher_copy;
+
+    let total_cost = _.min([60, this.summary.color_page*0.5+44])
+                        * this.summary.student_copy
+                        +this.summary.edit_page*70
+                        +60*this.summary.teacher_copy;
+    this.summary.average_price = _.ceil(total_cost / this.summary.student_copy);
+
     },
     purchaseBook(id)
     {
@@ -198,7 +232,7 @@
                 this.area_rows = _.cloneDeep(this.current_book.row_record);
                 this.book_metadata = _.cloneDeep(this.current_book.metadata);
                 // this.updateCoverImage();
-                // this.updateBookSummary();
+                this.updateBookSummary();
             }
         });
         this.show_purchase_book=true;
