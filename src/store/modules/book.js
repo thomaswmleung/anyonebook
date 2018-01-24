@@ -130,7 +130,7 @@ const actions = {
     }
   },
 
-  getBook({commit,dispatch},{paginator}){
+  getBook({commit,dispatch},{paginator, filter}){
     //create an instance
     var instance = _axios.create({
       baseURL: API_BASE_URL,

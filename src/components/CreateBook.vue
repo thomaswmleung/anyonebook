@@ -99,7 +99,7 @@
                                     v-model="book_metadata.title"
                                 ></v-text-field>
                             </v-flex>
-                            <v-flex xs6 md2>
+                            <v-flex xs6 md3>
                                 <v-text-field
                                     label="Book Subtitle"
                                     v-model="book_metadata.subtitle"
@@ -113,7 +113,7 @@
                                     single-line
                                 ></v-select>
                             </v-flex>
-                            <v-flex xs2 md2>
+                            <v-flex xs2 md3>
                                 <v-text-field
                                     label="Student Copy"
                                     v-model="book_metadata.student_copy"
@@ -121,7 +121,7 @@
                                     @input="validation($event, 'student_copy')"
                                 ></v-text-field>
                             </v-flex>
-                            <v-flex xs2 md2>
+                            <v-flex xs2 md3>
                                 <v-text-field
                                     label="Teacher Copy"
                                     v-model="book_metadata.teacher_copy"

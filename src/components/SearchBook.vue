@@ -18,6 +18,20 @@
                     autocomplete
                 ></v-select>
             </v-flex>
+            <v-flex xs6 md3>
+                <v-text-field
+                    label="School Name"
+                    v-model="filter.school_name"
+                ></v-text-field>
+            </v-flex>
+            <v-flex xs4 md2>
+                <v-select
+                    :items="publicity_items"
+                    v-model="filter.publicity"
+                    label="Publicity"
+                    autocomplete
+                ></v-select>
+            </v-flex>
             <v-flex xs2 md1>
                 <v-btn  color="primary" fab small dark>
                   <v-icon>search</v-icon>
@@ -98,7 +112,9 @@
     return {
         filter:{
             codex:"",
-            grade:""
+            grade:"",
+            publicity:"Private",
+            school_name:""
         }
     };
   },
@@ -112,7 +128,7 @@
         let paginator = {};
             paginator.limit = this.book_paginator.limit;
             paginator.skip = (this.book_paginator.current_page-1)*this.book_paginator.limit;
-        this.getBook({paginator});
+        this.getBook({paginator}, this.filter);
     },
 
     getOptionLabel({type,code}){
