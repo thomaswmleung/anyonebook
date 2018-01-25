@@ -206,7 +206,6 @@ const mutations ={
     },
     [types.PAGE_DELETE_AFFILIATION](state,index){
         let obj = state.current_page.affiliation.splice(index,1);
-        DEBUG||console.log(index, obj);
     },
     /*** Affiliation Mutation End ***/
 
@@ -319,6 +318,7 @@ const mutations ={
             }
             state.current_page[params.type]= params.values;
         },
+
         [types.PAGE_RESET_OPTION](state, params) {
             let i ="";
             for(i in state.current_page){
@@ -328,11 +328,31 @@ const mutations ={
             }
             state.current_page.version = [];
         },
+
         [types.PAGE_SET_CURRENT_PAGE](state,params){
-            // console.log(types.PAGE_SET_CURRENT_PAGE,params);
+            console.log(types.PAGE_SET_CURRENT_PAGE,params);
             if(!params.learning_objective){
               params.learning_objective= [];
             }
+            //remove  students_preview_image, teachers_preview_image , import_url from version collection
+            if(params.version
+              && typeof params.version=="object"
+              && typeof params.version.forEach=="function"){
+                params.version.forEach(item=>{
+                  // delete item.students_preview_image;
+                  delete item.teachers_preview_image;
+                  delete item.import_url;
+                })
+            }
+          //remove  version_id
+          if(params.affiliation
+            && typeof params.affiliation=="object"
+            && typeof params.affiliation.forEach=="function"){
+              params.affiliation.forEach(item=>{
+                delete item.version_id;
+              })
+          }
+
             state.current_page = params;
         },
         [types.PAGE_SET_LIST](state,params){
