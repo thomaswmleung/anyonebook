@@ -98,6 +98,26 @@ const actions = {
             reject(errors);
           });
         });
+    },
+    getOrder()
+    {
+        var instance = _axios.create({
+            baseURL: API_BASE_URL,
+            timeout: 8000,
+            headers: {
+              'accept': 'application/json',
+              'token': getUser().token
+            }
+          });
+          instance({
+                method : "get",
+                url: `/order`
+                }).then((response) => {
+              resolve(response);
+            })
+            .catch((errors) => {
+              reject(errors);
+            });
     }
 }
 
