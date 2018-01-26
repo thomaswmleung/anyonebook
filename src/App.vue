@@ -55,6 +55,13 @@
       <a class="lang_btn" @click.stop="$i18n.set('tc')" >中 </a>
       <span class="lang_btn">&nbsp;| &nbsp;</span>
       <a class="lang_btn" @click.stop="$i18n.set('en')" >Eng</a>
+      <v-btn flat icon color="indigo" @click.stop = "show_orderform_modal = true">
+        <v-icon>shopping_cart</v-icon>
+      </v-btn>
+      <order-form-modal
+          :show="show_orderform_modal"
+          @close_dialog = "show_orderform_modal=false"
+      ></order-form-modal>
       <!-- <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
       <v-btn
         icon
@@ -136,10 +143,15 @@
 <script>
   import {mapGetters,mapActions} from "vuex";
   import CommonModalLoading from "@/components/partial/common-modal-loading"
+  import OrderFormModal from "@/components/partial/order-modal-orderform"
   export default {
-      components:{CommonModalLoading},
+      components:{
+        CommonModalLoading,
+        OrderFormModal
+      },
     data() {
       return {
+        show_orderform_modal: false,
         clipped: false,
         drawer: true,
         fixed: true,

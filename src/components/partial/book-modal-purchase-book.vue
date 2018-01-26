@@ -69,6 +69,24 @@
             (Total Record:  {{row_record.length}})
           </v-flex>
           <v-flex md4>
+            <v-btn color="blue darken-1" flat @click.stop="dialog = true">
+              {{$t("Purchase")}}
+            </v-btn>
+            <v-dialog v-model="dialog" max-width="290">
+              <v-card style="padding:1.2em">
+                <v-card-title>Purchasing Book</v-card-title>
+                <v-text-field
+                    label="Quantity"
+                    v-model="quantity"
+                    onkeypress='return event.charCode >= 48 && event.charCode <= 57'
+                    @input="validation($event)"
+                ></v-text-field>
+                Unit Price: HKD$ {{summary.average_price}} <br>
+                Total Price: HKD$ {{summary.average_price*quantity}} <br>
+                <v-btn color="green darken-1" flat @click.native="dialog = false; ProcessShoppingCart(); resetPage();">Confirm</v-btn>
+                <v-btn color="green darken-1" flat @click.native="dialog = false; resetPage();">Cancel</v-btn>
+              </v-card>
+            </v-dialog>
             <v-btn color="blue darken-1" flat @click.native="$emit('close_dialog');">
               {{$t("Close")}}
             </v-btn>
@@ -110,20 +128,43 @@
       data(){
         return{
           current_index:1,
-          row_height:550
+          row_height:550,
+          quantity: 1,
+          dialog: false
         }
       },
   methods: {
     ...mapActions([
+      "AddinShoppingCart"
     ]),
     resetPage()
     {
-      console.log(this.all_pages)
-    }
+      this.quantity = 1;
     },
+    validation(input){
+      if (input=="" || input=="0") {
+          this.quantity = 1;
+      } else {
+          this.quantity = input?parseInt(input, 10):1
+      }
+    },
+    ProcessShoppingCart()
+    {
+      let product = {
+        book_id : this.current_book._id,
+        book_title : this.current_book.metadata.title,
+        book_price : this.summary.average_price,
+        book_qty : this.quantity,
+        discount_percentage : 0.0
+      }
+      this.AddinShoppingCart(product);
+      console.log(this.shopping_cart)
+    },
+  },
   computed:{
     ...mapGetters({
         current_book:"currentBook",
+        shopping_cart:"shoppingCart"
       }),
      page(){
         return this.row_record[this.current_index-1]||{};

@@ -7,6 +7,7 @@ import page from './modules/page'
 import auth from './modules/auth'
 import media from './modules/media'
 import book from './modules/book'
+import order from './modules/order'
 
 import createLogger from '../plugins/logger'
 
@@ -23,6 +24,7 @@ export default new Vuex.Store({
       page,
       media,
       book,
+      order
     },
     strict: debug,
     plugins: debug ? [createLogger()] : []
