@@ -55,9 +55,11 @@
       <a class="lang_btn" @click.stop="$i18n.set('tc')" >中 </a>
       <span class="lang_btn">&nbsp;| &nbsp;</span>
       <a class="lang_btn" @click.stop="$i18n.set('en')" >Eng</a>
-      <v-btn flat icon color="indigo" @click.stop = "show_orderform_modal = true">
-        <v-icon>shopping_cart</v-icon>
-      </v-btn>
+      <div v-if="$route.name == 'SearchBook'">
+        <v-btn flat icon color="indigo" @click.stop = "show_orderform_modal = true">
+          <v-icon>shopping_cart</v-icon>
+        </v-btn>
+      </div>
       <order-form-modal
           :show="show_orderform_modal"
           @close_dialog = "show_orderform_modal=false"
