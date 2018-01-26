@@ -101,7 +101,7 @@
                                                     <v-btn fab dark small color="primary" @click.stop="pageUpdateVersionIndex(idx);show_upload_pdf=true;">
                                                         <v-icon dark>mode_edit</v-icon>
                                                     </v-btn>
-                                                    <v-btn  fab dark small color="error" @click.stop="pageDeleteVersion(idx)">
+                                                    <v-btn  fab dark small color="error" @click.stop="pageDeleteVersion(row.version_id)">
                                                         <v-icon dark>delete_forever</v-icon>
                                                     </v-btn>
                                                     <v-btn

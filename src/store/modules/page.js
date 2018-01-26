@@ -415,7 +415,20 @@ const actions= {
     pageDeleteVersion({commit},index){
         let processBool = window.confirm("Are you sure?");
         if(processBool){
-            commit(types.PAGE_DELETE_VERSION,index);
+            return new Promise((resolve, reject) => {
+              Http({
+                  method: 'delete',
+                  url: `${API_BASE_URL}/page_group`,
+                  params: {
+                    pid: index
+                  }
+                }).then(
+                    response => {
+                        commit(types.PAGE_DELETE_VERSION,index);
+                        // resolve(response);
+                    }
+                )
+            })
         }
     },
     pageUploadVersion({commit},{formData,params}){
