@@ -81,8 +81,8 @@
                     onkeypress='return event.charCode >= 48 && event.charCode <= 57'
                     @input="validation($event)"
                 ></v-text-field>
-                Unit Price: HKD$ {{summary.average_price}} <br>
-                Total Price: HKD$ {{summary.average_price*quantity}} <br>
+                Unit Price: HKD ${{summary.average_price}} <br>
+                Total Price: HKD ${{summary.average_price*quantity}} <br>
                 <v-btn color="green darken-1" flat @click.native="dialog = false; ProcessShoppingCart(); resetPage();">Confirm</v-btn>
                 <v-btn color="green darken-1" flat @click.native="dialog = false; resetPage();">Cancel</v-btn>
               </v-card>
@@ -120,57 +120,57 @@
   import BookRowImage from "@/components/partial/book-row-image"
 
   export default{
-      name:"BookModalPurchaseBook",
-      components:{
-        BookRowImage
+    name:"BookModalPurchaseBook",
+    components:{
+      BookRowImage
+    },
+    props:["show","all_pages", "row_record", "metadata", "summary"],
+    data(){
+      return{
+        current_index:1,
+        row_height:550,
+        quantity: 1,
+        dialog: false
+      }
+    },
+    methods: {
+      ...mapActions([
+        "AddinShoppingCart"
+      ]),
+      resetPage()
+      {
+        this.quantity = 1;
       },
-      props:["show","all_pages", "row_record", "metadata", "summary"],
-      data(){
-        return{
-          current_index:1,
-          row_height:550,
-          quantity: 1,
-          dialog: false
+      validation(input){
+        if (input=="" || input=="0") {
+            this.quantity = 1;
+        } else {
+            this.quantity = input?parseInt(input, 10):1
         }
       },
-  methods: {
-    ...mapActions([
-      "AddinShoppingCart"
-    ]),
-    resetPage()
-    {
-      this.quantity = 1;
-    },
-    validation(input){
-      if (input=="" || input=="0") {
-          this.quantity = 1;
-      } else {
-          this.quantity = input?parseInt(input, 10):1
-      }
-    },
-    ProcessShoppingCart()
-    {
-      let product = {
-        book_id : this.current_book._id,
-        book_title : this.current_book.metadata.title,
-        book_price : this.summary.average_price,
-        book_qty : this.quantity,
-        discount_percentage : 0.0
-      }
-      this.AddinShoppingCart(product);
-      console.log(this.shopping_cart)
-    },
-  },
-  computed:{
-    ...mapGetters({
-        current_book:"currentBook",
-        shopping_cart:"shoppingCart"
-      }),
-     page(){
-        return this.row_record[this.current_index-1]||{};
+      ProcessShoppingCart()
+      {
+        let product = {
+          book_id : this.current_book._id,
+          book_title : this.current_book.metadata.title,
+          book_price : this.summary.average_price,
+          book_qty : this.quantity,
+          discount_percentage : 0.0
+        }
+        this.AddinShoppingCart({product,book:_.cloneDeep(this.current_book)});
+        console.log(this.shopping_cart)
       },
+    },
+    computed:{
+      ...mapGetters({
+          current_book:"currentBook",
+          shopping_cart:"shoppingCart"
+        }),
+      page(){
+          return this.row_record[this.current_index-1]||{};
+        },
 
-    }
-  };
+      }
+    };
 </script>
 
