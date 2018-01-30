@@ -8,13 +8,15 @@ import _axios from "axios";
 import book from './book';
 
 const state = {
+    all_orders: [],
     shopping_cart: [],
     OrderBooks:{}
 }
 
 const getters = {
     shoppingCart:state=>_.clone(state.shopping_cart),
-    OrderBooks:state=>state.OrderBooks
+    OrderBooks:state=>state.OrderBooks,
+    allOrders:state=>_.clone(state.all_orders)
 }
 
 const mutations = {
@@ -26,6 +28,9 @@ const mutations = {
     },
     UpdateBooklist(state, booklist){
         state.OrderBooks = booklist;
+    },
+    UpdateAllOrders(state, orderlist){
+        state.all_orders = orderlist;
     }
 }
 
@@ -99,8 +104,9 @@ const actions = {
           });
         });
     },
-    getOrder()
+    getOrder({commit,dispatch})
     {
+        return new Promise((resolve,reject)=>{
         var instance = _axios.create({
             baseURL: API_BASE_URL,
             timeout: 8000,
@@ -112,12 +118,46 @@ const actions = {
           instance({
                 method : "get",
                 url: `/order`
-                }).then((response) => {
-              resolve(response);
+            }).then((response) => {
+                commit('COMMOM_UPDATE_FULLSCREEN_LOADER',false) //Common Loader Module
+                commit("UpdateAllOrders", response.data.data); // return result;
+                resolve(response);
             })
             .catch((errors) => {
-              reject(errors);
+                reject(errors);
             });
+        })
+    },
+    deleteOrder({commit,dispatch},{id, callback})
+    {
+        let processBool = window.confirm("Are you sure?");
+        if (processBool){
+            return new Promise((resolve,reject)=>{
+                var instance = _axios.create({
+                    baseURL: API_BASE_URL,
+                    timeout: 8000,
+                    headers: {
+                    'accept': 'application/json',
+                    'token': getUser().token
+                    }
+                });
+                instance({
+                        method : "delete",
+                        url: `/order?_id=${id}`
+                }).then((response) => {
+                    let message = `Order is deleted successfully`;
+                    response.message = message;
+                    //fetchdata after delete
+                    if( typeof callback == "function"){
+                      callback(response);
+                    }
+                    resolve(response);
+                })
+                .catch((errors) => {
+                    reject(errors);
+                });
+            })
+        }
     }
 }
 

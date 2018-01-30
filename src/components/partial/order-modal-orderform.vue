@@ -40,25 +40,63 @@
           </v-flex>
         </v-layout>
         <v-layout row wrap>
-          <v-flex xs6 md3>
-            <v-select
-              :items="payment_items"
-              v-model="payment_details"
-              label="Payment"
-              autocomplete
-            ></v-select>
-          </v-flex>
-          <v-flex md5>
-            Total Price: HKD ${{totalPrice}}
-          </v-flex>
-          <v-flex md4>
-            <v-btn color="blue darken-1" flat @click.stop = "processOrder(); $emit('close_dialog');">
-              {{$t("Purchase")}}
-            </v-btn>
-            <v-btn color="blue darken-1" flat @click.native="$emit('close_dialog');">
-              {{$t("Close")}}
-            </v-btn>
-          </v-flex>
+          <v-container text-xs-centre>
+            Total Price: HKD ${{totalPrice}}<br>
+          </v-container>
+          <v-form v-model="valid" ref="form" lazy-validation>
+            <v-layout row wrap>
+              <v-flex xs4 md3>
+                <v-select
+                  :items="payment_items"
+                  v-model="payment_details"
+                  label="Payment"
+                  autocomplete
+                  required
+                  :rules="[v => !!v || 'Item is required']"
+                ></v-select>
+              </v-flex>
+              <v-flex xs2 md2>
+              </v-flex>
+              <v-flex xs4 md3>
+                <v-select
+                  :items="delivery_items"
+                  v-model="delivery_details"
+                  label="Delivery"
+                  autocomplete
+                  required
+                  :rules="[v => !!v || 'Item is required']"
+                ></v-select>
+              </v-flex>
+              <v-flex xs2 md4>
+                <v-btn color="blue darken-1" flat 
+                  @click.stop = "processOrder();"
+                  :disabled="!valid">
+                  {{$t("Purchase")}}
+                </v-btn>
+              </v-flex>
+              <v-flex xs4 md3>
+                <v-text-field
+                  label = "Address"
+                  v-model="address"
+                  required
+                  :rules="[v => !!v || 'Item is required']"
+                ></v-text-field>
+              </v-flex>
+              <v-flex xs2 md2>
+              </v-flex>
+              <v-flex xs4 md3>
+                <v-text-field
+                  label = "Remarks"
+                  v-model="remarks"
+                ></v-text-field>
+              </v-flex>
+              <v-flex xs2 md4>
+                <v-btn color="blue darken-1" flat @click.native="$emit('close_dialog');">
+                  {{$t("Close")}}
+                </v-btn>
+              </v-flex>
+            </v-layout>
+          </v-form>
         </v-layout>
       </v-container>
   </v-dialog>
@@ -82,10 +120,15 @@
     },
     data(){
       return{
+        valid: true,
         payment_details:"",
-        payment_items:["Cash", "Credit Card"],
+        payment_items:["Cash", "Credit Card", "Cheque"],
+        delivery_details:"",
+        delivery_items:["Option1", "Option2"],
         books_record:[],
-        totalPrice:0
+        totalPrice:0,
+        address: "",
+        remarks: ""
       }
     }, 
     watch: {
@@ -100,20 +143,23 @@
       ]),
       processOrder()
       {
-        let order = {};
-        order.user_id = getUser()._id;
-        order.metadata = {
-          search_key_1 : "",
-          search_key_2 : ""
+        if (this.$refs.form.validate() && this.shopping_cart.length!=0) {
+          let order = {};
+          order.user_id = getUser()._id;
+          order.metadata = {
+            search_key_1 : "",
+            search_key_2 : ""
+          }
+          order.products = this.shopping_cart
+          order.status = "DONE"
+          order.payment_details = {
+            type : this.payment_details
+          }
+          console.log(order);
+          let orderData = JSON.stringify(order)
+          this.purchase({orderData});
+          this.$emit('close_dialog');
         }
-        order.products = this.shopping_cart
-        order.status = "PENDING"
-        order.payment_details = {
-          type : this.payment_details
-        }
-        console.log(order);
-        let orderData = JSON.stringify(order)
-        this.purchase({orderData});
       },
       reset()
       {
@@ -121,6 +167,9 @@
         let i = 0;
         this.books_record={};
         this.totalPrice = 0;
+        if (this.shopping_cart.length==0) {
+          this.valid = false;
+        }
         for (i in this.shopping_cart)
         {
           id = this.shopping_cart[i].book_id;
