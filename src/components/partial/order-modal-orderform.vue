@@ -151,7 +151,7 @@
             search_key_2 : ""
           }
           order.products = this.shopping_cart
-          order.status = "DONE"
+          order.status = "PENDING"
           order.payment_details = {
             type : this.payment_details
           }
