@@ -161,6 +161,7 @@
                   //hide loading
                   _instance.showFullscreenLoader(false);
                   _instance.$router.push(`/upload_page/${_instance.current_page._id}`);
+                  _instance.getPageById(_instance.$route.params.id);
                  _instance.$emit("close_dialog");
 
                 }
