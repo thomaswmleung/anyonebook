@@ -4,116 +4,114 @@
 
             <v-flex sm10>
                 <v-layout row wrap>
-                    <v-flex>
-                    <v-container>
-                        <v-card-title>
-                            <h3 class="title">
-                                <span>{{$t('SearchPage')}}</span>
-                            </h3>
-                        </v-card-title>
-                        <v-form ref="page_meta" lazy-validation>
-                            <v-layout row wrap>
-                                <v-flex xs12 md4>
-                                    <v-select :items="option.codex"
-                                              item-value="code"
-                                              item-text="label"
-                                              v-model="current_page.codex"
-                                              @input="pageUpdateOption({type:'codex',values:$event})"
-                                              :label="$t('Codex')" editable ></v-select>
-                                </v-flex>
-                                <v-flex xs12 md4>
-                                    <v-select :items="option.syllabus"
-                                              item-value="code"
-                                              item-text="label"
-                                              v-model="current_page.syllabus"
-                                              @input="pageUpdateOption({type:'syllabus_code',values:$event})"
-                                              :label="$t('Syllabus')" editable ></v-select>
-                                </v-flex>
-                                <v-flex xs12 md4>
-                                    <v-select :items="option.domain"
-                                              v-model="current_page.domain"
-                                              @input="pageUpdateOption({type:'domain',values:$event})"
-                                              :label="$t('Domain')" editable ></v-select>
-                                </v-flex>
+                    <v-flex xs12>
+                      <v-container>
+                          <v-card-title>
+                              <h3 class="title">
+                                  <span>{{$t('SearchPage')}}</span>
+                              </h3>
+                          </v-card-title>
+                          <v-form ref="page_meta" lazy-validation>
+                              <v-layout row wrap>
+                                  <v-flex xs12 md4>
+                                      <v-select :items="option.codex"
+                                                item-value="code"
+                                                item-text="label"
+                                                v-model="current_page.codex"
+                                                @input="pageUpdateOption({type:'codex',values:$event})"
+                                                :label="$t('Codex')" editable ></v-select>
+                                  </v-flex>
+                                  <v-flex xs12 md4>
+                                      <v-select :items="option.syllabus"
+                                                item-value="code"
+                                                item-text="label"
+                                                v-model="current_page.syllabus"
+                                                @input="pageUpdateOption({type:'syllabus_code',values:$event})"
+                                                :label="$t('Syllabus')" editable ></v-select>
+                                  </v-flex>
+                                  <v-flex xs12 md4>
+                                      <v-select :items="option.domain"
+                                                v-model="current_page.domain"
+                                                @input="pageUpdateOption({type:'domain',values:$event})"
+                                                :label="$t('Domain')" editable ></v-select>
+                                  </v-flex>
 
-                                <v-flex xs12 md4><v-select :items="option.area"
-                                v-model="current_page.area"
-                                              @input="pageUpdateOption({type:'area',values:$event})"
-                                              :label="$t('Area')" editable ></v-select>
-                                </v-flex>
+                                  <v-flex xs12 md4><v-select :items="option.area"
+                                  v-model="current_page.area"
+                                                @input="pageUpdateOption({type:'area',values:$event})"
+                                                :label="$t('Area')" editable ></v-select>
+                                  </v-flex>
 
-                                <v-flex xs12 md4><v-select :items="option.knowledge_unit"
-                                v-model="current_page.knowledge_unit"
-                                              @input="pageUpdateOption({type:'knowledge_unit',values:$event})"
-                                              :label="$t('Knowledge Unit')" editable ></v-select>
-                                </v-flex>
+                                  <v-flex xs12 md4><v-select :items="option.knowledge_unit"
+                                  v-model="current_page.knowledge_unit"
+                                                @input="pageUpdateOption({type:'knowledge_unit',values:$event})"
+                                                :label="$t('Knowledge Unit')" editable ></v-select>
+                                  </v-flex>
 
-                                <v-flex xs12 md4><v-select :items="option.learning_objective"
-                                v-model="current_page.learning_objective"
-                                              @input="pageUpdateOption({type:'learning_objective',values:$event})"
-                                              :label="$t('Learning Objective')" editable ></v-select>
-                                </v-flex>
+                                  <v-flex xs12 md4><v-select :items="option.learning_objective"
+                                  v-model="current_page.learning_objective"
+                                                @input="pageUpdateOption({type:'learning_objective',values:$event})"
+                                                :label="$t('Learning Objective')" editable ></v-select>
+                                  </v-flex>
 
-                                <v-flex xs12 md4>
-                                  <v-menu
-                                    lazy
-                                    :close-on-content-click="false"
-                                    v-model="menuStartDate"
-                                    offset-y
-                                    full-width
-                                  >
-                                    <v-text-field
-                                      slot="activator"
-                                      label="From Date"
-                                      v-model="current_page.startDate"
-                                    ></v-text-field>
-                                    <v-date-picker v-model="startDate" @input="current_page.startDate = startDate" no-title scrollable actions>
-                                      <template slot-scope="{ save, cancel }">
-                                        <v-card-actions>
-                                          <v-spacer></v-spacer>
-                                          <v-btn flat color="primary" @click="cancel">{{$t('Cancel')}}</v-btn>
-                                          <v-btn flat color="primary" @click="save">OK</v-btn>
-                                        </v-card-actions>
-                                      </template>
-                                    </v-date-picker>
-                                  </v-menu>
-                                </v-flex>
+                                  <v-flex xs12 md4>
+                                    <v-menu
+                                      lazy
+                                      :close-on-content-click="false"
+                                      v-model="menuStartDate"
+                                      offset-y
+                                      full-width
+                                    >
+                                      <v-text-field
+                                        slot="activator"
+                                        label="From Date"
+                                        v-model="current_page.startDate"
+                                      ></v-text-field>
+                                      <v-date-picker v-model="startDate" @input="current_page.startDate = startDate" no-title scrollable actions>
+                                        <template slot-scope="{ save, cancel }">
+                                          <v-card-actions>
+                                            <v-spacer></v-spacer>
+                                            <v-btn flat color="primary" @click="cancel">{{$t('Cancel')}}</v-btn>
+                                            <v-btn flat color="primary" @click="save">OK</v-btn>
+                                          </v-card-actions>
+                                        </template>
+                                      </v-date-picker>
+                                    </v-menu>
+                                  </v-flex>
 
 
-                                <v-flex xs12 md4>
-                                  <v-menu
-                                    lazy
-                                    :close-on-content-click="false"
-                                    v-model="menuEndDate"
-                                    offset-y
-                                    full-width
-                                  >
-                                    <v-text-field
-                                      slot="activator"
-                                      label="To Date"
-                                      v-model="current_page.endDate"
-                                    ></v-text-field>
-                                    <v-date-picker v-model="endDate" @input="current_page.endDate = endDate" no-title scrollable actions>
-                                      <template slot-scope="{ save, cancel }">
-                                        <v-card-actions>
-                                          <v-spacer></v-spacer>
-                                          <v-btn flat color="primary" @click="cancel">{{$t('Cancel')}}</v-btn>
-                                          <v-btn flat color="primary" @click="save">OK</v-btn>
-                                        </v-card-actions>
-                                      </template>
-                                    </v-date-picker>
-                                  </v-menu>
-                                </v-flex>
-                                <v-flex md3>
-                                    <v-btn fab dark small color="primary" @click.stop="fetchData">
-                                        <v-icon>search</v-icon>
-                                    </v-btn>
-                                </v-flex>
-
-                            </v-layout>
-                        </v-form>
-                    </v-container>
-
+                                  <v-flex xs12 md4>
+                                    <v-menu
+                                      lazy
+                                      :close-on-content-click="false"
+                                      v-model="menuEndDate"
+                                      offset-y
+                                      full-width
+                                    >
+                                      <v-text-field
+                                        slot="activator"
+                                        label="To Date"
+                                        v-model="current_page.endDate"
+                                      ></v-text-field>
+                                      <v-date-picker v-model="endDate" @input="current_page.endDate = endDate" no-title scrollable actions>
+                                        <template slot-scope="{ save, cancel }">
+                                          <v-card-actions>
+                                            <v-spacer></v-spacer>
+                                            <v-btn flat color="primary" @click="cancel">{{$t('Cancel')}}</v-btn>
+                                            <v-btn flat color="primary" @click="save">OK</v-btn>
+                                          </v-card-actions>
+                                        </template>
+                                      </v-date-picker>
+                                    </v-menu>
+                                  </v-flex>
+                                  <v-flex md3>
+                                      <v-btn fab dark small color="primary" @click.stop="fetchData">
+                                          <v-icon>search</v-icon>
+                                      </v-btn>
+                                  </v-flex>
+                              </v-layout>
+                          </v-form>
+                      </v-container>
                     </v-flex>
                 </v-layout>
 

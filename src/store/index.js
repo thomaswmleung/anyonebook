@@ -8,10 +8,11 @@ import auth from './modules/auth'
 import media from './modules/media'
 import book from './modules/book'
 import order from './modules/order'
+import user from './modules/user'
 
 import createLogger from '../plugins/logger'
 
-Vue.use(Vuex);  
+Vue.use(Vuex);
 
 const debug = process.env.NODE_ENV !== 'production';
 
@@ -24,9 +25,9 @@ export default new Vuex.Store({
       page,
       media,
       book,
-      order
+      order,
+      user
     },
     strict: debug,
     plugins: debug ? [createLogger()] : []
   })
-  
