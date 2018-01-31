@@ -27,17 +27,19 @@ const state={
   }
 };
 
-const getters={};
+const getters={
+  userMetaData:state=>_.cloneDeep(state.metadata)
+};
 
 const mutations={
-  mutUpdateMetaData(state, {attribute,parameter}){
+  mutUpdateUserMetaData(state, {attribute,parameter}){
     _.set(state, `metadata.${attribute}`,parameter);
   }
 };
 
 const actions={
-  actUpdateMetaData({commit},{attribute,parameter}){
-    commit('mutUpdateMetaData', {attribute,parameter})
+  actUpdateUserMetaData({commit},{attribute,parameter}){
+    commit('mutUpdateUserMetaData', {attribute,parameter})
   }
 };
 
