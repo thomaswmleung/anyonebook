@@ -61,7 +61,8 @@ import {
   VPagination,
   VDatePicker,
   VMenu,
-  VSwitch
+  VSwitch,
+  VTabs,
 } from 'vuetify';
 import '../node_modules/vuetify/src/stylus/app.styl'
 
@@ -90,7 +91,8 @@ Vue.use(Vuetify, {
     VPagination,
     VDatePicker,
     VMenu,
-    VSwitch
+    VSwitch,
+    VTabs
   },
   // theme: {
   //   primary: '#ee44aa',

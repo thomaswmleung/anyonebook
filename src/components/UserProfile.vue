@@ -1,27 +1,83 @@
 <template>
     <v-container grid-list-md >
         <v-layout row wrap>
-            <v-flex xs4>
-                <h2>User Profile </h2>
-            </v-flex>
-            <v-flex xs8>
-                <v-layout row wrap>
-                    <v-flex xs8>
-                        <ul>
-                            <li v-for="item in items" :key="item" >{{item}}</li> 
-                        </ul>
+          <v-flex xs12>
+            <h2>{{$t("UserProfile")}}</h2>
+          </v-flex>
+        </v-layout>
+        <v-layout row wrap>
+          <v-flex xs12>
+             <v-tabs :scrollable="false">
+                <v-tabs-bar dark color="cyan">
+                  <v-tabs-slider color="yellow"></v-tabs-slider>
+                  <v-tabs-item
+                    v-for="item in steps"
+                    :key="item.key"
+                    :href="`#tab-${item.key}`"
+                  >
+                    {{ $t(item.title) }}
+                  </v-tabs-item>
+                </v-tabs-bar>
+                <v-tabs-items>
+                  <v-tabs-content
+                    id="tab-step1"
+                  >
+                    <v-container>
+                      <v-layout row wrap>
+                        <v-flex md3>
+                            <v-text-field
+                            :label="$t('Email')"
+                            v-model="metadata.email"
+                            @input="formChangeHandler({attribute:'email',parameter:$event})"
+                            required></v-text-field>
+                        </v-flex>
+                        <v-flex md2>
+                            <v-text-field
+                            :label="$t('First Name')"
+                            v-model="metadata.firstname"
+                            @input="formChangeHandler({attribute:'firstname',parameter:$event})"
+                            required></v-text-field>
+                        </v-flex>
+                        <v-flex md2>
+                            <v-text-field
+                            :label="$t('Last Name')"
+                            v-model="metadata.lastname"
+                            @input="formChangeHandler({attribute:'lastname',parameter:$event})"
+                            required></v-text-field>
+                        </v-flex>
+                        <v-flex md3>
+                           {{$t('Gender')}}
+                           <v-radio-group
+                              style="margin-top:-1.3em"
+                              v-model="metadata.gender"
+                              row
+                              @change="formChangeHandler({attribute:'gender',parameter:$event})"
+                           >
+                             <v-radio :label="$t('Male')" value="M"></v-radio>
+                             <v-radio :label="$t('Female')" value="F"></v-radio>
+                           </v-radio-group>
+                        </v-flex>
+                        <v-flex md6>
+                            <v-text-field
+                            :label="$t('Address')"
+                            @input="formChangeHandler({attribute:'address',parameter:$event})"
+                            required></v-text-field>
+                        </v-flex>
+                        <v-flex md2>
+                            <v-text-field
+                            :label="$t('Contact Phone')"
+                            @input="formChangeHandler({attribute:'contact',parameter:$event})"
+                            required></v-text-field>
+                        </v-flex>
 
-                        <ul>
-                            <li v-for="item in completed" :key="item" :style="{background:'lightgreen'}" >{{item}}</li> 
-                        </ul>
 
-                    </v-flex>
-                    <v-flex xs4>
-                        Try
-                    </v-flex>
-                </v-layout>
-                
-            </v-flex>
+                      </v-layout>
+
+                    </v-container>
+                  </v-tabs-content>
+                </v-tabs-items>
+              </v-tabs>
+          </v-flex>
         </v-layout>
      </v-container>
 </template>
@@ -32,25 +88,53 @@
     .flex-content{
         display:flex;
     }
+    .active {
+      background-color:lightgoldenrodyellow
+    }
 </style>
 
 <script>
+ import {mapGetters,mapActions} from "vuex"
  export default {
-  name: 'Pagination',
+  name: 'UserProfile',
+  methods:{
+    ...mapActions([
+      "actUpdateUserMetaData",
+    ]),
+    stepClickHandler(key){
+      this.current_step = key;
+    },
+    formChangeHandler({attribute,parameter}){
+      this.actUpdateUserMetaData({attribute,parameter});
+    }
+  },
   data() {
     return {
-        unit:[],
-        page:[],
-        meta:{},
-        items:[
-            "Display User Profile",
-            "Edit User Profile"
+        current_step:"step1",
+        steps:[{key:"step1",title:"Basic Info"}
+            ,{key:"step2",title:"Order/Payment History"}
+          ],
+        fields:[
+          {type:"input", attribute:"email",label:"Email",validation:["email","require"]},
         ],
-        completed:[
-        ]
+        validationRules:{
+            email: [
+              (v) => !!v || 'E-mail is required',
+              (v) => /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(v) || 'E-mail must be valid'
+            ],
+            name: [
+              (v) => !!v || 'Name is required',
+              (v) => v && v.length <= 10 || 'Name must be less than 10 characters'
+            ],
+        }
     };
   },
-};    
+  computed:{
+    ...mapGetters({
+      metadata:"userMetaData"
+    })
+  }
+};
 </script>
 <style scoped>
 
