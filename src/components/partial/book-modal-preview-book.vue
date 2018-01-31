@@ -24,6 +24,11 @@
                 textarea
                 @input="changeEvent('left_comment')"
               ></v-text-field>
+              <v-btn 
+                v-if="edit1"
+                outline color="indigo">
+                {{$t('Upload')}}
+              </v-btn>
             </v-card>
           </v-flex>
           <v-flex xs8>
@@ -70,8 +75,40 @@
                 v-model="cm2"
                 textarea
                 @input="changeEvent('right_comment')"
-                ></v-text-field>
+              ></v-text-field>
+              <div v-if="edit2">
+                <ul>
+                  <li v-for="file in files" :key="file.id">
+                    <span>{{file.name}}</span>
+                    <span v-if="file.error">{{file.error}}</span>
+                    <span v-else-if="file.success">success</span>
+                    <span v-else-if="file.active">active</span>
+                    <span v-else-if="file.active">active</span>
+                    <span v-else></span>
+                  </li>
+                </ul>
+                <div class="upload-btn">
+                  <file-upload
+                    post-action=""
+                    extensions="gif,jpg,jpeg,png,webp"
+                    accept="image/png,image/gif,image/jpeg,image/webp"
+                    :multiple="true"
+                    :size="1024 * 1024 * 10"
+                    v-model="files"
+                    @input-filter="inputFilter"
+                    ref="upload">
+                    Select files
+                  </file-upload>
+                  <v-btn
+                    color = "primary"
+                    flat
+                    @click.native="$refs.upload.active = true; uploadImage();">
+                    Upload
+                  </v-btn>
+                </div>
+              </div>
             </v-card>
+            <br>
             <v-card color="yellow lighten-4">
               <v-container>
                 <table class="summary_table">
@@ -142,6 +179,10 @@
     text-align: left;
 
   }
+  .example-simple label.btn {
+    margin-bottom: 0;
+    margin-right: 1rem;
+  }
 </style>
 <script>
   import Vue from 'vue'
@@ -151,11 +192,13 @@
 
   import BookRowImage from "@/components/partial/book-row-image"
   import jsSHA from "jssha"
+  import FileUpload from 'vue-upload-component/dist/vue-upload-component.part.js'
 
   export default{
       name:"BookModalPreviewBook",
       components:{
-        BookRowImage
+        BookRowImage,
+        FileUpload
       },
       props:["show","row_record","metadata","all_pages", "grey","summary"],
       data(){
@@ -167,7 +210,8 @@
           bw2:false,
           cm1:"",
           cm2:"",
-          row_height:550
+          row_height:550,
+          files:[]
         }
       }, 
       watch: {
@@ -177,7 +221,8 @@
   methods: {
     ...mapActions([
       "createBook",
-      "showFullscreenLoader"
+      "showFullscreenLoader",
+      "uploadMedia"
     ]),
     fetchData()
     {
@@ -243,6 +288,20 @@
           }
         )
       },
+      inputFilter(newFile, oldFile, prevent) {
+        if (newFile && !oldFile) {
+          if (/(\/|^)(Thumbs\.db|desktop\.ini|\..+)$/.test(newFile.name)) {
+            return prevent()
+          }
+          if (/\.(php5?|html?|jsx?)$/i.test(newFile.name)) {
+            return prevent()
+          }
+        }
+      },
+      uploadImage()
+      {
+          // this.uploadMedia({payload: this.files});
+      }
     },
   computed:{
     ...mapGetters({
