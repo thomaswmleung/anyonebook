@@ -82,18 +82,14 @@
                     <span>{{file.name}}</span>
                     <span v-if="file.error">{{file.error}}</span>
                     <span v-else-if="file.success">success</span>
-                    <span v-else-if="file.active">active</span>
-                    <span v-else-if="file.active">active</span>
                     <span v-else></span>
                   </li>
                 </ul>
                 <div class="upload-btn">
                   <file-upload
-                    post-action=""
                     extensions="gif,jpg,jpeg,png,webp"
                     accept="image/png,image/gif,image/jpeg,image/webp"
-                    :multiple="true"
-                    :size="1024 * 1024 * 10"
+                    :multiple="false"
                     v-model="files"
                     @input-filter="inputFilter"
                     ref="upload">
@@ -102,7 +98,7 @@
                   <v-btn
                     color = "primary"
                     flat
-                    @click.native="$refs.upload.active = true; uploadImage();">
+                    @click.native="uploadImage(files);">
                     Upload
                   </v-btn>
                 </div>
@@ -298,9 +294,22 @@
           }
         }
       },
-      uploadImage()
+      uploadImage(files)
       {
-          // this.uploadMedia({payload: this.files});
+        let formData = new FormData();
+        formData.append('media_file',files[0])
+        let data = {
+              queryString: {
+                type: files[0].type,
+                extension: getExtension(files[0].name),
+                usage: [files[0].id],
+              },
+              formData
+        }
+        this.uploadMedia({
+            data,
+            router: this.router
+          });
       }
     },
   computed:{
