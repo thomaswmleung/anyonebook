@@ -22,13 +22,13 @@ const state={
     website:"",
     joindate:"",
     remark:"",
-    school:[],
+    schools:[],
     family:[]
   }
 };
 
 const getters={
-  userMetaData:state=>_.cloneDeep(state.metadata)
+  userMetaData:state=>state.metadata
 };
 
 const mutations={

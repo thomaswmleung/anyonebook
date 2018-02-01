@@ -59,6 +59,7 @@
                         </v-flex>
                         <v-flex md6>
                             <v-text-field
+                            v-model="metadata.address"
                             :label="$t('Address')"
                             @input="formChangeHandler({attribute:'address',parameter:$event})"
                             required></v-text-field>
@@ -69,10 +70,18 @@
                             @input="formChangeHandler({attribute:'contact',parameter:$event})"
                             required></v-text-field>
                         </v-flex>
-
-
+                        <v-flex md6>
+                            <v-select
+                              :items="schools"
+                              item-text="name"
+                              item-value="id"
+                              label="Schools"
+                               @change="formChangeHandler({attribute:'schools',parameter:$event})"
+                              autocomplete
+                              multiple
+                            ></v-select>
+                        </v-flex>
                       </v-layout>
-
                     </v-container>
                   </v-tabs-content>
                 </v-tabs-items>
@@ -95,6 +104,9 @@
 
 <script>
  import {mapGetters,mapActions} from "vuex"
+import { Http,ApiPrivateHttp } from '@/shared/http-service'
+import { toQueryParams } from '@/shared/helpers'
+import { REGISTER, DEBUG,API_BASE_URL } from '@/env'
  export default {
   name: 'UserProfile',
   methods:{
@@ -106,6 +118,37 @@
     },
     formChangeHandler({attribute,parameter}){
       this.actUpdateUserMetaData({attribute,parameter});
+    },
+    fetchData(){
+        let school_type = "primary";
+        return new Promise((resolve,reject)=>{
+          Http({
+              method: 'get',
+              url: `static/${school_type}.tsv`,
+            }).then(
+                response=>{
+                  let items=[];
+                  let fields = ["id","type","name","chi_address","eng_address"];
+                  let rowArray = response.split('\n');
+                  rowArray.forEach(row=>{
+                      let obj = {};
+                      let arr = []
+                      let attrs = row.split('\t');
+                      fields.forEach((str,idx)=>{
+                          obj[str] = attrs[idx];
+                          if(str == "name"){
+                            arr = obj.name.split("   ")
+                            //0:Chinese Name, 1: English Name, 2:Website
+                            obj.name = `${arr[0]}  -   ${arr[1]}`
+                          }
+                      })
+                      items.push(obj);
+                  });
+                  resolve(items);
+                }
+            );
+
+        });
     }
   },
   data() {
@@ -126,13 +169,18 @@
               (v) => !!v || 'Name is required',
               (v) => v && v.length <= 10 || 'Name must be less than 10 characters'
             ],
-        }
+        },
+        schools:[]
     };
+  },mounted () {
+    this.fetchData().then(schools=>this.schools=schools);
   },
+
   computed:{
-    ...mapGetters({
-      metadata:"userMetaData"
-    })
+    ...mapGetters(["userMetaData"]),
+    metadata(){
+      return _.cloneDeep(this.userMetaData)
+    }
   }
 };
 </script>
