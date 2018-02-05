@@ -47,8 +47,8 @@
           </v-list-tile-content>
         </v-list-tile>
       </v-list>
-      
-    </v-navigation-drawer> 
+
+    </v-navigation-drawer>
     <v-toolbar app fixed >
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
       <h3>AnyOneBook － {{$t($route.name)}}&nbsp;&nbsp;</h3>
@@ -91,7 +91,7 @@
       >
         <v-icon>menu</v-icon>
       </v-btn> -->
-     
+
     </v-toolbar>
     <v-content>
       <v-container flex>
@@ -129,9 +129,9 @@
     </v-navigation-drawer> -->
     <v-footer>
       <span>Copyright&copy; &nbsp;{{new Date().getFullYear()}}&nbsp; </span>
-      <span> iLearners Publishing Limited. All rights reserved.</span> 
-      <a href="http://www.ilearners.hk/privacy.php" target="_blank" style="margin-left:1.2em"> {{$t('Privacy Policy')}} </a> 
-      <a href="http://www.ilearners.hk/legal.php" target="_blank" style="margin-left:1.2em"> {{$t('Legal Notice')}} </a>         
+      <span> iLearners Publishing Limited. All rights reserved.</span>
+      <a href="http://www.ilearners.hk/privacy.php" target="_blank" style="margin-left:1.2em"> {{$t('Privacy Policy')}} </a>
+      <a href="http://www.ilearners.hk/legal.php" target="_blank" style="margin-left:1.2em"> {{$t('Legal Notice')}} </a>
     </v-footer>
 
     <!-- Common modal -->
@@ -193,6 +193,10 @@
           title: 'OrderManagement',
           path:"/order_management"
         },{
+          icon: 'border_color',
+          title: 'Enagement(Editor)',
+          path:"/enagement_form"
+        },{
           icon: 'remove_red_eye',
           title: 'OpenPageWrite',
           path:"/openpage_write"
@@ -213,7 +217,7 @@
       ...mapActions(["authLogout",'authUserDetect'])
     },
     created(){
-       //If User Already Login Update the LocalStorage 
+       //If User Already Login Update the LocalStorage
        this.authUserDetect();
     }
   };

@@ -59,6 +59,8 @@ const actions = {
   createBook({commit,dispatch},{book}){
     return new Promise((resolve,reject)=>{
         let {_id, page_code, content, metadata}=book;
+        console.log(getUser,getUser());
+
         let reference1=getUser().id,
             reference2=metadata.codex,
             reference3=metadata.grade,
@@ -79,9 +81,10 @@ const actions = {
               method,
               url: method=="post"?`/static_html_page?page_code=${page_code}`:  //url used if post
                               `/static_html_page?static_html_page_id=${_id}&page_code=${page_code}`, //url used if put
-              data: method=="post"? `content=${content}`: //data needed if post
-                                `content=${content}&reference_1=${reference1}&reference_2=${reference2}&reference_3=${reference3}&reference_4=${reference4}&reference_5=${reference5}`
-                                //data needed if put
+              // data: method=="post"? `content=${content}`: //data needed if post
+              //                   `content=${content}&reference_1=${reference1}&reference_2=${reference2}&reference_3=${reference3}&reference_4=${reference4}&reference_5=${reference5}`
+                  data:  `content=${content}&reference_1=${reference1}&reference_2=${reference2}&reference_3=${reference3}&reference_4=${reference4}&reference_5=${reference5}`,
+              //data needed if put
               }).then((response) => {
             let message = `Book is ${_id!=""?"Updated":"Created"} successfully`;
             response.message = message;

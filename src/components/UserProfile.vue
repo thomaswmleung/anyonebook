@@ -147,7 +147,6 @@ import { REGISTER, DEBUG,API_BASE_URL } from '@/env'
                   resolve(items);
                 }
             );
-
         });
     }
   },

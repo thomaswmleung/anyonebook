@@ -67,6 +67,11 @@ export default new Router({
       name:'OpenPageWrite',
       component:load('OpenpageWrite'),
       beforeEnter:authenticated
+    },{
+      path:"/enagement_form",
+      name:'EnagementForm',
+      component:load('EnagementForm'),
+      beforeEnter:authenticated
     },
     {
       path:"/login",
