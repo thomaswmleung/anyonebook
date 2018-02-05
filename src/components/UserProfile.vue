@@ -81,6 +81,14 @@
                               multiple
                             ></v-select>
                         </v-flex>
+                        <v-flex md8 >
+                          <common-items-manipulation
+                            :items="family"
+                            :attributes="['name','email','remark']"
+                            :options="{remark:'textarea'}"
+                            @change="emailHandler('family',$event)"
+                           ></common-items-manipulation>
+                        </v-flex>
                       </v-layout>
                     </v-container>
                   </v-tabs-content>
@@ -103,16 +111,24 @@
 </style>
 
 <script>
- import {mapGetters,mapActions} from "vuex"
+import {mapGetters,mapActions} from "vuex"
 import { Http,ApiPrivateHttp } from '@/shared/http-service'
 import { toQueryParams } from '@/shared/helpers'
 import { REGISTER, DEBUG,API_BASE_URL } from '@/env'
+
+import CommonItemsManipulation from "@/components/partial/common-items-manipulation"
+
  export default {
   name: 'UserProfile',
+  components:{CommonItemsManipulation},
   methods:{
     ...mapActions([
       "actUpdateUserMetaData",
     ]),
+    emailHandler(attr,parameter){
+      console.log(parameter);
+      this[attr] = parameter;
+    },
     stepClickHandler(key){
       this.current_step = key;
     },
@@ -169,7 +185,8 @@ import { REGISTER, DEBUG,API_BASE_URL } from '@/env'
               (v) => v && v.length <= 10 || 'Name must be less than 10 characters'
             ],
         },
-        schools:[]
+        schools:[],
+        family:[{name:"Tommy Lam",email:"namsouth@email.com",remark:"Try it out"}],
     };
   },mounted () {
     this.fetchData().then(schools=>this.schools=schools);
