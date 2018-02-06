@@ -43,13 +43,13 @@
                     Select files
                   </file-upload>
                   <v-btn
-                    v-if = "!preview1"
+                    v-if="!preview1"
                     color = "primary"
                     flat
                     @click.native="uploadImage(files1, 'left');">
                     Upload
                   </v-btn>
-                  <img v-if="preview1" :src="url1" height="200px" />
+                  <img v-if="preview1" :src="url1" width="100%"/>
                 </div>
               </div>
             </v-card>
@@ -115,13 +115,13 @@
                     Select files 
                   </file-upload>
                   <v-btn
-                    v-if = "!preview2"
+                    v-if="!preview2"
                     color = "primary"
                     flat
                     @click.native="uploadImage(files2, 'right');">
                     Upload
                   </v-btn>
-                  <img v-if="preview2 && url2 !=''" :src="url2" height="200px" />
+                  <img v-if="preview2" :src="url2" width="100%"/>
                 </div>
               </div>
             </v-card>
@@ -237,10 +237,10 @@
           row_height:550,
           files1:[],
           files2:[],
-          preview1: false,
-          preview2: false,
           url1: "",
           url2: "",
+          preview1: false,
+          preview2: false
         }
       }, 
       watch: {
@@ -262,8 +262,13 @@
         this.bw1=this.page[`left_greyscale`];
         this.bw2=this.page[`right_greyscale`];
         this.cm1=this.page[`left_comment`];
-        this.cm2=this.page[`right_comment`]
-        console.log(this.bw1)
+        this.cm2=this.page[`right_comment`];
+        this.url1=this.page[`left_url`];
+        this.url2=this.page[`right_url`];
+        this.preview1=this.page[`left_preview`];
+        this.preview2=this.page[`right_preview`];
+        this.files1=this.page[`left_files`];
+        this.files2=this.page[`right_files`]
     },
     //reset the value of the switch for every page
     resetPage()
@@ -274,10 +279,12 @@
           this.bw2=this.row_record[this.current_index-1].right_greyscale;
           this.cm1=this.row_record[this.current_index-1].left_comment;
           this.cm2=this.row_record[this.current_index-1].right_comment;
-          this.preview1= false;
-          this.preview2= false;
-          this.url1= "";
-          this.url2= "";
+          this.url1=this.row_record[this.current_index-1].left_url;
+          this.url2=this.row_record[this.current_index-1].right_url;
+          this.preview1=this.row_record[this.current_index-1].left_preview;
+          this.preview2=this.row_record[this.current_index-1].right_preview;
+          this.files1=this.row_record[this.current_index-1].left_files;
+          this.files2=this.row_record[this.current_index-1].right_files;
       },
     //handle the value changed caused by the action
      changeEvent(attr_key)
@@ -290,6 +297,12 @@
            case 'right_edit': value=this.edit2; break;
            case 'left_comment': value=this.cm1; break;
            case 'right_comment': value=this.cm2; break;
+           case 'left_url': value=this.url1; break;
+           case 'right_url': value=this.url2; break;
+           case 'left_preview': value=this.preview1; break;
+           case 'right_preview': value=this.preview2; break;
+           case 'left_files': value=this.files1; break;
+           case 'right_files': value=this.files2; break;
          }
          //emit an event to CreateBook to handle the changes
           this.$emit("changeRowValue", {current_index:this.current_index-1, attr:attr_key, value});
@@ -347,18 +360,23 @@
               },
               formData
         }
-
         this.uploadMedia({
             payload: {data},
             callback:()=>{
               if(where == 'left')
               {
                 this.url1 = this.currentMedia.url
-                this.preview1 = true;
+                this.preview1 = true
+                this.changeEvent('left_files')
+                this.changeEvent('left_url')
+                this.changeEvent('left_preview')
               }
               else{
                 this.url2 = this.currentMedia.url
-                this.preview2 = true;
+                this.preview2 = true
+                this.changeEvent('right_files')
+                this.changeEvent('right_url')
+                this.changeEvent('right_preview')
               };
             }
           });

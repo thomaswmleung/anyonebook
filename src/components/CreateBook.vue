@@ -316,7 +316,13 @@ import BookRowImage from "@/components/partial/book-row-image"
             right_greyscale:false,
             right_comment:"",
             left_edit:false,
-            right_edit:false
+            right_edit:false,
+            left_preview: false,
+            right_preview: false,
+            left_url:'',
+            right_url:'',
+            left_files:[],
+            right_files:[]
         });
     },
 
