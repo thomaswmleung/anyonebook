@@ -16,19 +16,42 @@
                 v-model="bw1"
                 @change="changeEvent('left_greyscale')"
               ></v-switch>
-              <v-text-field
-                v-if="edit1"
-                name="Edit"
-                label="Comment here"
-                v-model="cm1"
-                textarea
-                @input="changeEvent('left_comment')"
-              ></v-text-field>
-              <v-btn 
-                v-if="edit1"
-                outline color="indigo">
-                {{$t('Upload')}}
-              </v-btn>
+              <div v-if="edit1">
+                <v-text-field
+                  name="Edit"
+                  label="Comment here"
+                  v-model="cm1"
+                  textarea
+                  @input="changeEvent('left_comment')"
+                ></v-text-field>
+                <ul>
+                  <li v-for="file in files1" :key="file.id">
+                    <span>{{file.name}}</span>
+                    <span v-if="file.error">{{file.error}}</span>
+                    <span v-else-if="file.success">success</span>
+                    <span v-else></span>
+                  </li>
+                </ul>
+                <div class="upload-btn">
+                  <file-upload
+                    extensions="gif,jpg,jpeg,png,webp"
+                    accept="image/png,image/gif,image/jpeg,image/webp"
+                    :multiple="false"
+                    v-model="files1"
+                    @input-filter="inputFilter"
+                    ref="upload">
+                    Select files
+                  </file-upload>
+                  <v-btn
+                    v-if = "!preview1"
+                    color = "primary"
+                    flat
+                    @click.native="uploadImage(files1, 'left');">
+                    Upload
+                  </v-btn>
+                  <img v-if="preview1" :src="url1" height="200px" />
+                </div>
+              </div>
             </v-card>
           </v-flex>
           <v-flex xs8>
@@ -68,39 +91,37 @@
                 v-model="bw2"
                 @change="changeEvent('right_greyscale')"
               ></v-switch>
-              <v-text-field
-                v-if="edit2"
-                name="Edit"
-                label="Comment here"
-                v-model="cm2"
-                textarea
-                @input="changeEvent('right_comment')"
-              ></v-text-field>
-              <div v-if="edit2">
+              <div v-if="edit2">  
+                <v-text-field
+                  name="Edit"
+                  label="Comment here"
+                  v-model="cm2"
+                  textarea
+                  @input="changeEvent('right_comment')"
+                ></v-text-field>
                 <ul>
-                  <li v-for="file in files" :key="file.id">
+                  <li v-for="file in files2" :key="file.id">
                     <span>{{file.name}}</span>
-                    <span v-if="file.error">{{file.error}}</span>
-                    <span v-else-if="file.success">success</span>
-                    <span v-else></span>
                   </li>
                 </ul>
-                <div class="upload-btn">
+                <div>
                   <file-upload
                     extensions="gif,jpg,jpeg,png,webp"
                     accept="image/png,image/gif,image/jpeg,image/webp"
                     :multiple="false"
-                    v-model="files"
+                    v-model="files2"
                     @input-filter="inputFilter"
                     ref="upload">
-                    Select files
+                    Select files 
                   </file-upload>
                   <v-btn
+                    v-if = "!preview2"
                     color = "primary"
                     flat
-                    @click.native="uploadImage(files);">
+                    @click.native="uploadImage(files2, 'right');">
                     Upload
                   </v-btn>
+                  <img v-if="preview2 && url2 !=''" :src="url2" height="200px" />
                 </div>
               </div>
             </v-card>
@@ -160,10 +181,6 @@
   </v-dialog>
 </template>
 <style scoped>
-  input[type=file] {
-    position: absolute;
-    left: -99999px;
-  }
   table.summary_table td.attr{
     color:grey;
     font-size: 0.85em;
@@ -179,6 +196,17 @@
     margin-bottom: 0;
     margin-right: 1rem;
   }
+  hidden{
+    opacity: 0;
+  }
+  #file {
+    overflow: hidden;
+    position: fixed;
+    width: 1px;
+    height: 1px;
+    z-index: -1;
+    opacity: 0;
+}
 </style>
 <script>
   import Vue from 'vue'
@@ -207,7 +235,12 @@
           cm1:"",
           cm2:"",
           row_height:550,
-          files:[]
+          files1:[],
+          files2:[],
+          preview1: false,
+          preview2: false,
+          url1: "",
+          url2: "",
         }
       }, 
       watch: {
@@ -218,7 +251,9 @@
     ...mapActions([
       "createBook",
       "showFullscreenLoader",
-      "uploadMedia"
+      "uploadMedia",
+      "pageUploadVersion",
+      "getMedia"
     ]),
     fetchData()
     {
@@ -239,6 +274,10 @@
           this.bw2=this.row_record[this.current_index-1].right_greyscale;
           this.cm1=this.row_record[this.current_index-1].left_comment;
           this.cm2=this.row_record[this.current_index-1].right_comment;
+          this.preview1= false;
+          this.preview2= false;
+          this.url1= "";
+          this.url2= "";
       },
     //handle the value changed caused by the action
      changeEvent(attr_key)
@@ -294,21 +333,34 @@
           }
         }
       },
-      uploadImage(files)
+      uploadImage(files, where)
       {
         let formData = new FormData();
-        formData.append('media_file',files[0])
+        formData.append('media_file',files[0].file)
         let data = {
               queryString: {
                 type: files[0].type,
                 extension: getExtension(files[0].name),
                 usage: [files[0].id],
+                remark: [],
+                tag: []
               },
               formData
         }
+
         this.uploadMedia({
-            data,
-            router: this.router
+            payload: {data},
+            callback:()=>{
+              if(where == 'left')
+              {
+                this.url1 = this.currentMedia.url
+                this.preview1 = true;
+              }
+              else{
+                this.url2 = this.currentMedia.url
+                this.preview2 = true;
+              };
+            }
           });
       }
     },
@@ -317,6 +369,7 @@
         all_page:"allPages",
         user_data: "userData",
         current_book:"currentBook",
+        currentMedia: "currentMedia"
       }),
      page(){
         return this.row_record[this.current_index-1]||{};

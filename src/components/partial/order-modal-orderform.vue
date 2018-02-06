@@ -165,7 +165,11 @@
       {
         let id = "";
         let i = 0;
-        this.books_record={};
+        this.books_record = {};
+        this.payment_details = "",
+        this.delivery_details = "",
+        this.address = "",
+        this.remarks = ""
         this.totalPrice = 0;
         if (this.shopping_cart.length==0) {
           this.valid = false;

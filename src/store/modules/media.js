@@ -12,13 +12,15 @@ const state = {
     totalRows: 0,
     perPage: 12,
     limit: 12
-  }
+  },
+  currentMedia: {}
 }
 
 const getters = {
   allMedia: state => state.allMedia,
   mediaDivide: state => chunk(state.media, 4),
-  mediaPaginator: state => state.mediaPaginator
+  mediaPaginator: state => state.mediaPaginator,
+  currentMedia: state => state.currentMedia
 }
 
 const mutations = {
@@ -27,6 +29,10 @@ const mutations = {
   },
   updatePaginatorMedia (state, { key, value }) {
     state.mediaPaginator[key] = value
+  },
+  updateCurrentMedia (state, media)
+  {
+    state.currentMedia = media;
   }
 }
 
@@ -61,7 +67,7 @@ const actions = {
       commit('COMMOM_UPDATE_FULLSCREEN_LOADER',false) //Common Loader Module      
     })
   },
-  uploadMedia ({ commit, dispatch }, payload) {
+  uploadMedia ({ commit, dispatch }, {payload, callback}) {
     commit('loadingBar', true)
     Http({
       method: 'post',
@@ -69,10 +75,11 @@ const actions = {
       data: payload.data.formData,
       params: { ...payload.data.queryString }
     }).then((response) => {
-      dispatch('showToash', { message: 'New Media Has Been Uploaded', type: 'success' })
-      payload.modal.hide()
-      dispatch('getMedia', { router: payload.router })
-      commit('loadingBar', false)
+      console.log(response.data)
+      commit('updateCurrentMedia', response.data)
+      if(typeof callback=="function"){
+        callback();
+      }
     }).catch((errors) => {
       dispatch('handleErrorResponse', { errors: errors, router: payload.router })
       commit('loadingBar', false)
