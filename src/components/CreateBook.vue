@@ -89,11 +89,31 @@
                                     v-model="book_metadata.school_name"
                                 ></v-text-field>
                             </v-flex>
-                            <v-flex xs6 md2>
-                                <v-text-field
-                                    label="School Logo"
-                                    v-model="book_metadata.school_logo"
-                                ></v-text-field>
+                            <v-flex xs6 md4>
+                                <div>
+                                    <ul>
+                                        <li v-for="file in files" :key="file.id">
+                                            <span>{{file.name}}</span>
+                                        </li>
+                                    </ul>
+                                    <file-upload
+                                        extensions="gif,jpg,jpeg,png,webp"
+                                        accept="image/png,image/gif,image/jpeg,image/webp"
+                                        :multiple="false"
+                                        v-model="files"
+                                        @input-filter="inputFilter"
+                                        ref="upload">
+                                        School Logo
+                                    </file-upload>
+                                    <v-btn
+                                        v-if="!preview"
+                                        color = "primary"
+                                        flat
+                                        @click.native="uploadImage(files);">
+                                        Upload
+                                    </v-btn>
+                                    <img v-if="preview" :src="book_metadata.school_logo" width="100%"/>
+                                </div>
                             </v-flex>
                             <v-flex xs6 md2>
                                 <v-text-field
@@ -101,7 +121,7 @@
                                     v-model="book_metadata.title"
                                 ></v-text-field>
                             </v-flex>
-                            <v-flex xs6 md3>
+                            <v-flex xs6 md2>
                                 <v-text-field
                                     label="Book Subtitle"
                                     v-model="book_metadata.subtitle"
@@ -228,24 +248,28 @@
 import Vue from 'vue';
 import {mapGetters,mapActions} from "vuex";
 import { Http,ApiPrivateHttp } from '@/shared/http-service'
+import { getExtension } from '@/shared/helpers'
 import {checkImageExists} from "@/util"
 // import {syllabus} from "@/store/static-record";
 import _ from "lodash";
 
 import BookModalPreviewBook from "@/components/partial/book-modal-preview-book"
 import BookRowImage from "@/components/partial/book-row-image"
+import FileUpload from 'vue-upload-component/dist/vue-upload-component.part.js'
 
  export default {
   name: 'Pagination',
   components:{
       BookModalPreviewBook,
       BookRowImage,
+      FileUpload
     },
   methods: {
       ...mapActions([
            "pageUpdateOption",
            "getBookById",
-           "resetBook"
+           "resetBook",
+           "uploadMedia"
         ]),
     getPageTsv(){
         let page_file_name = "page-rows";
@@ -409,6 +433,38 @@ import BookRowImage from "@/components/partial/book-row-image"
           }
           this.updateBookSummary();
           console.log(this.book_metadata)
+      },
+      inputFilter(newFile, oldFile, prevent) {
+        if (newFile && !oldFile) {
+          if (/(\/|^)(Thumbs\.db|desktop\.ini|\..+)$/.test(newFile.name)) {
+            return prevent()
+          }
+          if (/\.(php5?|html?|jsx?)$/i.test(newFile.name)) {
+            return prevent()
+          }
+        }
+      },
+      uploadImage(files)
+      {
+        let formData = new FormData();
+        formData.append('media_file',files[0].file)
+        let data = {
+              queryString: {
+                type: files[0].type,
+                extension: getExtension(files[0].name),
+                usage: [files[0].id],
+                remark: [],
+                tag: []
+              },
+              formData
+        }
+        this.uploadMedia({
+            payload: {data},
+            callback:()=>{
+              this.preview = true;
+              this.book_metadata.school_logo = this.currentMedia.url
+            }
+          });
       }
   },
   watch: {
@@ -423,6 +479,8 @@ import BookRowImage from "@/components/partial/book-row-image"
         area_rows:[], //domain, area
 
         row_height:450,
+        files:[],
+        preview: false,
 
         cover_image:"",
         show_cover_image:false,
@@ -466,7 +524,8 @@ import BookRowImage from "@/components/partial/book-row-image"
             current_page:"currentPage",
             current_book:"currentBook",
             grade_items:"gradeItem",
-            publicity_items:"publicityItem"
+            publicity_items:"publicityItem",
+            currentMedia: "currentMedia"
         })
   }
 };
