@@ -148,11 +148,6 @@
         Fbooks:[]
     };
   },
-    // firestore(){
-    //   return {
-    //     Fbooks: db.collection('book').get()
-    //   }
-    // },
    methods: {
     ...mapActions([
       "deleteBook",
@@ -191,17 +186,6 @@
             book_filter.publicity = this.filter.publicity;
             book_filter.school_name = this.filter.school_name;
         this.getBook({paginator, book_filter});
-        //https://scotch.io/tutorials/getting-started-with-firebase-cloud-firestore-build-a-vue-contact-app
-        db.collection('book').get().then((querySnapshot) => {
-          querySnapshot.forEach((doc) => {
-            let data = {
-              _id: doc.data()._id,
-              content: doc.data().content,
-              metadata: doc.data().metadata
-            }
-            this.Fbooks.push(data)
-          })
-        })
         //get all pages
         this.getPageTsv().then(list=>this.all_pages=list);
     },
