@@ -66,8 +66,9 @@
                                         </v-btn>
                                     </router-link>
                                     <v-btn small color="error"
-                                        @click.stop="deleteBook({book,callback:getBooks}); ">
+                                        @click.stop="deleteBooks(book); ">
                                         {{$t('Delete')}}
+                                         <!-- @click.stop="deleteBook({book,callback:getBooks}); " -->
                                     </v-btn>
                                 </div>
                                 <div style="color: darkgrey">
@@ -111,6 +112,7 @@
  import moment from 'moment'
  import { Http,ApiPrivateHttp } from '@/shared/http-service'
  import BookModalPurchaseBook from "@/components/partial/book-modal-purchase-book"
+ import { db } from '../main'
 
  export default {
   name: 'Pagination',
@@ -142,9 +144,15 @@
             bw_page:0,
             color_page:0,
             average_price:60
-        }
+        },
+        Fbooks:[]
     };
   },
+    // firestore(){
+    //   return {
+    //     Fbooks: db.collection('book').get()
+    //   }
+    // },
    methods: {
     ...mapActions([
       "deleteBook",
@@ -173,7 +181,6 @@
             });
         })
     },
-
     getBooks() {
         let paginator = {};
             paginator.limit = this.book_paginator.limit;
@@ -184,6 +191,17 @@
             book_filter.publicity = this.filter.publicity;
             book_filter.school_name = this.filter.school_name;
         this.getBook({paginator, book_filter});
+        //https://scotch.io/tutorials/getting-started-with-firebase-cloud-firestore-build-a-vue-contact-app
+        db.collection('book').get().then((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            let data = {
+              _id: doc.data()._id,
+              content: doc.data().content,
+              metadata: doc.data().metadata
+            }
+            this.Fbooks.push(data)
+          })
+        })
         //get all pages
         this.getPageTsv().then(list=>this.all_pages=list);
     },
@@ -236,6 +254,10 @@
             }
         });
         this.show_purchase_book=true;
+    },
+    deleteBooks(book)
+    {
+      db.collection('book').doc('emNxMeC0nQ0zl2fDjONX').delete()
     }
    },
   computed:{

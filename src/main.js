@@ -13,9 +13,26 @@ import store from '@/store';
 
 import {DEBUG} from '@/env';
 
+import VueFire from 'vuefire';
+import firebase from 'firebase/app';
+import 'firebase/firestore';
+
+Vue.use(VueFire);
+var config = {
+    apiKey: "AIzaSyCAX1OKPyRAM6F2WOVBeuMPeUR9niGTSk8",
+    authDomain: "openpage-anyonebook.firebaseapp.com",
+    databaseURL: "https://openpage-anyonebook.firebaseio.com",
+    projectId: "openpage-anyonebook",
+    storageBucket: "openpage-anyonebook.appspot.com",
+    messagingSenderId: "448562932508"
+  };
+var firebaseApp = firebase.initializeApp(config);
+export const db = firebase.firestore();
+
 Vue.use(Vuex);
 Vue.use(Toasted);
 Vue.use(Viewer);
+
 // initialize the vuex store using the vuex module. note that you can change the
 //  name of the module if you wish
 // const store = new Vuex.Store();

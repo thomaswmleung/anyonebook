@@ -256,6 +256,7 @@ import _ from "lodash";
 import BookModalPreviewBook from "@/components/partial/book-modal-preview-book"
 import BookRowImage from "@/components/partial/book-row-image"
 import FileUpload from 'vue-upload-component/dist/vue-upload-component.part.js'
+import { db } from '../main'
 
  export default {
   name: 'Pagination',
@@ -411,6 +412,20 @@ import FileUpload from 'vue-upload-component/dist/vue-upload-component.part.js'
       },
       initialize(){
           if(this.$route.params.id){
+            // db.collection('book').where("_id", "==", this.$route.params.id).get().then((querySnapshot) => {
+            //   querySnapshot.forEach((doc) => {
+            //     if (doc.data()._id == this.$route.params.id){
+            //       let _data = JSON.parse(doc.data().content)
+            //       this.current_book = {
+            //         _id: doc.data()._id,
+            //         row_record:_data.row_pages,
+            //         metadata:_data.book_metadata
+            //       }
+            //       this.area_rows = this.current_book.row_record;
+            //       this.book_metadata = this.current_book.metadata;
+            //     }
+            //   })
+            // })
             this.getBookById({
                 id:this.$route.params.id,
                 callback:()=>{
@@ -504,7 +519,7 @@ import FileUpload from 'vue-upload-component/dist/vue-upload-component.part.js'
             color_page:0,
             edit_page:0,
             average_price:44
-          }
+          },
     };
   },
   mounted(){

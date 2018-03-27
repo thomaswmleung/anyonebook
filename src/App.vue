@@ -146,6 +146,7 @@
   import {mapGetters,mapActions} from "vuex";
   import CommonModalLoading from "@/components/partial/common-modal-loading"
   import OrderFormModal from "@/components/partial/order-modal-orderform"
+
   export default {
       components:{
         CommonModalLoading,

@@ -91,7 +91,7 @@
                 v-model="bw2"
                 @change="changeEvent('right_greyscale')"
               ></v-switch>
-              <div v-if="edit2">  
+              <div v-if="edit2">
                 <v-text-field
                   name="Edit"
                   label="Comment here"
@@ -112,7 +112,7 @@
                     v-model="files2"
                     @input-filter="inputFilter"
                     ref="upload">
-                    Select files 
+                    Select files
                   </file-upload>
                   <v-btn
                     v-if="!preview2"
@@ -217,6 +217,7 @@
   import BookRowImage from "@/components/partial/book-row-image"
   import jsSHA from "jssha"
   import FileUpload from 'vue-upload-component/dist/vue-upload-component.part.js'
+  import { db }from '../../main'
 
   export default{
       name:"BookModalPreviewBook",
@@ -242,7 +243,7 @@
           preview1: false,
           preview2: false
         }
-      }, 
+      },
       watch: {
     // call again the method if the route changes
     'show': 'fetchData'
@@ -322,7 +323,9 @@
         shaObj.update(Date());
         book.page_code = `${this.user_data._id}-${shaObj.getHash("B64")}` ; //user id from getters , hash obj return a set of string
 
-        this.createBook({book}).then(
+        if (this.current_book._id!="") {
+          //https://www.npmjs.com/package/vue-firestore
+          db.collection('book').doc(book._id).update(book).then(
           response=>{
             //hide loading
             _instance.showFullscreenLoader(false);
@@ -333,8 +336,33 @@
             // Vue.toasted(_instance.$t('Fail to create Book Record'));
             console.log(error);
             _instance.showFullscreenLoader(false);
-          }
-        )
+          })
+        } else {
+          db.collection('book').add(book).then(
+          response=>{
+            //hide loading
+            _instance.showFullscreenLoader(false);
+            _instance.$router.push(`/create_book/${book._id}`);
+            _instance.$emit("close_dialog");
+            //https://scotch.io/tutorials/getting-started-with-firebase-cloud-firestore-build-a-vue-contact-app
+            db.collection('book').where("_id", "==", "").get().then((querySnapshot) => {
+              querySnapshot.forEach((doc) => {
+                let data = {
+                  _id: doc.id,
+                  content: doc.data().content,
+                  metadata: doc.data().metadata
+                }
+                book = data;
+              })
+              db.collection('book').doc(book._id).update(book)
+            })
+          },
+          error=>{
+            // Vue.toasted(_instance.$t('Fail to create Book Record'));
+            console.log(error);
+            _instance.showFullscreenLoader(false);
+          })
+        }
       },
       inputFilter(newFile, oldFile, prevent) {
         if (newFile && !oldFile) {
