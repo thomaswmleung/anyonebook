@@ -312,12 +312,12 @@ const mutations ={
                 state.current_page.remark = params.values;
             }
             if(params.type=="_id"){
-                state.current_page._id = params.values;
+                state.current_page._id = params.values||"";
             }
             if(params.type=="previous_page_id"){
                 state.current_page.previous_page_id = params.values;
             }
-            state.current_page[params.type]= params.values;
+            state.current_page[params.type]= params.values||"";
         },
 
         [types.PAGE_RESET_OPTION](state, params) {
@@ -587,7 +587,8 @@ const actions= {
                 _id: doc.id,
                 page_group: doc.data().page_group,
               }
-              data.page_group._id = doc.id
+              data.page_group._id = doc.id;
+              commit(types.PAGE_UPDATE_OPTION, {type:'_id', values: doc.id});
             })
             db.collection('page').doc(data._id).update(data)
             .then(response => {})

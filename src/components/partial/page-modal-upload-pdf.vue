@@ -155,8 +155,6 @@
               page.version = _instance.current_page_version;
               page.affiliation = {};
               page.parent_page_group_id = _instance.current_page._id;
-              console.log(page)
-              console.log(this.current_page)
               // page.page_group.page= []
               _instance.createPage({page}).then(
                 response=>{
@@ -199,10 +197,10 @@
               this.createPage({page:page_parameter})
                 .then(response=>{
                     //update page-group-id
-                    _instance.pageUpdateOption({
-                      type:"_id",
-                      values:page_parameter.page_group_id
-                    });
+                    // _instance.pageUpdateOption({
+                    //   type:"_id",
+                    //   values:page_parameter.page_group._id
+                    // });
                     _instance.processPDF(files);
                   },
                   error=>{
