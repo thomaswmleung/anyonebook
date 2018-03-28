@@ -315,7 +315,7 @@ export default {
               //custom mapping
               page_parameter.page_group.subdomain = page_parameter.page_group.area;
               page_parameter.page_group.sub_title = page_parameter.page_group.knowledge_unit;
-              page_parameter.page_group.layout = page_parameter.page_group.syllabus;
+              page_parameter.page_group.layout = page_parameter.page_group.syllabus_code;
               page_parameter.page_group.previous_page_id = page_parameter.page_group.previous_page_id;
               page_parameter.affiliation = page_parameter.page_group.affiliation;
               page_parameter.version = page_parameter.page_group.version;
@@ -332,7 +332,7 @@ export default {
                     //update page-group-id
                     _instance.pageUpdateOption({
                       type:"_id",
-                      values:response.page_group_id
+                      values:page_parameter.page_group._id
                     });
                     _instance.showFullscreenLoader(false);
                   },

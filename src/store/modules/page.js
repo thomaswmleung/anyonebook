@@ -5,9 +5,10 @@ import { toQueryParams } from '@/shared/helpers'
 import { REGISTER, DEBUG,API_BASE_URL } from '@/env'
 import { getUser } from '@/shared/auth-service'
 import moment from 'moment'
-
+import { db } from '../../main'
 //import {syllabus} from "@/store/static-record";
 import _ from "lodash";
+
 //initial state
 const state = {
     all_pages:[],
@@ -565,24 +566,58 @@ const actions= {
           })
     },
     createPage({commit,dispatch},payload){
-        return new Promise((resolve,reject)=>{
-            let method = 'post'
-            if (payload.page._id!="") {
-              method = 'put'
-            }
-            ApiPrivateHttp[method]('/page_group', JSON.stringify(payload.page))
-              .then((response) => {
-                let message = `Page is ${payload.page._id!=""?"Updated":"Added"} successfully`;
-                response.message = message;
-                resolve(response);
-              })
-              .catch((errors) => {
-                reject(errors);
-              });
+      if (payload.page._id != ""){
+        //update page if id exist
+        //ref: https://www.npmjs.com/package/vue-firestore
+        db.collection('page').doc(payload.page._id).update(payload.page)
+        .then(response => {})
+        .catch((errors) => {
+          console.log(errors);
         });
-    },
-    updatePage({commit},payload){
-
+      } else {
+        db.collection('page').add(payload.page)
+        .then(response => {
+          //update the page._id and page.page_group._id to be the same as page data id in firebase
+          //ref: https://scotch.io/tutorials/getting-started-with-firebase-cloud-firestore-build-a-vue-contact-app
+          db.collection('page').where("_id", "==", "").get()
+          .then((querySnapshot) => {
+            let data = {}
+            querySnapshot.forEach((doc) => {
+              data = {
+                _id: doc.id,
+                page_group: doc.data().page_group,
+              }
+              data.page_group._id = doc.id
+            })
+            db.collection('page').doc(data._id).update(data)
+            .then(response => {})
+            .catch((errors) => {
+              console.log(errors);
+            });
+          })
+          .catch((errors) => {
+            console.log(errors);
+          });
+        })
+        .catch((errors) => {
+          console.log(errors);
+        });
+        // return new Promise((resolve,reject)=>{
+            // let method = 'post'
+            // if (payload.page._id!="") {
+            //   method = 'put'
+            // }
+            // ApiPrivateHttp[method]('/page_group', JSON.stringify(payload.page))
+            //   .then((response) => {
+            //     let message = `Page is ${payload.page._id!=""?"Updated":"Added"} successfully`;
+            //     response.message = message;
+            //     resolve(response);
+            //   })
+            //   .catch((errors) => {
+            //     reject(errors);
+            //   });
+        // });
+      }
     },
     deletePage({commit},payload){
         let processBool = window.confirm("Are you sure?");

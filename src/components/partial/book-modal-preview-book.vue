@@ -180,6 +180,7 @@
       </v-container>
   </v-dialog>
 </template>
+
 <style scoped>
   table.summary_table td.attr{
     color:grey;
@@ -190,7 +191,6 @@
     color:darkolivegreen;
     font-size: 0.95em;
     text-align: left;
-
   }
   .example-simple label.btn {
     margin-bottom: 0;
@@ -206,8 +206,9 @@
     height: 1px;
     z-index: -1;
     opacity: 0;
-}
+  }
 </style>
+
 <script>
   import Vue from 'vue'
   import {mapGetters,mapActions} from "vuex"
@@ -219,96 +220,72 @@
   import { db }from '../../main'
 
   export default{
-      name:"BookModalPreviewBook",
-      components:{
-        BookRowImage,
-        FileUpload
+    name:"BookModalPreviewBook",
+    components:{
+      BookRowImage,
+      FileUpload
+    },
+    props:["show", "row_record", "metadata", "all_pages", "grey", "summary"],
+    data(){
+      return{
+        current_index:1,
+        edit1:false,      edit2:false,
+        bw1:false,        bw2:false,
+        cm1:"",           cm2:"",
+        row_height:550,
+        files1:[],        files2:[],
+        url1: "",         url2: "",
+        preview1: false,  preview2: false
+      }
+    },
+    watch: {
+      // call again the method if the route changes
+      'show': 'fetchData'
+    },
+    methods: {
+      ...mapActions([
+        "createBook",
+        "showFullscreenLoader",
+        "uploadMedia",
+        "pageUploadVersion",
+        "getMedia"
+      ]),
+
+      fetchData(){
+        this.edit1=this.page[`left_edit`];        this.edit2=this.page[`right_edit`];
+        this.bw1=this.page[`left_greyscale`];     this.bw2=this.page[`right_greyscale`];
+        this.cm1=this.page[`left_comment`];       this.cm2=this.page[`right_comment`];
+        this.url1=this.page[`left_url`];          this.url2=this.page[`right_url`];
+        this.preview1=this.page[`left_preview`];  this.preview2=this.page[`right_preview`];
+        this.files1=this.page[`left_files`];      this.files2=this.page[`right_files`]
       },
-      props:["show","row_record","metadata","all_pages", "grey","summary"],
-      data(){
-        return{
-          current_index:1,
-          edit1:false,
-          edit2:false,
-          bw1:false,
-          bw2:false,
-          cm1:"",
-          cm2:"",
-          row_height:550,
-          files1:[],
-          files2:[],
-          url1: "",
-          url2: "",
-          preview1: false,
-          preview2: false
+
+      //reset the value of the switch for every page
+      resetPage(){
+        this.edit1=this.row_record[this.current_index-1].left_edit;       this.edit2=this.row_record[this.current_index-1].right_edit;
+        this.bw1=this.row_record[this.current_index-1].left_greyscale;    this.bw2=this.row_record[this.current_index-1].right_greyscale;
+        this.cm1=this.row_record[this.current_index-1].left_comment;      this.cm2=this.row_record[this.current_index-1].right_comment;
+        this.url1=this.row_record[this.current_index-1].left_url;         this.url2=this.row_record[this.current_index-1].right_url;
+        this.preview1=this.row_record[this.current_index-1].left_preview; this.preview2=this.row_record[this.current_index-1].right_preview;
+        this.files1=this.row_record[this.current_index-1].left_files;     this.files2=this.row_record[this.current_index-1].right_files;
+      },
+
+      //handle the value changed caused by the action
+      changeEvent(attr_key){
+        let value = {};
+        switch(attr_key){
+          case 'left_greyscale': value=this.bw1; break;     case 'right_greyscale': value=this.bw2; break;
+          case 'left_edit': value=this.edit1; break;        case 'right_edit': value=this.edit2; break;
+          case 'left_comment': value=this.cm1; break;       case 'right_comment': value=this.cm2; break;
+          case 'left_url': value=this.url1; break;          case 'right_url': value=this.url2; break;
+          case 'left_preview': value=this.preview1; break;  case 'right_preview': value=this.preview2; break;
+          case 'left_files': value=this.files1; break;      case 'right_files': value=this.files2; break;
         }
+        //emit an event to CreateBook to handle the changes
+        this.$emit("changeRowValue", {current_index:this.current_index-1, attr:attr_key, value});
       },
-      watch: {
-    // call again the method if the route changes
-    'show': 'fetchData'
-    },
-  methods: {
-    ...mapActions([
-      "createBook",
-      "showFullscreenLoader",
-      "uploadMedia",
-      "pageUploadVersion",
-      "getMedia"
-    ]),
-    fetchData()
-    {
-        this.edit1=this.page[`left_edit`];
-        this.edit2=this.page[`right_edit`];
-        this.bw1=this.page[`left_greyscale`];
-        this.bw2=this.page[`right_greyscale`];
-        this.cm1=this.page[`left_comment`];
-        this.cm2=this.page[`right_comment`];
-        this.url1=this.page[`left_url`];
-        this.url2=this.page[`right_url`];
-        this.preview1=this.page[`left_preview`];
-        this.preview2=this.page[`right_preview`];
-        this.files1=this.page[`left_files`];
-        this.files2=this.page[`right_files`]
-    },
-    //reset the value of the switch for every page
-    resetPage()
-      {
-          this.edit1=this.row_record[this.current_index-1].left_edit;
-          this.edit2=this.row_record[this.current_index-1].right_edit;
-          this.bw1=this.row_record[this.current_index-1].left_greyscale;
-          this.bw2=this.row_record[this.current_index-1].right_greyscale;
-          this.cm1=this.row_record[this.current_index-1].left_comment;
-          this.cm2=this.row_record[this.current_index-1].right_comment;
-          this.url1=this.row_record[this.current_index-1].left_url;
-          this.url2=this.row_record[this.current_index-1].right_url;
-          this.preview1=this.row_record[this.current_index-1].left_preview;
-          this.preview2=this.row_record[this.current_index-1].right_preview;
-          this.files1=this.row_record[this.current_index-1].left_files;
-          this.files2=this.row_record[this.current_index-1].right_files;
-      },
-    //handle the value changed caused by the action
-     changeEvent(attr_key)
-      {
-         let value = {};
-         switch(attr_key){
-           case 'left_greyscale': value=this.bw1; break;
-           case 'right_greyscale': value=this.bw2; break;
-           case 'left_edit': value=this.edit1; break;
-           case 'right_edit': value=this.edit2; break;
-           case 'left_comment': value=this.cm1; break;
-           case 'right_comment': value=this.cm2; break;
-           case 'left_url': value=this.url1; break;
-           case 'right_url': value=this.url2; break;
-           case 'left_preview': value=this.preview1; break;
-           case 'right_preview': value=this.preview2; break;
-           case 'left_files': value=this.files1; break;
-           case 'right_files': value=this.files2; break;
-         }
-         //emit an event to CreateBook to handle the changes
-          this.$emit("changeRowValue", {current_index:this.current_index-1, attr:attr_key, value});
-      },
-      processBook()
-      {
+
+      processBook(){
         let _instance = this;
         let book = {};
         book._id = this.current_book._id=""?"":this.current_book._id;
@@ -322,76 +299,75 @@
         shaObj.update(Date());
         book.page_code = `${this.user_data._id}-${shaObj.getHash("B64")}` ; //user id from getters , hash obj return a set of string
 
-        this.createBook({book}).then(
-          response=>{
-            //hide loading
-            _instance.showFullscreenLoader(false);
-            _instance.$router.push(`/create_book/${book._id}`);
-            _instance.$emit("close_dialog");
-          },
-          error=>{
-            // Vue.toasted(_instance.$t('Fail to create Book Record'));
-            console.log(error);
-            _instance.showFullscreenLoader(false);
-          })
+        this.createBook({book})
+        .then(response=>{
+          //hide loading
+          _instance.showFullscreenLoader(false);
+          _instance.$router.push(`/create_book/${book._id}`);
+          _instance.$emit("close_dialog");
+        },error=>{
+          // Vue.toasted(_instance.$t('Fail to create Book Record'));
+          console.log(error);
+          _instance.showFullscreenLoader(false);
+        })
       },
-      inputFilter(newFile, oldFile, prevent) {
-        if (newFile && !oldFile) {
-          if (/(\/|^)(Thumbs\.db|desktop\.ini|\..+)$/.test(newFile.name)) {
+
+      inputFilter(newFile, oldFile, prevent){
+        if (newFile && !oldFile){
+          if (/(\/|^)(Thumbs\.db|desktop\.ini|\..+)$/.test(newFile.name)){
             return prevent()
           }
-          if (/\.(php5?|html?|jsx?)$/i.test(newFile.name)) {
+          if (/\.(php5?|html?|jsx?)$/i.test(newFile.name)){
             return prevent()
           }
         }
       },
-      uploadImage(files, where)
-      {
+
+      uploadImage(files, where){
         let formData = new FormData();
         formData.append('media_file',files[0].file)
         let data = {
-              queryString: {
-                type: files[0].type,
-                extension: getExtension(files[0].name),
-                usage: [files[0].id],
-                remark: [],
-                tag: []
-              },
-              formData
+          queryString: {
+            type: files[0].type,
+            extension: getExtension(files[0].name),
+            usage: [files[0].id],
+            remark: [],
+            tag: []
+          },
+          formData
         }
         this.uploadMedia({
-            payload: {data},
-            callback:()=>{
-              if(where == 'left')
-              {
-                this.url1 = this.currentMedia.url
-                this.preview1 = true
-                this.changeEvent('left_files')
-                this.changeEvent('left_url')
-                this.changeEvent('left_preview')
-              }
-              else{
-                this.url2 = this.currentMedia.url
-                this.preview2 = true
-                this.changeEvent('right_files')
-                this.changeEvent('right_url')
-                this.changeEvent('right_preview')
-              };
+          payload: {data},
+          callback:()=>{
+            if(where == 'left')
+            {
+              this.url1 = this.currentMedia.url
+              this.preview1 = true
+              this.changeEvent('left_files')
+              this.changeEvent('left_url')
+              this.changeEvent('left_preview')
             }
-          });
+            else{
+              this.url2 = this.currentMedia.url
+              this.preview2 = true
+              this.changeEvent('right_files')
+              this.changeEvent('right_url')
+              this.changeEvent('right_preview')
+            };
+          }
+        });
       }
     },
-  computed:{
-    ...mapGetters({
+    computed:{
+      ...mapGetters({
         all_page:"allPages",
         user_data: "userData",
         current_book:"currentBook",
         currentMedia: "currentMedia"
       }),
-     page(){
+      page(){
         return this.row_record[this.current_index-1]||{};
       },
-
     }
   };
 </script>

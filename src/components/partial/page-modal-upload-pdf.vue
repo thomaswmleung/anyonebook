@@ -154,7 +154,9 @@
               page.page_group.import_url = responsePageVersion.data.url;
               page.version = _instance.current_page_version;
               page.affiliation = {};
-              page.parent_page_group_id = _instance.current_page._id
+              page.parent_page_group_id = _instance.current_page._id;
+              console.log(page)
+              console.log(this.current_page)
               // page.page_group.page= []
               _instance.createPage({page}).then(
                 response=>{
@@ -188,7 +190,7 @@
               //custom mapping
               page_parameter.page_group.subdomain = page_parameter.page_group.area;
               page_parameter.page_group.sub_title = page_parameter.page_group.knowledge_unit;
-              page_parameter.page_group.layout = page_parameter.page_group.syllabus;
+              page_parameter.page_group.layout = page_parameter.page_group.syllabus_code;
               page_parameter.page_group.previous_page_id = page_parameter.page_group.previous_page_id;
               // page_parameter.page_group.page = [];
               delete page_parameter.page_group._id;
@@ -199,7 +201,7 @@
                     //update page-group-id
                     _instance.pageUpdateOption({
                       type:"_id",
-                      values:response.page_group_id
+                      values:page_parameter.page_group_id
                     });
                     _instance.processPDF(files);
                   },

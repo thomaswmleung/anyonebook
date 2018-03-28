@@ -32,19 +32,19 @@ const getters = {
 // modify value in the state
 const mutations = {
   mutUpdateBooks(state, books) {
-      state.all_books= books;
+    state.all_books= books;
   },
   mutUpdateBookPaginator(state, total_count) {
-      state.book_paginator.total_count = total_count;
+    state.book_paginator.total_count = total_count;
   },
   mutUpdateCurrentBook(state, book) {
-      state.current_book = book;
+    state.current_book = book;
   },
   mutResetBook(state){
     state.current_book= {
-        _id:"",
-        row_record:[],
-        metadata:{}
+      _id:"",
+      row_record:[],
+      metadata:{}
     }
   }
 }
@@ -56,42 +56,40 @@ const actions = {
     if (book._id != ""){
       //update book if id exist
       //ref: https://www.npmjs.com/package/vue-firestore
-      db.collection('book').doc(book._id).update(book).then(
-        response => {
-        })
-        .catch((errors) => {
-          console.log(errors);
-        });
+      db.collection('book').doc(book._id).update(book)
+      .then(response => {})
+      .catch((errors) => {
+        console.log(errors);
+      });
     } else {
       //creaate book if id not exist
       db.collection('book').add(book)
-        .then(response => {
-          //update the book._id to be the same as book data id in firebase
-          //ref: https://scotch.io/tutorials/getting-started-with-firebase-cloud-firestore-build-a-vue-contact-app
-          db.collection('book').where("_id", "==", "").get()
-            .then((querySnapshot) => {
-              let data = {}
-              querySnapshot.forEach((doc) => {
-                data = {
-                  _id: doc.id,
-                  content: doc.data().content,
-                  metadata: doc.data().metadata
-                }
-              })
-              db.collection('book').doc(data._id).update(data)
-                .then(response => {
-                })
-                .catch((errors) => {
-                  console.log(errors);
-                });
-            })
-            .catch((errors) => {
-              console.log(errors);
-            });
+      .then(response => {
+        //update the book._id to be the same as book data id in firebase
+        //ref: https://scotch.io/tutorials/getting-started-with-firebase-cloud-firestore-build-a-vue-contact-app
+        db.collection('book').where("_id", "==", "").get()
+        .then((querySnapshot) => {
+          let data = {}
+          querySnapshot.forEach((doc) => {
+            data = {
+              _id: doc.id,
+              content: doc.data().content,
+              metadata: doc.data().metadata
+            }
+          })
+          db.collection('book').doc(data._id).update(data)
+          .then(response => {})
+          .catch((errors) => {
+            console.log(errors);
+          });
         })
         .catch((errors) => {
           console.log(errors);
         });
+      })
+      .catch((errors) => {
+        console.log(errors);
+      });
     }
   },
 
@@ -99,53 +97,56 @@ const actions = {
     let processBool = window.confirm("Are you sure?");
     if (processBool){
       db.collection('book').doc(book._id).delete()
-        .then(response=>{
-          //fetchdata after delete
-          if( typeof callback == "function"){
-            callback(response);
-          }
+      .then(response=>{
+        //fetchdata after delete
+        if( typeof callback == "function"){
+          callback(response);
         }
-      ).catch((errors) => {
+      })
+      .catch((errors) => {
         console.log(errors);
       });
     }
   },
 
   getBook({commit,dispatch},{paginator, book_filter}){
-      console.log(paginator, book_filter)
-      commit('COMMOM_UPDATE_FULLSCREEN_LOADER',true)   //Common Loader Module
-      //https://scotch.io/tutorials/getting-started-with-firebase-cloud-firestore-build-a-vue-contact-app
-      db.collection('book').get().then((querySnapshot) => {
-        commit('COMMOM_UPDATE_FULLSCREEN_LOADER',false) //Common Loader Module
-        var result = [];
-        querySnapshot.forEach((doc) => {
-          let pageObj = {};
-          let _data = doc.data().metadata;
-          //to match with searching filter
-          if ((book_filter.codex == "" || _data.codex == book_filter.codex) &&
-              (book_filter.grade == "" || _data.grade == book_filter.grade) &&
-              (book_filter.publicity == "" || _data.publicity == book_filter.publicity) &&
-              (book_filter.school_name == "" || _data.school_name == book_filter.school_name)){
-                //to get book which public or private match with user token
-                if (book_filter.publicity == "Public" || doc.data().user_token == getUser().token){
-                  pageObj._id = doc.data()._id;
-                  pageObj.content = doc.data().content;
-                  pageObj.metadata = doc.data().metadata;
-                  pageObj.user_token = doc.data().user_token;
-                  result.push(pageObj);
-                }
-          }
-        })
-        commit("mutUpdateBooks",result); // return result;
-        commit("mutUpdateBookPaginator", result.length)
-      }).catch((errors) => {
-        console.log(errors);
-        commit('COMMOM_UPDATE_FULLSCREEN_LOADER',false) //Common Loader Module
+    console.log(paginator, book_filter)
+    commit('COMMOM_UPDATE_FULLSCREEN_LOADER',true)   //Common Loader Module
+    //https://scotch.io/tutorials/getting-started-with-firebase-cloud-firestore-build-a-vue-contact-app
+    db.collection('book').get()
+    .then((querySnapshot) => {
+      commit('COMMOM_UPDATE_FULLSCREEN_LOADER',false) //Common Loader Module
+      var result = [];
+      querySnapshot.forEach((doc) => {
+        let pageObj = {};
+        let _data = doc.data().metadata;
+        //to match with searching filter
+        if ((book_filter.codex == "" || _data.codex == book_filter.codex) &&
+            (book_filter.grade == "" || _data.grade == book_filter.grade) &&
+            (book_filter.publicity == "" || _data.publicity == book_filter.publicity) &&
+            (book_filter.school_name == "" || _data.school_name == book_filter.school_name)){
+              //to get book which public or private match with user token
+              if (book_filter.publicity == "Public" || doc.data().user_token == getUser().token){
+                pageObj._id = doc.data()._id;
+                pageObj.content = doc.data().content;
+                pageObj.metadata = doc.data().metadata;
+                pageObj.user_token = doc.data().user_token;
+                result.push(pageObj);
+              }
+        }
       })
+      commit("mutUpdateBooks",result); // return result;
+      commit("mutUpdateBookPaginator", result.length)
+    })
+    .catch((errors) => {
+      console.log(errors);
+      commit('COMMOM_UPDATE_FULLSCREEN_LOADER',false) //Common Loader Module
+    })
   },
 
   getBookById({commit}, {id, callback}){
-    db.collection('book').where("_id", "==", id).get().then(querySnapshot => {
+    db.collection('book').where("_id", "==", id).get()
+    .then(querySnapshot => {
       querySnapshot.forEach(doc => {
         if (doc.data()._id == id){
           let _data = JSON.parse(doc.data().content)
@@ -161,6 +162,9 @@ const actions = {
         }
       })
     })
+    .catch((errors) => {
+      console.log(errors);
+    })
   },
 
   resetBook({commit}){
@@ -170,9 +174,8 @@ const actions = {
 
 
 export default {
-    state,
-    getters,
-    actions,
-    mutations
-  }
-
+  state,
+  getters,
+  actions,
+  mutations
+}
