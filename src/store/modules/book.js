@@ -1,12 +1,6 @@
 import Vue from 'vue'
-//import { indexOf, each } from 'lodash'
-//import { Http,ApiPrivateHttp, ApiHttp } from '@/shared/http-service'
-//import { toQueryParams } from '@/shared/helpers'
-//import { REGISTER, DEBUG,API_BASE_URL } from '@/env'
 import { getUser } from '@/shared/auth-service'
-//import {syllabus} from "@/store/static-record";
 import _ from "lodash";
-//import _axios from "axios";
 import { db } from "../../main";
 
 const state = {
@@ -102,36 +96,18 @@ const actions = {
   },
 
   deleteBook({commit,dispatch},{book,callback}){
-    //create an instance
-    //var instance = _axios.create({
-      //baseURL: API_BASE_URL,
-      //timeout: 8000,
-      //headers: {
-        //'accept': 'application/json',
-        //'token': getUser().token
-      //}
-    //});
     let processBool = window.confirm("Are you sure?");
     if (processBool){
-
-        db.collection('book').doc(book._id).delete()
-        //return new Promise((resolve,reject)=>{
-            //instance({
-                //method: 'delete',
-                //url: '/static_html_page',
-                //params: {
-                    //'_id': book._id
-                //}
-              //})
-          .then(response=>{
-              //fetchdata after delete
-              if( typeof callback == "function"){
-                callback(response);
-              }
-            }
-        ).catch((errors) => {
-          console.log(errors);
-        });
+      db.collection('book').doc(book._id).delete()
+        .then(response=>{
+          //fetchdata after delete
+          if( typeof callback == "function"){
+            callback(response);
+          }
+        }
+      ).catch((errors) => {
+        console.log(errors);
+      });
     }
   },
 
