@@ -170,11 +170,11 @@
           </v-flex>
           <v-flex md4>
             <v-btn color="blue darken-1" flat @click.native="processBook">
-            {{$t('Save')}}
-          </v-btn>
-          <v-btn color="blue darken-1" flat @click.native="$emit('close_dialog');">
-            {{$t("Close")}}
-          </v-btn>
+              {{$t('Save')}}
+            </v-btn>
+            <v-btn color="blue darken-1" flat @click.native="$emit('close_dialog');">
+              {{$t("Close")}}
+            </v-btn>
           </v-flex>
         </v-layout>
       </v-container>
@@ -213,7 +213,6 @@
   import {mapGetters,mapActions} from "vuex"
   import moment from 'moment'
   import { getExtension } from '@/shared/helpers'
-
   import BookRowImage from "@/components/partial/book-row-image"
   import jsSHA from "jssha"
   import FileUpload from 'vue-upload-component/dist/vue-upload-component.part.js'
@@ -323,9 +322,7 @@
         shaObj.update(Date());
         book.page_code = `${this.user_data._id}-${shaObj.getHash("B64")}` ; //user id from getters , hash obj return a set of string
 
-        if (this.current_book._id!="") {
-          //https://www.npmjs.com/package/vue-firestore
-          db.collection('book').doc(book._id).update(book).then(
+        this.createBook({book}).then(
           response=>{
             //hide loading
             _instance.showFullscreenLoader(false);
@@ -337,32 +334,6 @@
             console.log(error);
             _instance.showFullscreenLoader(false);
           })
-        } else {
-          db.collection('book').add(book).then(
-          response=>{
-            //hide loading
-            _instance.showFullscreenLoader(false);
-            _instance.$router.push(`/create_book/${book._id}`);
-            _instance.$emit("close_dialog");
-            //https://scotch.io/tutorials/getting-started-with-firebase-cloud-firestore-build-a-vue-contact-app
-            db.collection('book').where("_id", "==", "").get().then((querySnapshot) => {
-              querySnapshot.forEach((doc) => {
-                let data = {
-                  _id: doc.id,
-                  content: doc.data().content,
-                  metadata: doc.data().metadata
-                }
-                book = data;
-              })
-              db.collection('book').doc(book._id).update(book)
-            })
-          },
-          error=>{
-            // Vue.toasted(_instance.$t('Fail to create Book Record'));
-            console.log(error);
-            _instance.showFullscreenLoader(false);
-          })
-        }
       },
       inputFilter(newFile, oldFile, prevent) {
         if (newFile && !oldFile) {

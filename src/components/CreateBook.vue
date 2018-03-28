@@ -493,7 +493,7 @@ import { db } from '../main'
             subtitle:"",
             school_name:"",
             school_logo:"",
-            publicity:"",
+            publicity:"Public",
             remark:"",
             student_copy:1,
             teacher_copy:1

@@ -1,12 +1,12 @@
 import Vue from 'vue'
-import { indexOf, each } from 'lodash'
-import { Http,ApiPrivateHttp, ApiHttp } from '@/shared/http-service'
-import { toQueryParams } from '@/shared/helpers'
-import { REGISTER, DEBUG,API_BASE_URL } from '@/env'
+//import { indexOf, each } from 'lodash'
+//import { Http,ApiPrivateHttp, ApiHttp } from '@/shared/http-service'
+//import { toQueryParams } from '@/shared/helpers'
+//import { REGISTER, DEBUG,API_BASE_URL } from '@/env'
 import { getUser } from '@/shared/auth-service'
-import {syllabus} from "@/store/static-record";
+//import {syllabus} from "@/store/static-record";
 import _ from "lodash";
-import _axios from "axios";
+//import _axios from "axios";
 import { db } from "../../main";
 
 const state = {
@@ -57,57 +57,86 @@ const mutations = {
 
 // connect with external source or multiple mutation in single action
 const actions = {
-  // TODO: put the method back to here
-  // createBook({commit,dispatch},{book}){
-  //             }).then((response) => {
-  //           let message = `Book is ${_id!=""?"Updated":"Created"} successfully`;
-  //           response.message = message;
-  //           resolve(response);
-  //         })
-  //         .catch((errors) => {
-  //           reject(errors);
-  //         });
-  //       });
-  // },
+  createBook({commit,dispatch},{book}){
+    book.user_token = getUser().token
+    if (book._id != ""){
+      //update book if id exist
+      //ref: https://www.npmjs.com/package/vue-firestore
+      db.collection('book').doc(book._id).update(book).then(
+        response => {
+        })
+        .catch((errors) => {
+          console.log(errors);
+        });
+    } else {
+      //creaate book if id not exist
+      db.collection('book').add(book)
+        .then(response => {
+          //update the book._id to be the same as book data id in firebase
+          //ref: https://scotch.io/tutorials/getting-started-with-firebase-cloud-firestore-build-a-vue-contact-app
+          db.collection('book').where("_id", "==", "").get()
+            .then((querySnapshot) => {
+              let data = {}
+              querySnapshot.forEach((doc) => {
+                data = {
+                  _id: doc.id,
+                  content: doc.data().content,
+                  metadata: doc.data().metadata
+                }
+              })
+              db.collection('book').doc(data._id).update(data)
+                .then(response => {
+                })
+                .catch((errors) => {
+                  console.log(errors);
+                });
+            })
+            .catch((errors) => {
+              console.log(errors);
+            });
+        })
+        .catch((errors) => {
+          console.log(errors);
+        });
+    }
+  },
 
   deleteBook({commit,dispatch},{book,callback}){
     //create an instance
-    var instance = _axios.create({
-      baseURL: API_BASE_URL,
-      timeout: 8000,
-      headers: {
-        'accept': 'application/json',
-        'token': getUser().token
-      }
-    });
+    //var instance = _axios.create({
+      //baseURL: API_BASE_URL,
+      //timeout: 8000,
+      //headers: {
+        //'accept': 'application/json',
+        //'token': getUser().token
+      //}
+    //});
     let processBool = window.confirm("Are you sure?");
     if (processBool){
-        return new Promise((resolve,reject)=>{
-            instance({
-                method: 'delete',
-                url: '/static_html_page',
-                params: {
-                    '_id': book._id
-                }
-              }).then(
-                  response=>{
-                    let message = `Book is deleted successfully`;
-                    response.message = message;
-                    //fetchdata after delete
-                    if( typeof callback == "function"){
-                      callback(response);
-                    }
-                    resolve(response);
-                  }
-              ).catch((errors) => {
-                reject(errors);
-              });
-        })
+
+        db.collection('book').doc(book._id).delete()
+        //return new Promise((resolve,reject)=>{
+            //instance({
+                //method: 'delete',
+                //url: '/static_html_page',
+                //params: {
+                    //'_id': book._id
+                //}
+              //})
+          .then(response=>{
+              //fetchdata after delete
+              if( typeof callback == "function"){
+                callback(response);
+              }
+            }
+        ).catch((errors) => {
+          console.log(errors);
+        });
     }
   },
 
   getBook({commit,dispatch},{paginator, book_filter}){
-    console.log(paginator, book_filter)
+      console.log(paginator, book_filter)
       commit('COMMOM_UPDATE_FULLSCREEN_LOADER',true)   //Common Loader Module
       //https://scotch.io/tutorials/getting-started-with-firebase-cloud-firestore-build-a-vue-contact-app
       db.collection('book').get().then((querySnapshot) => {
@@ -118,13 +147,17 @@ const actions = {
           let _data = doc.data().metadata;
           //to match with searching filter
           if ((book_filter.codex == "" || _data.codex == book_filter.codex) &&
-              (book_filter.codex == "" || _data.grade == book_filter.grade) &&
+              (book_filter.grade == "" || _data.grade == book_filter.grade) &&
               (book_filter.publicity == "" || _data.publicity == book_filter.publicity) &&
               (book_filter.school_name == "" || _data.school_name == book_filter.school_name)){
-                pageObj._id = doc.data()._id;
-                pageObj.content = doc.data().content;
-                pageObj.metadata = doc.data().metadata;
-                result.push(pageObj);
+                //to get book which public or private match with user token
+                if (book_filter.publicity == "Public" || doc.data().user_token == getUser().token){
+                  pageObj._id = doc.data()._id;
+                  pageObj.content = doc.data().content;
+                  pageObj.metadata = doc.data().metadata;
+                  pageObj.user_token = doc.data().user_token;
+                  result.push(pageObj);
+                }
           }
         })
         commit("mutUpdateBooks",result); // return result;
@@ -153,6 +186,7 @@ const actions = {
       })
     })
   },
+
   resetBook({commit}){
     commit("mutResetBook");
   }

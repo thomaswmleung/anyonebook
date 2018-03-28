@@ -66,9 +66,8 @@
                                         </v-btn>
                                     </router-link>
                                     <v-btn small color="error"
-                                        @click.stop="deleteBooks(book); ">
+                                        @click.stop="deleteBook({book,callback:getBooks});">
                                         {{$t('Delete')}}
-                                         <!-- @click.stop="deleteBook({book,callback:getBooks}); " -->
                                     </v-btn>
                                 </div>
                                 <div style="color: darkgrey">
@@ -239,10 +238,6 @@
         });
         this.show_purchase_book=true;
     },
-    deleteBooks(book)
-    {
-      db.collection('book').doc('emNxMeC0nQ0zl2fDjONX').delete()
-    }
    },
   computed:{
         ...mapGetters({
